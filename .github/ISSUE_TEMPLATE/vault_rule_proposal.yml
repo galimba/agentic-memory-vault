@@ -1,0 +1,70 @@
+name: Vault Rule Proposal
+description: Propose a new hard rule, soft rule, or tag
+labels: ["proposal"]
+body:
+  - type: dropdown
+    id: rule_type
+    attributes:
+      label: Type
+      options:
+        - Hard Rule
+        - Soft Rule
+        - New Tag
+        - Tag Category
+    validations:
+      required: true
+
+  - type: input
+    id: title
+    attributes:
+      label: Proposed rule/tag name
+      placeholder: e.g., "No inline HTML in wiki pages" or "tool/dbt"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What does this rule/tag do?
+      description: A clear description of the proposed rule or tag.
+    validations:
+      required: true
+
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Why is this needed?
+      description: Explain the motivation and benefit.
+    validations:
+      required: true
+
+  - type: textarea
+    id: enforcement
+    attributes:
+      label: How should this be enforced?
+      description: For rules only. Describe lint checks, CI steps, or manual review.
+    validations:
+      required: false
+
+  - type: textarea
+    id: examples
+    attributes:
+      label: Examples
+      description: Show 3+ examples of this rule or tag in use.
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: breaking
+    attributes:
+      label: Would this break existing vaults?
+      options:
+        - "Yes"
+        - "No"
+        - Unknown
+    validations:
+      required: true

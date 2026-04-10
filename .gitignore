@@ -1,0 +1,46 @@
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Obsidian workspace (keep plugins config if customized)
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/graph.json
+.obsidian/backlink.json
+# Obsidian plugin data may contain tokens, API keys, or sensitive config
+.obsidian/plugins/*/data.json
+
+# Dependencies (if any tooling is added)
+node_modules/
+__pycache__/
+*.pyc
+
+# Agent platform settings (prevent agents from committing permission changes)
+.claude/settings.json
+.claude/settings.local.json
+
+# Claude Code local workspace (settings, worktrees, agent scratch)
+.claude/
+
+# Development task tracking (local planning files)
+tasks/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# Logs
+*.log

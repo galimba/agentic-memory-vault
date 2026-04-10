@@ -1,0 +1,19 @@
+# Typos configuration
+# See: https://github.com/crate-ci/typos
+
+[default.extend-words]
+# Domain-specific terms that are NOT typos
+ack = "ack"
+agentic = "agentic"
+wikilink = "wikilink"
+wikilinks = "wikilinks"
+frontmatter = "frontmatter"
+struct = "struct"
+
+[files]
+# Ignore generated files and binary content
+extend-exclude = [
+    "raw/",
+    ".git/",
+    "*.json",
+]
