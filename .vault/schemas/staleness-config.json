@@ -1,0 +1,23 @@
+{
+  "$comment": "Staleness thresholds by content domain. Pages not updated within their threshold (in days) are flagged as stale during lint (SR-008). Customize per-domain as needed.",
+  "default_threshold_days": 30,
+  "domain_thresholds": {
+    "domain/engineering": 30,
+    "domain/operations": 14,
+    "domain/security": 14,
+    "domain/compliance": 30,
+    "domain/product": 21,
+    "domain/strategy": 60,
+    "domain/hr": 60,
+    "domain/finance": 30
+  },
+  "type_thresholds": {
+    "type/runbook": 14,
+    "type/decision": 90,
+    "type/report": 60,
+    "type/source": 90,
+    "type/concept": 60,
+    "type/entity": 30
+  },
+  "exempt_statuses": ["archived", "deprecated"]
+}

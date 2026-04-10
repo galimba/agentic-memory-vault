@@ -1,0 +1,32 @@
+# Markdownlint configuration for Memory Vault Boilerplate
+# See: https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md
+
+default: true
+
+# Line length: relaxed for readability
+MD013:
+  line_length: 200
+  code_blocks: false
+  tables: false
+  headings: false
+
+# Allow inline HTML (used in README badges and some templates)
+MD033: false
+
+# Allow duplicate headings in different sections (common in vault pages)
+MD024:
+  siblings_only: true
+
+# Don't require first line to be a heading (frontmatter comes first)
+MD041: false
+
+# Allow trailing punctuation in headings (for "?" in FAQ-style headings)
+MD026:
+  punctuation: ".,;:!"
+
+# Allow multiple blank lines (sometimes used for visual separation)
+MD012:
+  maximum: 2
+
+# Allow bare URLs (common in source references)
+MD034: false

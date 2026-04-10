@@ -1,0 +1,11 @@
+# ShellCheck configuration
+# See: https://github.com/koalaman/shellcheck/wiki/optional
+
+# Default shell dialect
+shell=bash
+
+# Disable specific warnings
+# SC2034: Variable appears unused (false positives with sourced scripts)
+disable=SC2034
+# SC1091: Not following sourced files (can't resolve at lint time)
+disable=SC1091
