@@ -36,9 +36,10 @@ Rejected because nesting creates implicit parent tags and agents must decide
 at which level to filter. With flat tags, you use `dept/backend` separately
 from `domain/engineering` -- explicit over implicit.
 
-## Why 200-Line Markdown Limit (HR-004)
+## Why Markdown Length Limits (HR-004)
 
-No markdown file in `wiki/` or `memory/` may exceed 200 lines.
+Markdown files in `wiki/` or `memory/` should stay under 200 lines (warning)
+and must not exceed 400 lines (hard block).
 
 **Rationale**: Context window optimization. Agents process pages individually.
 A 500-line page forces an agent to load irrelevant content alongside relevant content,
@@ -46,24 +47,26 @@ wasting tokens and reducing precision.
 Short, focused pages with clear `[[wikilinks]]` between them enable targeted retrieval --
 the agent reads only the pages it needs.
 
-The 200-line limit forces modular knowledge: instead of one sprawling "API Design" page,
+The 200-line target encourages modular knowledge: instead of one sprawling "API Design" page,
 you get `concept-api-design-principles.md`, `concept-api-versioning.md`,
 and `concept-api-error-handling.md`, each focused and independently retrievable.
+The 400-line ceiling catches files that genuinely need splitting.
 
 **Exception**: `wiki/index.md` and `wiki/log.md` are exempt. They grow indefinitely by design. When `index.md` exceeds 500 lines, split into category-specific index files.
 
-## Why 500-Line Code Minimum (HR-005)
+## Why Code Length Limits (HR-005)
 
-Standalone code files in `.vault/scripts/` and `.vault/hooks/` must be at least 500 lines.
+Standalone code files in `.vault/` should stay under 400 lines (warning)
+and must not exceed 600 lines (hard block).
 
-**Rationale**: Consolidation over proliferation. A vault with fifty 20-line shell scripts
-becomes unmaintainable. The minimum forces related functionality into well-documented,
-comprehensive tool files. The vault ships with two main code files:
-`vault-tools.sh` (870+ lines, all CLI operations) and
-`pre-commit.sh` (830+ lines, all enforcement).
-Each is self-contained with documentation, error handling, and helpers.
+**Rationale**: Modularity over monoliths. Long code files are hard to read,
+review, and maintain. The vault ships with modular code files: entry points
+(`vault-tools.sh`, `pre-commit.sh`) source focused library files
+(`lib-utils.sh`, `lib-lint.sh`, `lib-hook-checks.sh`, etc.).
+Each module has clear responsibilities and can be reviewed independently.
 
-**Exception**: `init.sh` and configuration files (`.json`, `.yaml`, `.toml`) are exempt.
+**Exception**: Library files (`lib-*.sh`) sourced by an entry point are exempt.
+Configuration files (`.json`, `.yaml`, `.toml`) are exempt.
 
 ## Why Index-Based Retrieval Over Vector Databases
 

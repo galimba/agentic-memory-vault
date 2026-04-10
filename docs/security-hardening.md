@@ -102,7 +102,7 @@ setting `"enabled": true` in `.vault/schemas/content-policy.json`.
 - **Bulk deletion** — flags commits deleting more than 20% of content
 - **Confidence downgrades** — detects changes lowering confidence fields
 - **Mass status changes** — flags many status field changes at once
-- **File count limits** — blocks commits touching more than 25 files
+- **File count limits** — warns on commits touching more than 25 files; can be overridden per-operation when justified (e.g., batch ingestion, broad cross-reference updates)
 
 ## Disabling Hardening
 

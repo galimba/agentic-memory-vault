@@ -74,8 +74,8 @@ docs(templates): add report template with executive summary section
 
 - One logical change per PR
 - All linters pass (CI will check)
-- Markdown files in `wiki/` and `memory/` stay under 200 lines
-- Code files in `.vault/scripts/` and `.vault/hooks/` stay at 500+ lines
+- Markdown files in `wiki/` and `memory/` stay under 200 lines (warning) / 400 lines (hard limit)
+- Code files in `.vault/` stay under 400 lines (warning) / 600 lines (hard limit)
 - New tags are added to `.vault/rules/tags.md` before being used
 - Update `CHANGELOG.md` under `[Unreleased]`
 

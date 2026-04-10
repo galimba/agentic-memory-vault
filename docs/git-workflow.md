@@ -24,7 +24,7 @@ All commits follow the pattern: `[operation] description`
 | `[ingest]` | Source ingestion | `[ingest] Added source on Q1 engineering retro` |
 | `[query]` | Filing a query answer | `[query] Filed answer on deployment pipeline design` |
 | `[lint]` | Fixing lint issues | `[lint] Fixed orphan pages and missing index entries` |
-| `[human]` | Human changes to `raw/` | `[human] Added raw source document` |
+| `[raw]` | Adding files to `raw/` (via PR) | `[raw] Added raw source document` |
 | `[tags]` | Tag taxonomy changes | `[tags] Added custom/acme-onboarding` |
 | `[config]` | Vault configuration | `[config] Updated staleness thresholds` |
 | `[fix]` | Bug fixes | `[fix] Corrected broken wikilink in concept-api.md` |

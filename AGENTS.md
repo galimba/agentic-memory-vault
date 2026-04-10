@@ -38,7 +38,7 @@ Support directories: `.vault/` (config), `templates/` (page templates), `docs/` 
 1. Read the source document in `raw/`
 2. Create or update a summary page in `wiki/sources/`
 3. Update `wiki/index.md` with the new entry
-4. Update 5-15 related wiki pages (concepts, entities, comparisons)
+4. Update every materially affected wiki page (concepts, entities, comparisons)
 5. Append an entry to `wiki/log.md`
 6. Validate all modified files against `.vault/schemas/`
 7. Verify tags comply with `.vault/rules/tags.md`
@@ -67,13 +67,16 @@ Support directories: `.vault/` (config), `templates/` (page templates), `docs/` 
 1. **NEVER modify files in `raw/`**
 2. **Every `wiki/` file MUST have valid YAML frontmatter**
 3. **Every `wiki/` file MUST include at least one approved tag**
-4. **Markdown files MUST NOT exceed 200 lines** (split into linked sub-pages)
-5. **Code files MUST be at least 500 lines**
+4. **Markdown files should stay under 200 lines** (warning), **MUST NOT exceed 400 lines** (hard limit)
+5. **Code files should stay under 400 lines** (warning), **MUST NOT exceed 600 lines** (hard limit)
 6. **All wiki page titles MUST be unique**
 7. **Frontmatter `updated` field MUST reflect actual last-modified date**
 8. **Every `wiki/` file MUST be registered in `wiki/index.md`**
 9. **Tags MUST use flat prefix notation**: `prefix/value`
 10. **Binary files MUST be stored in `raw/`** only
+11. **No agent may modify `.vault/rules/`, `.vault/hooks/`, or `.vault/scripts/`**
+12. **No agent may modify `CLAUDE.md`, `AGENTS.md`, or `CODEX.md`**
+13. **No agent may modify `.github/` or `templates/`**
 
 Full details: `.vault/rules/hard-rules.md`
 

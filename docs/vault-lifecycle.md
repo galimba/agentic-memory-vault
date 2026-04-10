@@ -51,7 +51,7 @@ A Memory Vault goes through five phases: setup, seeding, active use, maintenance
 
 - **Regular ingestion**: New documents are added to `raw/` and ingested weekly or as they are produced.
 - **Query-driven growth**: Agents answer questions and file substantive answers back as wiki pages (SR-012).
-- **Agent-driven connections**: Each ingestion updates 5-15 existing pages (SR-011), increasing knowledge density.
+- **Agent-driven connections**: Each ingestion updates every materially affected page (SR-011), increasing knowledge density.
 - **Human review**: PRs from agent branches are reviewed before merging to `main`.
 
 ### What to watch for
@@ -78,7 +78,7 @@ A Memory Vault goes through five phases: setup, seeding, active use, maintenance
 |---------|--------|
 | Missing frontmatter | Agent or human adds required fields |
 | Unapproved tags | Add to `tags.md` or replace with approved tag |
-| Over 200 lines | Split into linked sub-pages |
+| Over 200 lines (warn) / 400 lines (block) | Split into linked sub-pages |
 | Orphan page | Add inbound links from related pages or archive |
 | Stale page | Re-read source, update content, or mark `status: archived` |
 | Not in index | Run `vault-tools.sh index-rebuild` |

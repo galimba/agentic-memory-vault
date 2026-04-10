@@ -21,7 +21,7 @@ confidence: unverified
 
 ## Summary
 
-Brief summary of the source document (20-50% of original length per SR-004).
+Summary length should follow SR-004 word count tiers (100-5000 words depending on source length).
 
 ## Key Takeaways
 

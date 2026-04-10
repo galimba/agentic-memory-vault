@@ -17,7 +17,7 @@
 
 ## SR-002: Target Page Length
 
-**Default**: Wiki pages should target **80-150 lines** (hard limit is 200). Shorter pages are fine for narrow topics. Pages approaching 200 lines should be proactively split.
+**Default**: Wiki pages should target **80-150 lines** (warn at 200, block at 400). Shorter pages are fine for narrow topics. Pages approaching 200 lines should be proactively split.
 
 ---
 
@@ -31,7 +31,19 @@
 
 ## SR-004: Source Summary Length
 
-**Default**: Source summaries in `wiki/sources/` should be **20-50% of the original document length**. Summaries should capture key claims, data points, and conclusions — not reproduce the original.
+**Default**: Source summaries in `wiki/sources/` should use absolute word
+count ranges based on source length:
+
+| Source Length | Summary Target |
+|-------------|----------------|
+| Under 2,000 words | 100-500 words |
+| 2,000-10,000 words | 500-2,000 words |
+| Over 10,000 words | 2,000-5,000 words |
+
+Never exceed 5,000 words regardless of source length. Summaries should
+capture key claims, data points, and conclusions — not reproduce the
+original. For very short sources (<500 words), the summary may be nearly
+as long as the original if the content is dense.
 
 ---
 
@@ -110,21 +122,55 @@ This threshold can be adjusted per-domain
 
 ## SR-010: Review Gates
 
-**Default**: Pages with `status: draft` require human review before promotion to `status: active`. Agents may create draft pages freely but should not auto-promote them.
+**Default**: Pages with `status: draft` should require human review
+before promotion to `status: active`. Agents may create draft pages
+freely but should not auto-promote to active.
 
-**When to override**: Low-risk content (meeting notes, daily logs) can be auto-promoted. Configure exceptions in `.vault/schemas/auto-promote-config.json`.
+**Enforcement**: This rule is NOT automatically enforced by hooks.
+Enforcement relies on one or more of:
+
+1. **Git workflow** (recommended): Require PR reviews for branches that
+   modify `status:` fields. Use `git diff` in CI to detect status
+   transitions from `draft` to `active` and flag them for review.
+2. **CLAUDE.md instructions**: The agent configuration tells agents not
+   to set `status: active` directly. This is trust-based.
+3. **Manual review**: Lint reports include draft page counts. Humans
+   periodically review and promote pages.
+
+**When to override**: Low-risk content (meeting notes, daily logs) can be
+auto-promoted. Add a `auto_promote_types` list to
+`.vault/schemas/staleness-config.json` to configure which page types skip
+review.
 
 ---
 
 ## SR-011: Cross-Reference on Ingest
 
-**Default**: When ingesting a new source, the agent should update **5-15 existing wiki pages** that the new source relates to. This keeps the wiki interconnected and current.
+**Default**: When ingesting a new source, the agent should update every existing wiki page that the new source materially affects. A "material affect" means the source adds new information, contradicts existing claims, or provides updated data relevant to that page.
+
+**Guidance**: Most sources affect 5-15 pages. Use these checkpoints:
+- If fewer than 3 pages are affected, verify the source isn't too narrow
+  to warrant a standalone ingestion. Consider appending to an existing
+  source summary instead.
+- If more than 20 pages are affected, split the ingestion into focused
+  passes (e.g., update entity pages first, then concept pages) and
+  request a human checkpoint between passes.
 
 ---
 
 ## SR-012: Query Filing
 
-**Default**: When an agent answers a query and the answer is substantive (>5 sentences), file it back into the wiki as a new page or append to an existing page. This compounds knowledge over time.
+**Default**: When an agent answers a query, file the answer back into the
+wiki ONLY if both conditions are met:
+
+1. **Novelty**: The answer reveals knowledge not already captured in
+   existing wiki pages.
+2. **Reusability**: The knowledge is likely to be useful for future
+   queries from other agents or humans.
+
+One-off questions, personal preferences, and answers that simply
+recombine existing wiki content should NOT be filed back. When filing,
+prefer appending to an existing relevant page over creating a new page.
 
 ---
 

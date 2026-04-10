@@ -58,9 +58,15 @@ Create `raw/q1-engineering-retro.md`:
 
 ### Step 2: Commit the raw file
 
+Add the file via a pull request (the pre-commit hook blocks direct
+commits to `raw/`; PRs bypass client-side hooks at merge time):
+
 ```bash
+git checkout -b add/q1-retro
 git add raw/q1-engineering-retro.md
-git commit -m "[human] Added Q1 2026 engineering retrospective"
+git commit -m "Added Q1 2026 engineering retrospective"
+git push -u origin add/q1-retro
+# Create and merge PR (CODEOWNERS approval required)
 ```
 
 ### Step 3: Tell the agent to ingest
@@ -87,7 +93,7 @@ Check the source summary:
 
 - Does it capture the key claims? (Kubernetes migration, LangGraph adoption, incident response gap)
 - Does it link back to the raw source? (`sources: ["[[raw/q1-engineering-retro.md]]"]`)
-- Is it 20-50% the length of the original? (SR-004)
+- Does the summary length follow SR-004 word count tiers (100-5000 words depending on source length)?
 
 Check the index entry in `wiki/index.md`:
 
@@ -108,8 +114,8 @@ Check `wiki/log.md` for the ingestion record:
 1. **Read source**: The agent reads the raw file in full. It does not modify it (HR-001).
 2. **Create summary**: A new page in `wiki/sources/` with frontmatter, key takeaways, and source link. Named `source-{{original-filename}}.md`.
 3. **Update index**: Add the source summary and any new pages to `wiki/index.md` with one-line descriptions (HR-008).
-4. **Update related pages**: The agent identifies 5-15 existing wiki pages that relate to the
-new source and updates them with new information or links (SR-011).
+4. **Update related pages**: The agent identifies every existing wiki page that the new source
+materially affects and updates them with new information or links (SR-011).
 It may also create new concept, entity, or comparison pages.
 5. **Append to log**: A timestamped entry in `wiki/log.md` recording the operation (SR-005).
 6. **Validate**: The agent checks all modified files against the frontmatter schema.
@@ -119,7 +125,7 @@ It may also create new concept, entity, or comparison pages.
 
 For initial vault setup when you have many existing documents:
 
-1. Drop all source files into `raw/` and commit with `[human]` prefix.
+1. Drop all source files into `raw/` via a PR (the pre-commit hook blocks direct commits to `raw/`).
 2. Override SR-001 (one source at a time) by telling the agent: "Batch ingest all new files in raw/. Process each one sequentially."
 3. After batch ingestion, run a full lint pass: `bash .vault/scripts/vault-tools.sh lint`
 4. Review the generated wiki pages. Batch ingestion may produce lower-quality cross-references because the agent processes sources without seeing the full wiki state.

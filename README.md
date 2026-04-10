@@ -72,7 +72,7 @@ Agents perform exactly three operations on the vault:
 
 **INGEST** — Process a new source document from `raw/` into structured wiki pages.
 The agent reads the source, creates a summary in `wiki/sources/`, updates the index,
-creates or updates 5-15 related concept/entity/comparison pages, and logs the operation.
+updates every materially affected concept/entity/comparison page, and logs the operation.
 All generated pages include YAML frontmatter with tags, sources, and confidence levels.
 
 **QUERY** — Answer questions using vault contents.
@@ -91,13 +91,16 @@ and optionally files the answer back as a new wiki page. Every query is logged.
 | HR-001 | Never modify files in `raw/` | Immutable |
 | HR-002 | Every `wiki/` file needs valid YAML frontmatter | Required fields: title, type, created, updated, status, tags |
 | HR-003 | Every `wiki/` file needs at least one approved tag | From `.vault/rules/tags.md` |
-| HR-004 | Markdown files have a line limit | 200 lines max |
-| HR-005 | Code files have a line minimum | 500 lines min |
+| HR-004 | Markdown files have a line limit | Warn 200, block 400 lines |
+| HR-005 | Code files have a line limit | Warn 400, block 600 lines |
 | HR-006 | Wiki page titles must be unique | Across all of `wiki/` |
 | HR-007 | `updated` field must be accurate | ±1 day tolerance |
 | HR-008 | Every `wiki/` file must be in the index | `wiki/index.md` |
 | HR-009 | Tags use flat prefix notation | `prefix/value` only |
 | HR-010 | Binary files go in `raw/` only | No binaries in `wiki/` or `memory/` |
+| HR-011 | Vault configuration protected | `.vault/rules/`, `.vault/hooks/`, `.vault/scripts/` |
+| HR-012 | Agent configuration protected | `CLAUDE.md`, `AGENTS.md`, `CODEX.md` |
+| HR-013 | CI and templates protected | `.github/`, `templates/` |
 
 ### Soft Rules (Configurable Defaults)
 
@@ -106,7 +109,7 @@ and optionally files the answer back as a new wiki page. Every query is logged.
 | SR-001 | One source ingested at a time | Human review between |
 | SR-002 | Target page length | 80-150 lines |
 | SR-003 | Minimum wikilinks per page | 3 links |
-| SR-004 | Source summary length | 20-50% of original |
+| SR-004 | Source summary length | Word count tiers by source length |
 | SR-005 | Log entry format | `## [DATE] operation \| Title` |
 | SR-006 | Decision record format | ADR |
 | SR-007 | Lint frequency | Weekly minimum |
@@ -157,8 +160,8 @@ No. The vault is plain markdown files in a git repo. Obsidian provides a nice UI
 **Can multiple agents work on the vault simultaneously?**
 Yes. Each agent session creates its own git branch. Changes merge through PRs. See `docs/git-workflow.md` for conflict resolution.
 
-**What happens when a wiki page exceeds 200 lines?**
-The pre-commit hook blocks the commit. Split the page into linked sub-pages and update `wiki/index.md`.
+**What happens when a wiki page exceeds the line limit?**
+The pre-commit hook warns at 200 lines and blocks at 400 lines. Split the page into linked sub-pages and update `wiki/index.md`.
 
 **How do I add custom tags?**
 Add them to `.vault/rules/tags.md` under the `custom/` prefix section, then use them in your pages. See `docs/configuration.md`.

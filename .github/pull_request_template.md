@@ -13,8 +13,8 @@
 ## Checklist
 
 - [ ] I have read [CONTRIBUTING.md](CONTRIBUTING.md)
-- [ ] Markdown files in wiki/ and memory/ are under 200 lines
-- [ ] Code files in .vault/scripts/ and .vault/hooks/ are 500+ lines
+- [ ] Markdown files in wiki/ and memory/ are under 400 lines (200 recommended)
+- [ ] Code files in .vault/ are under 600 lines (400 recommended)
 - [ ] New tags are registered in .vault/rules/tags.md
 - [ ] `vault-tools.sh doctor` passes
 - [ ] I have updated CHANGELOG.md under [Unreleased]

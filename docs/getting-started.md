@@ -56,11 +56,15 @@ This checks directory structure, required files, hooks, and runs a lint pass.
 
 ```bash
 cp ~/documents/q1-engineering-retro.md raw/q1-engineering-retro.md
+git checkout -b add/q1-retro
 git add raw/q1-engineering-retro.md
-git commit -m "[human] Added Q1 engineering retrospective"
+git commit -m "Added Q1 engineering retrospective"
+git push -u origin add/q1-retro
+# Create and merge PR (CODEOWNERS approval required)
 ```
 
-Note: Raw files require the `[human]` commit prefix because agents cannot modify `raw/`.
+Note: The pre-commit hook unconditionally blocks commits to `raw/`.
+Add files via PRs, which bypass client-side hooks at merge time.
 
 2. **Tell your agent to ingest it**:
 
@@ -70,7 +74,7 @@ Note: Raw files require the `[human]` commit prefix because agents cannot modify
 
 | File | Purpose |
 |------|---------|
-| `wiki/sources/source-q1-engineering-retro.md` | Summary of the source document (20-50% of original length) |
+| `wiki/sources/source-q1-engineering-retro.md` | Summary of the source document (word count tiers per SR-004) |
 | `wiki/concepts/concept-*.md` | New or updated concept pages extracted from the source |
 | `wiki/entities/entity-*.md` | New or updated entity pages (people, tools, teams mentioned) |
 | `wiki/index.md` | Updated with entries for all new pages |
@@ -96,7 +100,7 @@ The lint checks, in order:
 
 1. **Frontmatter validation** -- every wiki page has required YAML fields
 2. **Tag validation** -- all tags are from the approved taxonomy
-3. **Line count check** -- no markdown file exceeds 200 lines
+3. **Line count check** -- warns at 200 lines, blocks at 400 lines
 4. **Orphan detection** -- pages with no inbound links (warning, not blocking)
 5. **Staleness check** -- pages not updated in 30+ days (warning)
 6. **Index completeness** -- every wiki page is registered in `wiki/index.md`

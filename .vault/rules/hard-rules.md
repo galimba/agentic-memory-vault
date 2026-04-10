@@ -8,7 +8,10 @@
 
 **Rationale**: `raw/` is the provenance layer. If sources can be modified after ingestion, the wiki loses its grounding truth. Every wiki claim must trace back to an unmodified source.
 
-**Enforcement**: Pre-commit hook `.vault/hooks/protect-raw.sh` rejects any commit that modifies `raw/` unless the commit message starts with `[human]`.
+**Enforcement**: Pre-commit hook unconditionally rejects any commit that
+modifies `raw/`. Humans add files to `raw/` via pull requests that bypass
+client-side hooks at merge time. Use CODEOWNERS to require maintainer
+approval for PRs touching `raw/`.
 
 ---
 
@@ -20,7 +23,7 @@
 Without it, pages become invisible to programmatic access.
 Dataview queries, index generation, and lint operations all depend on structured frontmatter.
 
-**Enforcement**: Pre-commit hook `.vault/hooks/validate-frontmatter.sh` parses YAML and rejects files missing required fields.
+**Enforcement**: Pre-commit hook (`check_hr002` in `lib-hook-checks.sh`) validates YAML frontmatter and rejects files missing required fields.
 
 ---
 
@@ -32,45 +35,54 @@ Dataview queries, index generation, and lint operations all depend on structured
 A page without tags is a page that cannot be found by category, domain, or type.
 Flat prefixes ensure consistent machine parsing without ambiguity.
 
-**Enforcement**: Pre-commit hook `.vault/hooks/validate-tags.sh` checks tags against the approved list.
+**Enforcement**: Pre-commit hook (`check_hr003` in `lib-hook-checks.sh`) checks tags against the approved list.
 
 ---
 
 ## HR-004: Markdown Length Limit
 
-**Rule**: No markdown file in `wiki/` or `memory/` may exceed **200 lines**. If content requires more space, split into linked sub-pages with a parent page that serves as an index.
+**Rule**: Markdown files in `wiki/` or `memory/` should stay under **200
+lines** (soft warning). Files exceeding **400 lines** are blocked (hard
+limit). If content requires more space, split into linked sub-pages with
+a parent page that serves as an index.
 
-**Rationale**: Long files degrade agent performance. Context windows are finite.
-Agents reading a 500-line file waste tokens on content irrelevant to their current task.
-Short, focused pages with clear links outperform monolithic documents
-for both retrieval and comprehension.
-The 200-line limit forces modular, composable knowledge.
+**Rationale**: Long files degrade agent performance. Context windows are
+finite. Agents reading a 500-line file waste tokens on content irrelevant
+to their current task. Short, focused pages with clear links outperform
+monolithic documents for both retrieval and comprehension. The 200-line
+target encourages modular knowledge. The 400-line ceiling catches files
+that genuinely need splitting.
 
-**Enforcement**: Pre-commit hook `.vault/hooks/check-line-count.sh` rejects markdown files exceeding 200 lines.
+**Enforcement**: Pre-commit hook warns at 200 lines and rejects files
+exceeding 400 lines in `wiki/` and `memory/`.
 
-**Exception**: `wiki/index.md` and `wiki/log.md` are exempt.
-These files grow indefinitely by design.
-When `index.md` exceeds 500 lines, split into
-`wiki/index-{{category}}.md` files with a root index linking to them.
+**Exception**: `wiki/index.md` and `wiki/log.md` are exempt. These files
+grow indefinitely by design. When `index.md` exceeds 500 lines, split
+into `wiki/index-{{category}}.md` files with a root index linking to them.
 
 ---
 
-## HR-005: Code File Minimum Length
+## HR-005: Code File Length Limit
 
-**Rule**: Standalone code files (`.sh`, `.py`, `.js`, `.ts`, etc.)
-in `.vault/scripts/` or `.vault/hooks/` MUST be at least **500 lines**.
-Shorter code belongs inline in markdown pages or as fenced code blocks in wiki entries.
+**Rule**: Standalone code files (`.sh`, `.py`, `.js`, `.ts`, etc.) in
+`.vault/` should stay under **400 lines** (soft warning). Files exceeding
+**600 lines** are blocked (hard limit). If a file exceeds the limit, split
+it into modular files with clear responsibilities and a single entry point
+that sources them.
 
-**Rationale**: Short scripts proliferate without governance.
-A vault with fifty 20-line shell scripts becomes unmaintainable.
-By requiring 500+ lines, the vault forces consolidation of related functionality
-into well-documented, comprehensive tool files.
-This is a code quality gate, not a size mandate —
-the 500 lines should include documentation, error handling, and tests.
+**Rationale**: Long code files are hard to read, review, and maintain. A
+single 800-line bash script with 15 functions is less maintainable than
+four 200-line files with clear names and responsibilities. Modular files
+enable focused code review, independent testing, and easier onboarding.
 
-**Enforcement**: Pre-commit hook `.vault/hooks/check-code-length.sh` rejects code files under 500 lines.
+**Enforcement**: Pre-commit hook warns at 400 lines and rejects code files
+exceeding 600 lines in `.vault/scripts/`, `.vault/hooks/`, and
+`.claude/skills/*/`.
 
-**Exception**: `.gitkeep` files, configuration files (`.json`, `.yaml`, `.toml`), and the init script `.vault/scripts/init.sh` are exempt.
+**Exception**: Library files (`lib-*.sh`) sourced by an entry point are
+exempt from the maximum — their size is governed by the entry point's
+ability to stay under the limit. Configuration files (`.json`, `.yaml`,
+`.toml`) are exempt.
 
 ---
 
@@ -82,7 +94,7 @@ the 500 lines should include documentation, error handling, and tests.
 When an agent writes `[[API Design Principles]]` and two pages share that title,
 the link target is undefined. Uniqueness eliminates this class of error.
 
-**Enforcement**: Pre-commit hook `.vault/hooks/check-unique-titles.sh` scans all `wiki/` frontmatter and rejects duplicates.
+**Enforcement**: Pre-commit hook (`check_hr006` in `lib-hook-checks.sh`) scans all `wiki/` frontmatter and rejects duplicates.
 
 ---
 
@@ -95,7 +107,7 @@ Agents MUST update this field whenever they modify page content
 
 **Rationale**: The `updated` field drives staleness detection in lint operations. An inaccurate date means stale content goes undetected, degrading vault quality over time.
 
-**Enforcement**: Pre-commit hook `.vault/hooks/check-updated-field.sh` verifies that modified files have an `updated` value matching the commit date (±1 day tolerance).
+**Enforcement**: Pre-commit hook (`check_hr007` in `lib-hook-checks.sh`) verifies that modified files have an `updated` value matching the commit date (±1 day tolerance).
 
 ---
 
@@ -108,7 +120,7 @@ Agents read the index first to locate relevant pages.
 An unregistered page is an invisible page — it exists on disk
 but is functionally absent from the knowledge base.
 
-**Enforcement**: Pre-commit hook `.vault/hooks/check-index-registration.sh` compares `wiki/` file listing against index entries.
+**Enforcement**: Pre-commit hook (`check_hr008` in `lib-hook-checks.sh`) compares `wiki/` file listing against index entries.
 
 ---
 
@@ -122,7 +134,7 @@ Deeper nesting requires recursive parsing.
 Bare tags without prefixes are ambiguous
 (is `#active` a lifecycle state, a project status, or a tag about the word "active"?).
 
-**Enforcement**: Pre-commit hook `.vault/hooks/validate-tags.sh` enforces the `prefix/value` pattern via regex.
+**Enforcement**: Pre-commit hook (`check_hr009` in `lib-hook-checks.sh`) enforces the `prefix/value` pattern via regex.
 
 ---
 
@@ -140,4 +152,52 @@ remain lightweight, fully text-searchable, and git-friendly.
 Agents reference binaries via paths (`[[raw/images/diagram.png]]`)
 rather than embedding them.
 
-**Enforcement**: Pre-commit hook `.vault/hooks/check-binary-quarantine.sh` rejects non-text files outside `raw/`.
+**Enforcement**: Pre-commit hook (`check_hr010` in `lib-hook-checks.sh`) rejects non-text files outside `raw/`.
+
+---
+
+## HR-011: Vault Configuration Protection
+
+**Rule**: No agent may modify files in `.vault/rules/`, `.vault/hooks/`,
+or `.vault/scripts/`. These directories contain the vault's governance
+and enforcement mechanisms. Changes require human-authored PRs.
+
+**Rationale**: If an agent can modify the rules that govern it, the rules
+are meaningless. A prompt-injected agent could weaken hard rules, disable
+hooks, or modify lint logic to hide violations. Protecting the governance
+layer from agent modification is the foundation of vault integrity.
+
+**Enforcement**: Pre-commit hook rejects any commit that modifies files
+in `.vault/rules/`, `.vault/hooks/`, or `.vault/scripts/`.
+
+---
+
+## HR-012: Agent Configuration Protection
+
+**Rule**: No agent may modify `CLAUDE.md`, `AGENTS.md`, or `CODEX.md`.
+These files define agent behavior constraints. Changes require
+human-authored PRs.
+
+**Rationale**: These files are the agent's instruction set. An agent that
+modifies its own instructions can grant itself arbitrary permissions,
+disable safety constraints, or remove rate limits. This is the most
+critical protection after raw/ immutability.
+
+**Enforcement**: Pre-commit hook rejects any commit that modifies
+`CLAUDE.md`, `AGENTS.md`, or `CODEX.md` in the repository root.
+
+---
+
+## HR-013: CI and Template Protection
+
+**Rule**: No agent may modify files in `.github/` or `templates/`.
+Workflow files control CI enforcement. Template files shape all future
+wiki pages.
+
+**Rationale**: A compromised workflow could disable all CI checks,
+allowing rule violations to merge unchecked. A compromised template
+could inject adversarial content into every future wiki page created
+from it.
+
+**Enforcement**: Pre-commit hook rejects any commit that modifies files
+in `.github/` or `templates/`.

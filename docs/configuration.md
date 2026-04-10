@@ -12,6 +12,7 @@ After running `init.sh`, these placeholders are replaced in all `.md` files:
 | `{{ORG_NAME}}` | Identity section | Your organization name |
 | `{{PLATFORM}}` | Identity section | Primary agent platform (`claude-code`, `codex`, `copilot`, `cursor`, `custom`) |
 | `{{INIT_DATE}}` | Identity section | Date the vault was initialized |
+| `{{GITHUB_ORG}}` | README, CONTRIBUTING, CHANGELOG | GitHub organization for repo URLs |
 
 To change these after initialization, search-and-replace across all `.md` files.
 The `init.sh` script uses `sed` and can be re-run, but it only replaces
@@ -24,17 +25,17 @@ Edit `.vault/rules/soft-rules.md` to customize agent behavior. Each rule has a d
 | Rule | Default | How to customize |
 |------|---------|-----------------|
 | SR-001 | One source per session | Override for batch onboarding |
-| SR-002 | 80-150 line target per page | Adjust range (hard max stays at 200) |
+| SR-002 | 80-150 line target per page | Adjust range (hard max is 400) |
 | SR-003 | 3+ wikilinks per page | Lower for specialized pages |
-| SR-004 | Summaries 20-50% of original | Adjust ratio |
+| SR-004 | Summaries use absolute word count ranges | Adjust per source length tier |
 | SR-005 | Log format `[YYYY-MM-DD] op \| Title` | Customize fields |
 | SR-006 | ADR format for decisions | Swap to RFC or custom template |
 | SR-007 | Lint weekly | Increase for active vaults |
 | SR-008 | 30-day staleness threshold | Customize per-domain (see below) |
 | SR-009 | Confidence calibration | Adjust meanings |
-| SR-010 | Drafts require human review | Auto-promote low-risk content |
-| SR-011 | Update 5-15 pages on ingest | Adjust range |
-| SR-012 | File substantive query answers | Disable for ephemeral queries |
+| SR-010 | Drafts require human review (trust-based) | Add CI enforcement or auto-promote |
+| SR-011 | Update all materially affected pages on ingest | Adjust thresholds |
+| SR-012 | File novel, reusable query answers | Disable for ephemeral queries |
 | SR-013 | Entity page structure | Customize sections |
 | SR-014 | Comparison page structure | Customize sections |
 | SR-015 | Custom tags use `custom/` prefix | Define your prefix convention |
@@ -108,7 +109,7 @@ Format: `[operation] description`
 
 - `[ingest] Added source on Q1 engineering retrospective`
 - `[lint] Fixed orphan pages and stale content`
-- `[human] Added raw source document`
+- `[raw] Added raw source document` (via PR only)
 - `[tags] Added custom/acme-onboarding tag`
 
 ## Hooks
@@ -117,7 +118,7 @@ Format: `[operation] description`
 
 Located at `.vault/hooks/pre-commit.sh`, installed to `.git/hooks/pre-commit` by `init.sh`.
 
-Enforces all 10 hard rules (HR-001 through HR-010). Violations block the commit with a clear error message identifying the rule, file, and issue.
+Enforces all 13 hard rules (HR-001 through HR-013). Violations block the commit with a clear error message identifying the rule, file, and issue.
 
 ### Customizing the pre-commit hook
 
