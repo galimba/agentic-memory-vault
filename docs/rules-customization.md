@@ -21,8 +21,8 @@ system works.
 **Exception**: Legitimate cases where the rule doesn't apply.
 ```
 
-3. Implement `check_hr0XX()` in `.vault/hooks/lib-hook-checks.sh`
-4. Add the check to `main()` in `.vault/hooks/pre-commit.sh`
+3. Create `.vault/hooks/checks/check-hr0XX.sh` with your `check_hr0XX()` function
+4. The pre-commit hook auto-discovers all files in `checks/` — no need to modify `pre-commit.sh`
 5. Add a summary line to `CLAUDE.md` Hard Rules section
 6. Test: create a violating file, verify the hook catches it
 

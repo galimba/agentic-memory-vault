@@ -23,7 +23,7 @@ approval for PRs touching `raw/`.
 Without it, pages become invisible to programmatic access.
 Dataview queries, index generation, and lint operations all depend on structured frontmatter.
 
-**Enforcement**: Pre-commit hook (`check_hr002` in `lib-hook-checks.sh`) validates YAML frontmatter and rejects files missing required fields.
+**Enforcement**: Pre-commit hook (`check_hr002` in `.vault/hooks/checks/check-hr002.sh`) validates YAML frontmatter and rejects files missing required fields.
 
 ---
 
@@ -35,7 +35,7 @@ Dataview queries, index generation, and lint operations all depend on structured
 A page without tags is a page that cannot be found by category, domain, or type.
 Flat prefixes ensure consistent machine parsing without ambiguity.
 
-**Enforcement**: Pre-commit hook (`check_hr003` in `lib-hook-checks.sh`) checks tags against the approved list.
+**Enforcement**: Pre-commit hook (`check_hr003` in `.vault/hooks/checks/check-hr003.sh`) checks tags against the approved list.
 
 ---
 
@@ -94,7 +94,7 @@ ability to stay under the limit. Configuration files (`.json`, `.yaml`,
 When an agent writes `[[API Design Principles]]` and two pages share that title,
 the link target is undefined. Uniqueness eliminates this class of error.
 
-**Enforcement**: Pre-commit hook (`check_hr006` in `lib-hook-checks.sh`) scans all `wiki/` frontmatter and rejects duplicates.
+**Enforcement**: Pre-commit hook (`check_hr006` in `.vault/hooks/checks/check-hr006.sh`) scans all `wiki/` frontmatter and rejects duplicates.
 
 ---
 
@@ -107,7 +107,7 @@ Agents MUST update this field whenever they modify page content
 
 **Rationale**: The `updated` field drives staleness detection in lint operations. An inaccurate date means stale content goes undetected, degrading vault quality over time.
 
-**Enforcement**: Pre-commit hook (`check_hr007` in `lib-hook-checks.sh`) verifies that modified files have an `updated` value matching the commit date (±1 day tolerance).
+**Enforcement**: Pre-commit hook (`check_hr007` in `.vault/hooks/checks/check-hr007.sh`) verifies that modified files have an `updated` value matching the commit date (±1 day tolerance).
 
 ---
 
@@ -120,7 +120,7 @@ Agents read the index first to locate relevant pages.
 An unregistered page is an invisible page — it exists on disk
 but is functionally absent from the knowledge base.
 
-**Enforcement**: Pre-commit hook (`check_hr008` in `lib-hook-checks.sh`) compares `wiki/` file listing against index entries.
+**Enforcement**: Pre-commit hook (`check_hr008` in `.vault/hooks/checks/check-hr008.sh`) compares `wiki/` file listing against index entries.
 
 ---
 
@@ -134,7 +134,7 @@ Deeper nesting requires recursive parsing.
 Bare tags without prefixes are ambiguous
 (is `#active` a lifecycle state, a project status, or a tag about the word "active"?).
 
-**Enforcement**: Pre-commit hook (`check_hr009` in `lib-hook-checks.sh`) enforces the `prefix/value` pattern via regex.
+**Enforcement**: Pre-commit hook (`check_hr009` in `.vault/hooks/checks/check-hr009.sh`) enforces the `prefix/value` pattern via regex.
 
 ---
 
@@ -152,7 +152,7 @@ remain lightweight, fully text-searchable, and git-friendly.
 Agents reference binaries via paths (`[[raw/images/diagram.png]]`)
 rather than embedding them.
 
-**Enforcement**: Pre-commit hook (`check_hr010` in `lib-hook-checks.sh`) rejects non-text files outside `raw/`.
+**Enforcement**: Pre-commit hook (`check_hr010` in `.vault/hooks/checks/check-hr010.sh`) rejects non-text files outside `raw/`.
 
 ---
 

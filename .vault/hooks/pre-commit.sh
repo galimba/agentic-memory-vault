@@ -8,8 +8,9 @@
 # causes the commit to be rejected with a clear error message.
 #
 # This is the entry point that sources modular libraries:
-#   lib-hook-utils.sh   — utility functions, logging, file inspection
-#   lib-hook-checks.sh  — all check functions (HR-001 through HR-013, etc.)
+#   lib-hook-utils.sh       — utility functions, logging, file inspection
+#   checks/check-hr*.sh    — individual hard rule check functions (HR-001 through HR-013)
+#   checks/check-*.sh      — additional checks (skill hardening, sensitive files)
 #
 # INSTALLATION:
 #   cp .vault/hooks/pre-commit.sh .git/hooks/pre-commit
@@ -134,9 +135,11 @@ HOOK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=lib-hook-utils.sh
 source "${HOOK_DIR}/lib-hook-utils.sh"
 
-# Source check functions
-# shellcheck source=lib-hook-checks.sh
-source "${HOOK_DIR}/lib-hook-checks.sh"
+# Source all check files (auto-discovered from checks/ directory)
+for check_file in "${HOOK_DIR}/checks/"*.sh; do
+    # shellcheck source=/dev/null
+    source "$check_file"
+done
 
 # ==============================================================================
 # MAIN EXECUTION

@@ -76,7 +76,13 @@ fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/lib-utils.sh"
-source "${SCRIPT_DIR}/lib-audit.sh"
+
+# Source audit files FIRST (lib-lint.sh depends on cmd_tag_audit)
+for audit_file in "${SCRIPT_DIR}/audits/"audit-*.sh; do
+    # shellcheck source=/dev/null
+    source "$audit_file"
+done
+
 source "${SCRIPT_DIR}/lib-lint.sh"
 source "${SCRIPT_DIR}/lib-manage.sh"
 

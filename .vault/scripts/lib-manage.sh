@@ -179,7 +179,7 @@ cmd_doctor() {
     header "Vault Doctor — Full Diagnostic"
 
     subheader "Directory Structure"
-    local required_dirs=("raw" "wiki" "wiki/sources" "wiki/entities" "wiki/concepts" "wiki/comparisons" "memory" "memory/decisions" "memory/logs" "memory/notes" ".vault" ".vault/rules" ".vault/schemas" ".vault/hooks" ".vault/scripts" "templates" "docs")
+    local required_dirs=("raw" "wiki" "wiki/sources" "wiki/entities" "wiki/concepts" "wiki/comparisons" "memory" "memory/decisions" "memory/logs" "memory/notes" ".vault" ".vault/rules" ".vault/schemas" ".vault/hooks" ".vault/hooks/checks" ".vault/scripts" ".vault/scripts/audits" "templates" "docs")
     for dir in "${required_dirs[@]}"; do
         if [[ -d "${VAULT_ROOT}/${dir}" ]]; then
             ok "${dir}/"

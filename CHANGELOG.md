@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Refactored
+
+- Split `lib-hook-checks.sh` (877 lines) into 15 individual check files in `.vault/hooks/checks/`
+- Split `lib-audit.sh` (729 lines) into 3 audit files in `.vault/scripts/audits/`
+- Auto-discovery via glob: adding a new rule = adding a file, not editing entry points
+- Updated all documentation references to point to new modular file locations
+
 ### Changed
 
 - **HR-001**: Removed `[human]` commit-message bypass. Raw directory modifications now require PRs with CODEOWNERS approval

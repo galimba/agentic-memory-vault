@@ -62,7 +62,7 @@ and must not exceed 600 lines (hard block).
 **Rationale**: Modularity over monoliths. Long code files are hard to read,
 review, and maintain. The vault ships with modular code files: entry points
 (`vault-tools.sh`, `pre-commit.sh`) source focused library files
-(`lib-utils.sh`, `lib-lint.sh`, `lib-hook-checks.sh`, etc.).
+(`lib-utils.sh`, `lib-lint.sh`, `checks/check-hr*.sh`, etc.).
 Each module has clear responsibilities and can be reviewed independently.
 
 **Exception**: Library files (`lib-*.sh`) sourced by an entry point are exempt.

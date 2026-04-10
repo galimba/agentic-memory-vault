@@ -74,8 +74,10 @@ is_exempt() {
             return 0
         fi
     done
-    # Library files (lib-*.sh) are modules sourced by entry points
-    if [[ "$(basename "$file_path")" == lib-*.sh ]]; then
+    # Library files (lib-*.sh) and individual check/audit modules are sourced by entry points
+    local basename
+    basename=$(basename "$file_path")
+    if [[ "$basename" == lib-*.sh ]] || [[ "$file_path" == *"/checks/"*.sh ]] || [[ "$file_path" == *"/audits/"*.sh ]]; then
         return 0
     fi
     return 1
