@@ -31,13 +31,15 @@ escape_sed_replacement() {
 # ==============================================================================
 # SECURITY: Validate user input does not contain shell metacharacters that
 # could cause command injection when interpolated into sed expressions.
-# Rejects: $, `, embedded nulls, and control characters (except tab).
+# Rejects: $(...), backticks, and control characters (except tab).
+# Null bytes cannot appear in bash variables (C-string storage), so no check
+# is needed — attempting `*$'\0'*` collapses to `**` and matches everything.
 # ==============================================================================
 validate_input() {
     local name="$1"
     local value="$2"
-    if [[ "$value" == *'$('* ]] || [[ "$value" == *'`'* ]] || [[ "$value" == *$'\0'* ]]; then
-        echo "ERROR: ${name} contains forbidden characters (\$(...), backticks, or null bytes)."
+    if [[ "$value" == *'$('* ]] || [[ "$value" == *'`'* ]]; then
+        echo "ERROR: ${name} contains forbidden characters (\$(...) or backticks)."
         echo "Please re-run init.sh with a safe value."
         exit 2
     fi
