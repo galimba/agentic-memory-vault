@@ -100,7 +100,7 @@ All hard rules are defined in `.vault/rules/hard-rules.md`. Summary:
 6. **All wiki page titles MUST be unique** across the vault.
 7. **Frontmatter `updated` field MUST reflect the actual last-modified date**.
 8. **No file may exist in `wiki/` without a corresponding entry in `wiki/index.md`**.
-9. **Tags MUST use flat prefix notation**: `#domain/engineering`, not nested hierarchies.
+9. **Tags MUST use flat prefix notation**: `domain/engineering`, not nested hierarchies.
 10. **Binary files (images, PDFs) MUST be stored in `raw/`**, never in `wiki/` or `memory/`.
 11. **No agent may modify `.vault/rules/`, `.vault/hooks/`, or `.vault/scripts/`**. Governance changes require human PRs.
 12. **No agent may modify `CLAUDE.md`, `AGENTS.md`, or `CODEX.md`**. Agent instruction changes require human PRs.
