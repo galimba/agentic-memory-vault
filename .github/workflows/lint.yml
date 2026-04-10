@@ -5,13 +5,18 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   lint-markdown:
     name: Lint Markdown
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v4
-      - uses: DavidAnson/markdownlint-cli2-action@v19
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+      - uses: DavidAnson/markdownlint-cli2-action@05f32210e84442804257b2a6f20b273450ec8265  # v19
         with:
           globs: "**/*.md"
           config: ".markdownlint.yaml"
@@ -19,16 +24,20 @@ jobs:
   lint-shell:
     name: Lint Shell
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
       - name: ShellCheck
         run: find .vault -name '*.sh' -exec shellcheck {} +
 
   lint-yaml:
     name: Lint YAML
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
       - name: yamllint
         run: |
           yamllint -d '{extends: default, rules: {line-length: {max: 200}, document-start: disable, truthy: disable}}' .github/
@@ -36,16 +45,31 @@ jobs:
   check-typos:
     name: Check Typos
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v4
-      - uses: crate-ci/typos@v1
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+      - uses: crate-ci/typos@02ea592e44b3a53c302f697cddca7641cd051c3d  # v1
         with:
           config: "_typos.toml"
 
   vault-doctor:
     name: Vault Doctor
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
       - name: Run vault doctor
         run: bash .vault/scripts/vault-tools.sh doctor
+
+  skill-audit:
+    name: Skill Audit
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    if: hashFiles('.vault/schemas/skill-policy.json') != ''
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+      - name: Run skill audit
+        run: bash .vault/scripts/vault-tools.sh skill-audit
