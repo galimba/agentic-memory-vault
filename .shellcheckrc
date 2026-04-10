@@ -11,8 +11,6 @@ disable=SC2034
 disable=SC1091
 # SC2295: Expansions inside ${..} need separate quoting (intentional pattern trimming)
 disable=SC2295
-# SC2015: A && B || C is not if-then-else (used deliberately for concise checks)
-disable=SC2015
 # SC2016: Expressions don't expand in single quotes (intentional regex patterns)
 disable=SC2016
 # SC2323: Extra parentheses in arithmetic (style preference)

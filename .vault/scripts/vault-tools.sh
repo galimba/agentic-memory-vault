@@ -433,10 +433,15 @@ cmd_validate() {
         updated=$(fm_field "updated" "$fm")
         status=$(fm_field "status" "$fm")
 
+        # shellcheck disable=SC2015
         [[ -n "$title" ]] && ok "Title: ${title}" || { error "Missing title"; violations=$((violations+1)); }
+        # shellcheck disable=SC2015
         [[ -n "$type" ]] && ok "Type: ${type}" || { error "Missing type"; violations=$((violations+1)); }
+        # shellcheck disable=SC2015
         [[ -n "$created" ]] && ok "Created: ${created}" || { error "Missing created"; violations=$((violations+1)); }
+        # shellcheck disable=SC2015
         [[ -n "$updated" ]] && ok "Updated: ${updated}" || { error "Missing updated"; violations=$((violations+1)); }
+        # shellcheck disable=SC2015
         [[ -n "$status" ]] && ok "Status: ${status}" || { error "Missing status"; violations=$((violations+1)); }
     fi
 
