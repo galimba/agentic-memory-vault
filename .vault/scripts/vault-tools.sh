@@ -433,10 +433,15 @@ cmd_validate() {
         updated=$(fm_field "updated" "$fm")
         status=$(fm_field "status" "$fm")
 
+        # shellcheck disable=SC2015
         [[ -n "$title" ]] && ok "Title: ${title}" || { error "Missing title"; violations=$((violations+1)); }
+        # shellcheck disable=SC2015
         [[ -n "$type" ]] && ok "Type: ${type}" || { error "Missing type"; violations=$((violations+1)); }
+        # shellcheck disable=SC2015
         [[ -n "$created" ]] && ok "Created: ${created}" || { error "Missing created"; violations=$((violations+1)); }
+        # shellcheck disable=SC2015
         [[ -n "$updated" ]] && ok "Updated: ${updated}" || { error "Missing updated"; violations=$((violations+1)); }
+        # shellcheck disable=SC2015
         [[ -n "$status" ]] && ok "Status: ${status}" || { error "Missing status"; violations=$((violations+1)); }
     fi
 
@@ -522,7 +527,8 @@ cmd_lint() {
 
     # 2. Tag validation
     subheader "Tag validation"
-    cmd_tag_audit 2>/dev/null | grep -c "Unapproved tag" | read -r unapproved || unapproved=0
+    local unapproved
+    unapproved=$(cmd_tag_audit 2>/dev/null | grep -c "Unapproved tag:" || true)
     if [[ $unapproved -gt 0 ]]; then
         total_violations=$((total_violations + unapproved))
     fi

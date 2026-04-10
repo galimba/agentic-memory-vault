@@ -6,7 +6,11 @@ Full text: <https://www.contributor-covenant.org/version/2/1/code_of_conduct/>
 
 ## AI Agent Addendum
 
-This code of conduct applies to both human contributors and AI agents operating on the vault. Agents must not generate content that is harmful, discriminatory, misleading, or that violates the principles outlined in the Contributor Covenant. Wiki pages, source summaries, and all agent-generated content should be factual, respectful, and aligned with the project's values.
+This code of conduct applies to both human contributors and AI agents operating on the vault.
+Agents must not generate content that is harmful, discriminatory, misleading,
+or that violates the principles outlined in the Contributor Covenant.
+Wiki pages, source summaries, and all agent-generated content should be factual,
+respectful, and aligned with the project's values.
 
 ## Enforcement
 

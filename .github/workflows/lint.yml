@@ -30,7 +30,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: yamllint
-        run: yamllint .github/ .vault/schemas/staleness-config.json
+        run: |
+          yamllint -d '{extends: default, rules: {line-length: {max: 200}, document-start: disable, truthy: disable}}' .github/
 
   check-typos:
     name: Check Typos

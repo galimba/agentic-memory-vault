@@ -2,15 +2,22 @@
 
 A structured, agent-first knowledge base template for organizations using AI agents alongside human teams.
 
-[![Lint](https://github.com/{{GITHUB_ORG}}/memory-vault-boilerplate/actions/workflows/lint.yml/badge.svg)](https://github.com/{{GITHUB_ORG}}/memory-vault-boilerplate/actions/workflows/lint.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 ![Version](https://img.shields.io/badge/version-0.1.0-green)
 
 ## What Is This
 
-Memory Vault is a git-based knowledge management system designed for AI agents (Claude Code, Codex, Copilot, Cursor) and human teams. You clone this template, initialize it for your organization, and start building institutional memory that both humans and agents can read, write, and reason over.
+Memory Vault is a git-based knowledge management system designed for AI agents
+(Claude Code, Codex, Copilot, Cursor) and human teams.
+You clone this template, initialize it for your organization, and start building
+institutional memory that both humans and agents can read, write, and reason over.
 
-The architecture is based on the [Karpathy LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) pattern, extended for multi-agent enterprise use. Source documents go in, structured knowledge comes out. Agents process sources into wiki pages, answer questions from the knowledge base, and maintain vault health through automated linting.
+The architecture is based on the
+[Karpathy LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)
+pattern, extended for multi-agent enterprise use.
+Source documents go in, structured knowledge comes out.
+Agents process sources into wiki pages, answer questions from the knowledge base,
+and maintain vault health through automated linting.
 
 No databases, no external services, no dependencies beyond bash and git. The vault is a directory of markdown files with YAML frontmatter, linked together with wikilinks, and governed by enforceable rules.
 
@@ -63,9 +70,15 @@ docs/                 Human documentation and guides
 
 Agents perform exactly three operations on the vault:
 
-**INGEST** — Process a new source document from `raw/` into structured wiki pages. The agent reads the source, creates a summary in `wiki/sources/`, updates the index, creates or updates 5-15 related concept/entity/comparison pages, and logs the operation. All generated pages include YAML frontmatter with tags, sources, and confidence levels.
+**INGEST** — Process a new source document from `raw/` into structured wiki pages.
+The agent reads the source, creates a summary in `wiki/sources/`, updates the index,
+creates or updates 5-15 related concept/entity/comparison pages, and logs the operation.
+All generated pages include YAML frontmatter with tags, sources, and confidence levels.
 
-**QUERY** — Answer questions using vault contents. The agent reads `wiki/index.md` to find relevant pages, synthesizes an answer with `[[wikilink]]` citations, and optionally files the answer back as a new wiki page. Every query is logged.
+**QUERY** — Answer questions using vault contents.
+The agent reads `wiki/index.md` to find relevant pages,
+synthesizes an answer with `[[wikilink]]` citations,
+and optionally files the answer back as a new wiki page. Every query is logged.
 
 **LINT** — Health-check the vault. Finds contradictions, orphan pages, stale content, invalid frontmatter, unapproved tags, and rule violations. Reports findings to `memory/notes/` and suggests improvements.
 
@@ -151,7 +164,9 @@ The pre-commit hook blocks the commit. Split the page into linked sub-pages and 
 Add them to `.vault/rules/tags.md` under the `custom/` prefix section, then use them in your pages. See `docs/configuration.md`.
 
 **Is this a vector database?**
-No. At vault scale (hundreds to low thousands of pages), deterministic index-based retrieval outperforms semantic search. Agents read `wiki/index.md` to find relevant pages. See `docs/architecture.md` for the rationale.
+No. At vault scale (hundreds to low thousands of pages), deterministic index-based
+retrieval outperforms semantic search. Agents read `wiki/index.md` to find relevant pages.
+See `docs/architecture.md` for the rationale.
 
 **How do I back up my vault?**
 It's a git repo. Push to a remote. That's your backup, version history, and collaboration mechanism.

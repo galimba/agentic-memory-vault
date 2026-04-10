@@ -108,7 +108,9 @@ Check `wiki/log.md` for the ingestion record:
 1. **Read source**: The agent reads the raw file in full. It does not modify it (HR-001).
 2. **Create summary**: A new page in `wiki/sources/` with frontmatter, key takeaways, and source link. Named `source-{{original-filename}}.md`.
 3. **Update index**: Add the source summary and any new pages to `wiki/index.md` with one-line descriptions (HR-008).
-4. **Update related pages**: The agent identifies 5-15 existing wiki pages that relate to the new source and updates them with new information or links (SR-011). It may also create new concept, entity, or comparison pages.
+4. **Update related pages**: The agent identifies 5-15 existing wiki pages that relate to the
+new source and updates them with new information or links (SR-011).
+It may also create new concept, entity, or comparison pages.
 5. **Append to log**: A timestamped entry in `wiki/log.md` recording the operation (SR-005).
 6. **Validate**: The agent checks all modified files against the frontmatter schema.
 7. **Verify tags**: All tags on modified files are checked against `.vault/rules/tags.md` (HR-003, HR-009).

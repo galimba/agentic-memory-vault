@@ -1,6 +1,9 @@
 # Soft Rules — Configurable Vault Guidelines
 
-> These rules are recommendations, not hard enforcement. Customize them for your organization. Agents should follow these unless instructed otherwise. Violations generate warnings during lint, not commit rejections.
+> These rules are recommendations, not hard enforcement.
+> Customize them for your organization.
+> Agents should follow these unless instructed otherwise.
+> Violations generate warnings during lint, not commit rejections.
 
 ## SR-001: One Source at a Time
 
@@ -84,7 +87,9 @@ What other options were evaluated and why were they rejected?
 
 ## SR-008: Staleness Threshold
 
-**Default**: Pages not updated in **30 days** are flagged as potentially stale during lint. This threshold can be adjusted per-domain (e.g., HR policies may be stable for 90+ days; engineering docs may go stale in 7 days).
+**Default**: Pages not updated in **30 days** are flagged as potentially stale during lint.
+This threshold can be adjusted per-domain
+(e.g., HR policies may be stable for 90+ days; engineering docs may go stale in 7 days).
 
 **Configuration**: Set thresholds in `.vault/schemas/staleness-config.json`.
 

@@ -1,6 +1,8 @@
 # AGENTS.md — Platform-Agnostic Agent Instructions
 
-> This file mirrors the core instructions from `CLAUDE.md` in a platform-neutral format. Any AI agent (Claude Code, Codex, Copilot, Cursor, or custom) should be able to operate this vault by reading this file.
+> This file mirrors the core instructions from `CLAUDE.md` in a platform-neutral format.
+> Any AI agent (Claude Code, Codex, Copilot, Cursor, or custom) should be able to
+> operate this vault by reading this file.
 
 ## Vault Identity
 
