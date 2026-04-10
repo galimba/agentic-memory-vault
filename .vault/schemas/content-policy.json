@@ -1,0 +1,22 @@
+{
+  "$schema": "content-hardening-policy-v1",
+  "enabled": false,
+  "checks": {
+    "detect_instruction_injection": true,
+    "max_deletion_percentage": 20,
+    "require_signed_commits": false,
+    "flag_confidence_downgrades": true,
+    "flag_mass_status_changes": true,
+    "max_files_per_commit": 25,
+    "snapshot_before_bulk_operations": true
+  },
+  "instruction_patterns": [
+    "IGNORE ALL PREVIOUS",
+    "ignore previous instructions",
+    "you are now in",
+    "do not mention this",
+    "system prompt",
+    "maintenance mode",
+    "override all rules"
+  ]
+}

@@ -38,6 +38,7 @@
 #   - sed
 #   - date
 #   - file (for binary detection)
+#   - python3 (optional — required for skill hardening enforcement)
 #
 # ==============================================================================
 
@@ -89,6 +90,16 @@ INDEX_FILE="${WIKI_DIR}/index.md"
 
 # Date tolerance for HR-007 (days)
 DATE_TOLERANCE=1
+
+# ==============================================================================
+# SECURITY THRESHOLDS
+# ==============================================================================
+# Maximum file size (in bytes) to process. Files exceeding this are skipped
+# to prevent denial-of-service via enormous frontmatter or line counting.
+MAX_FILE_SIZE_BYTES=1048576  # 1 MB
+
+# Maximum find depth to prevent deeply nested directory traversal attacks
+MAX_FIND_DEPTH=10
 
 # Color output (disable with NO_COLOR=1)
 if [[ "${NO_COLOR:-0}" == "1" ]] || [[ ! -t 1 ]]; then
@@ -185,9 +196,24 @@ extract_frontmatter() {
         echo ""
         return
     fi
+    # SECURITY: Skip symlinks to prevent path traversal
+    if is_symlink "$file_path"; then
+        warn "Skipping symlink: ${file_path}"
+        echo ""
+        return
+    fi
+    # SECURITY: Skip oversized files to prevent DoS
+    if is_oversized "$file_path"; then
+        warn "Skipping oversized file: ${file_path}"
+        echo ""
+        return
+    fi
     # Read the file and extract content between first and second ---
+    # SECURITY: Limit frontmatter to 100 lines to prevent memory exhaustion
     local in_frontmatter=false
     local frontmatter=""
+    local fm_lines=0
+    local max_fm_lines=100
     while IFS= read -r line; do
         if [[ "$line" == "---" ]]; then
             if $in_frontmatter; then
@@ -201,6 +227,12 @@ extract_frontmatter() {
             fi
         fi
         if $in_frontmatter; then
+            fm_lines=$((fm_lines + 1))
+            if [[ $fm_lines -gt $max_fm_lines ]]; then
+                warn "Frontmatter exceeds ${max_fm_lines} lines, truncating: ${file_path}"
+                echo "$frontmatter"
+                return
+            fi
             frontmatter="${frontmatter}${line}"$'\n'
         fi
     done < "$file_path"
@@ -292,6 +324,13 @@ today_date() {
 date_diff() {
     local date1="$1"
     local date2="$2"
+    # SECURITY: Validate date format before passing to date -d.
+    # Malicious frontmatter could craft values like "TZ=X date" or other
+    # strings that cause unexpected behavior when parsed by GNU date.
+    if ! is_valid_date "$date1" || ! is_valid_date "$date2"; then
+        echo "999"
+        return
+    fi
     local ts1 ts2
     ts1=$(date -d "$date1" +%s 2>/dev/null || date -j -f "%Y-%m-%d" "$date1" +%s 2>/dev/null || echo "0")
     ts2=$(date -d "$date2" +%s 2>/dev/null || date -j -f "%Y-%m-%d" "$date2" +%s 2>/dev/null || echo "0")
@@ -304,6 +343,58 @@ date_diff() {
         diff=$(( -diff ))
     fi
     echo $(( diff / 86400 ))
+}
+
+# ==============================================================================
+# SECURITY UTILITY FUNCTIONS
+# ==============================================================================
+
+# Check if a file exceeds the safe processing size limit.
+# Returns 0 if the file is too large and should be skipped.
+# Usage: is_oversized "/path/to/file"
+is_oversized() {
+    local file_path="$1"
+    if [[ ! -f "$file_path" ]]; then
+        return 1
+    fi
+    local size
+    size=$(stat -c%s "$file_path" 2>/dev/null || stat -f%z "$file_path" 2>/dev/null || echo "0")
+    [[ "$size" -gt "$MAX_FILE_SIZE_BYTES" ]]
+}
+
+# Check if a path is a symlink. Symlinks in wiki/ or memory/ are a path
+# traversal risk because they can point outside the vault.
+# Returns 0 if the path is a symlink, 1 otherwise.
+# Usage: is_symlink "/path/to/file"
+is_symlink() {
+    [[ -L "$1" ]]
+}
+
+# Validate that a resolved file path is within the vault root.
+# Prevents path traversal via symlinks or ../.. sequences.
+# Returns 0 if safe, 1 if the file escapes the vault.
+# Usage: is_within_vault "/path/to/file"
+is_within_vault() {
+    local file_path="$1"
+    local resolved
+    resolved=$(readlink -f "$file_path" 2>/dev/null || realpath "$file_path" 2>/dev/null || echo "")
+    if [[ -z "$resolved" ]]; then
+        return 1
+    fi
+    local vault_resolved
+    vault_resolved=$(readlink -f "$VAULT_ROOT" 2>/dev/null || realpath "$VAULT_ROOT" 2>/dev/null)
+    # Use trailing slash to prevent sibling directory prefix match
+    # e.g., /home/user/vault must not match /home/user/vault-backup
+    [[ "$resolved" == "${vault_resolved}/"* ]] || [[ "$resolved" == "${vault_resolved}" ]]
+}
+
+# Validate a date string matches YYYY-MM-DD format strictly.
+# Prevents injection via date -d with crafted values.
+# Returns 0 if valid, 1 otherwise.
+# Usage: is_valid_date "2026-04-10"
+is_valid_date() {
+    local date_str="$1"
+    [[ "$date_str" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]
 }
 
 # ==============================================================================
@@ -454,6 +545,12 @@ check_hr003() {
     local staged_files
     staged_files=$(get_staged_files)
 
+    # Load approved tags from taxonomy for validation
+    local approved_tags=""
+    if [[ -f "${VAULT_ROOT}/${TAGS_FILE}" ]]; then
+        approved_tags=$(get_approved_tags)
+    fi
+
     while IFS= read -r file; do
         [[ -z "$file" ]] && continue
         local ext
@@ -473,6 +570,21 @@ check_hr003() {
         tags=$(get_frontmatter_tags "$frontmatter")
         if [[ -z "$tags" ]]; then
             violation "HR-003" "$file" "No tags found. Every wiki page must have at least one approved tag."
+            continue
+        fi
+
+        # Validate each tag against approved taxonomy if available
+        if [[ -n "$approved_tags" ]]; then
+            local has_approved_tag=false
+            while IFS= read -r tag; do
+                [[ -z "$tag" ]] && continue
+                if echo "$approved_tags" | grep -qxF "$tag"; then
+                    has_approved_tag=true
+                fi
+            done <<< "$tags"
+            if ! $has_approved_tag; then
+                violation "HR-003" "$file" "No approved tags found. Tags must be from the taxonomy in ${TAGS_FILE}."
+            fi
         fi
     done <<< "$staged_files"
 
@@ -603,7 +715,8 @@ check_hr006() {
         else
             title_map["$title"]="$relative_path"
         fi
-    done < <(find "${VAULT_ROOT}/${WIKI_DIR}" -name "*.md" -print0 2>/dev/null)
+    # SECURITY: -maxdepth prevents traversal DoS; ! -type l excludes symlinks
+    done < <(find "${VAULT_ROOT}/${WIKI_DIR}" -maxdepth "${MAX_FIND_DEPTH}" ! -type l -name "*.md" -print0 2>/dev/null)
 
     success "HR-006: Title uniqueness check complete"
 }
@@ -682,12 +795,15 @@ check_hr008() {
         # Check if the file path or filename appears in index.md
         local basename
         basename=$(basename "$relative_path")
-        if ! echo "$index_content" | grep -q "$basename" 2>/dev/null; then
-            if ! echo "$index_content" | grep -q "$relative_path" 2>/dev/null; then
+        # SECURITY: Use grep -F for literal string match — filenames may contain
+        # regex metacharacters (., *, +, etc.) that grep would interpret as patterns.
+        if ! echo "$index_content" | grep -qF "$basename" 2>/dev/null; then
+            if ! echo "$index_content" | grep -qF "$relative_path" 2>/dev/null; then
                 violation "HR-008" "$relative_path" "Not registered in ${INDEX_FILE}. Every wiki page must have an index entry."
             fi
         fi
-    done < <(find "${VAULT_ROOT}/${WIKI_DIR}" -name "*.md" -print0 2>/dev/null)
+    # SECURITY: -maxdepth prevents traversal DoS; ! -type l excludes symlinks
+    done < <(find "${VAULT_ROOT}/${WIKI_DIR}" -maxdepth "${MAX_FIND_DEPTH}" ! -type l -name "*.md" -print0 2>/dev/null)
 
     success "HR-008: Index registration check complete"
 }
@@ -777,6 +893,306 @@ check_hr010() {
 }
 
 # ==============================================================================
+# SKILL HARDENING: PRE-COMMIT SKILL VALIDATION
+# ==============================================================================
+# If .vault/schemas/skill-policy.json exists and is enabled, validate any
+# staged files in skill directories. This check is fully optional and
+# backward compatible — if the policy file is absent or disabled, this
+# entire section is skipped silently.
+
+check_skill_hardening() {
+    local policy_file="${VAULT_ROOT}/${VAULT_CONFIG_DIR}/schemas/skill-policy.json"
+
+    # Skip silently if no policy file exists
+    [[ ! -f "$policy_file" ]] && return
+
+    # python3 is required for JSON parsing in skill hardening
+    if ! command -v python3 &>/dev/null; then
+        warn "SKILL-HARDENING: python3 not found — skill policy enforcement skipped."
+        warn "Install python3 to enable skill hardening checks."
+        return
+    fi
+
+    # Skip silently if hardening is disabled
+    local enabled
+    enabled=$(python3 -c "import json; print(json.load(open('${policy_file}'))['enabled'])" 2>/dev/null || echo "False")
+    [[ "$enabled" != "True" ]] && return
+
+    info "SKILL-HARDENING: Checking staged skill files..."
+
+    # Read skill directories from policy
+    local skill_dirs
+    skill_dirs=$(python3 -c "
+import json
+with open('${policy_file}') as f:
+    policy = json.load(f)
+for d in policy.get('skill_directories', []):
+    print(d)
+" 2>/dev/null)
+
+    # Check if any staged files are in skill directories
+    local staged_files
+    staged_files=$(get_staged_files)
+    local skill_files_staged=false
+
+    while IFS= read -r file; do
+        [[ -z "$file" ]] && continue
+        while IFS= read -r skill_dir; do
+            [[ -z "$skill_dir" ]] && continue
+            if [[ "$file" == "${skill_dir}/"* ]]; then
+                skill_files_staged=true
+                break 2
+            fi
+        done <<< "$skill_dirs"
+    done <<< "$staged_files"
+
+    if ! $skill_files_staged; then
+        success "SKILL-HARDENING: No skill files staged"
+        return
+    fi
+
+    # Read enforcement level and settings
+    local enforcement
+    enforcement=$(python3 -c "import json; print(json.load(open('${policy_file}'))['enforcement'])" 2>/dev/null || echo "strict")
+
+    local level_settings
+    level_settings=$(python3 -c "
+import json
+with open('${policy_file}') as f:
+    policy = json.load(f)
+level = policy['levels'].get(policy['enforcement'], policy['levels']['strict'])
+for k, v in level.items():
+    if isinstance(v, list):
+        print(f'{k}=|{chr(10).join(str(i) for i in v)}|')
+    else:
+        print(f'{k}={v}')
+" 2>/dev/null)
+
+    # Parse settings
+    local require_manifest="True"
+    local allow_tool_escalation="False"
+    local allow_shell_preprocessing="False"
+    local allow_external_urls="False"
+    local blocked_patterns_raw=""
+
+    while IFS= read -r setting_line; do
+        local key="${setting_line%%=*}"
+        local val="${setting_line#*=}"
+        case "$key" in
+            require_manifest) require_manifest="$val" ;;
+            allow_tool_escalation) allow_tool_escalation="$val" ;;
+            allow_shell_preprocessing) allow_shell_preprocessing="$val" ;;
+            allow_external_urls) allow_external_urls="$val" ;;
+            blocked_patterns) blocked_patterns_raw="${val}" ;;
+        esac
+    done <<< "$level_settings"
+
+    # Parse blocked patterns into array
+    local -a blocked_patterns=()
+    if [[ -n "$blocked_patterns_raw" ]]; then
+        local inner="${blocked_patterns_raw#|}"
+        inner="${inner%|}"
+        while IFS= read -r pat; do
+            [[ -n "$pat" ]] && blocked_patterns+=("$pat")
+        done <<< "$inner"
+    fi
+
+    # Read URL blocklist
+    local url_blocklist
+    url_blocklist=$(python3 -c "
+import json
+with open('${policy_file}') as f:
+    policy = json.load(f)
+for u in policy.get('url_blocklist', []):
+    print(u)
+" 2>/dev/null)
+
+    local url_allowlist
+    url_allowlist=$(python3 -c "
+import json
+with open('${policy_file}') as f:
+    policy = json.load(f)
+for u in policy.get('url_allowlist', []):
+    print(u)
+" 2>/dev/null)
+
+    # Validate each staged skill file
+    while IFS= read -r file; do
+        [[ -z "$file" ]] && continue
+        local in_skill_dir=false
+        while IFS= read -r skill_dir; do
+            [[ -z "$skill_dir" ]] && continue
+            if [[ "$file" == "${skill_dir}/"* ]]; then
+                in_skill_dir=true
+                break
+            fi
+        done <<< "$skill_dirs"
+
+        $in_skill_dir || continue
+
+        local full_path="${VAULT_ROOT}/${file}"
+        [[ ! -f "$full_path" ]] && continue
+
+        # Determine the skill root directory (first subdirectory under skill_dir)
+        local skill_root=""
+        while IFS= read -r skill_dir; do
+            [[ -z "$skill_dir" ]] && continue
+            if [[ "$file" == "${skill_dir}/"* ]]; then
+                # Extract the skill subdirectory name
+                local remainder="${file#${skill_dir}/}"
+                local skill_subdir="${remainder%%/*}"
+                skill_root="${VAULT_ROOT}/${skill_dir}/${skill_subdir}"
+                break
+            fi
+        done <<< "$skill_dirs"
+
+        # Check manifest requirement for the skill root
+        if [[ "$require_manifest" == "True" ]] && [[ -n "$skill_root" ]] && [[ -d "$skill_root" ]]; then
+            if [[ ! -f "${skill_root}/skill-manifest.json" ]]; then
+                violation "SKILL" "$file" "Skill directory missing required skill-manifest.json (${enforcement} enforcement)"
+            fi
+        fi
+
+        # Only scan markdown files for content violations
+        local ext
+        ext=$(get_extension "$file")
+        if extension_in_list "$ext" "${MARKDOWN_EXTENSIONS[@]}"; then
+
+            # Check for blocked patterns
+            for pattern in "${blocked_patterns[@]}"; do
+                if grep -qF "$pattern" "$full_path" 2>/dev/null; then
+                    violation "SKILL" "$file" "Blocked pattern '${pattern}' detected (${enforcement} enforcement)"
+                fi
+            done
+
+            # Check for allowed-tools frontmatter
+            if [[ "$allow_tool_escalation" == "False" ]]; then
+                if grep -qE '^allowed-tools:' "$full_path" 2>/dev/null; then
+                    violation "SKILL" "$file" "Tool escalation via allowed-tools blocked (${enforcement} enforcement)"
+                fi
+            fi
+
+            # Check for !command preprocessing
+            if [[ "$allow_shell_preprocessing" == "False" ]]; then
+                if grep -qE '^!' "$full_path" 2>/dev/null; then
+                    violation "SKILL" "$file" "Shell preprocessing syntax blocked (${enforcement} enforcement)"
+                fi
+            fi
+
+            # Check for external URLs
+            if [[ "$allow_external_urls" == "False" ]]; then
+                local urls_in_file
+                urls_in_file=$(grep -oE 'https?://[a-zA-Z0-9./?=_%&:@#~-]+' "$full_path" 2>/dev/null || true)
+                while IFS= read -r url; do
+                    [[ -z "$url" ]] && continue
+                    local domain
+                    # shellcheck disable=SC2001
+                    domain=$(echo "$url" | sed 's|https\?://\([^/]*\).*|\1|')
+                    local allowed=false
+                    while IFS= read -r allow_domain; do
+                        [[ -z "$allow_domain" ]] && continue
+                        if [[ "$domain" == *"$allow_domain"* ]]; then
+                            allowed=true
+                            break
+                        fi
+                    done <<< "$url_allowlist"
+                    if ! $allowed; then
+                        violation "SKILL" "$file" "External URL blocked: ${url} (${enforcement} enforcement)"
+                    fi
+                done <<< "$urls_in_file"
+            else
+                # Check blocklist even in permissive mode
+                while IFS= read -r blocked_domain; do
+                    [[ -z "$blocked_domain" ]] && continue
+                    if grep -qF "$blocked_domain" "$full_path" 2>/dev/null; then
+                        violation "SKILL" "$file" "Blocklisted domain '${blocked_domain}' detected"
+                    fi
+                done <<< "$url_blocklist"
+            fi
+        fi
+    done <<< "$staged_files"
+
+    success "SKILL-HARDENING: Skill file validation complete"
+}
+
+# ==============================================================================
+# SENSITIVE FILE MODIFICATION WARNINGS
+# ==============================================================================
+# These checks emit warnings (not blocking violations) when files critical to
+# vault security are modified. Pre-commit hooks cannot distinguish agent commits
+# from human commits, so these are advisory. The intent is to surface changes
+# to governance files that a human reviewer should scrutinize.
+
+SENSITIVE_WARNINGS=0
+
+check_sensitive_files() {
+    info "ADVISORY: Checking for sensitive file modifications..."
+    local staged_files
+    staged_files=$(get_staged_files)
+
+    # Also include deleted files in sensitivity check
+    local deleted_files
+    deleted_files=$(git diff --cached --name-only --diff-filter=D 2>/dev/null || true)
+    local all_changed_files
+    all_changed_files=$(printf '%s\n%s' "$staged_files" "$deleted_files" | sort -u)
+
+    # Define sensitive path patterns and their risk descriptions
+    local sensitive_patterns=(
+        ".vault/hooks/|VAULT HOOKS — controls all pre-commit enforcement"
+        ".vault/rules/|VAULT RULES — defines what is enforced"
+        ".vault/scripts/|VAULT SCRIPTS — operational tooling"
+        ".vault/schemas/|VAULT SCHEMAS — validation definitions"
+        ".github/|CI/CD PIPELINES — controls automated checks"
+        ".claude/|CLAUDE CODE SETTINGS — agent permission configuration"
+        "templates/|CONTENT TEMPLATES — injected into all future pages"
+    )
+
+    # Exact-match sensitive files
+    local sensitive_files=(
+        "CLAUDE.md|AGENT CONFIG — primary agent instruction file"
+        "AGENTS.md|AGENT CONFIG — platform-agnostic agent instructions"
+        "CODEX.md|AGENT CONFIG — Codex-specific agent instructions"
+    )
+
+    while IFS= read -r file; do
+        [[ -z "$file" ]] && continue
+
+        # Check path-prefix patterns
+        for pattern_desc in "${sensitive_patterns[@]}"; do
+            local pattern="${pattern_desc%%|*}"
+            local desc="${pattern_desc##*|}"
+            if [[ "$file" == "$pattern"* ]]; then
+                warn "SENSITIVE FILE MODIFIED: ${file} — ${desc}"
+                SENSITIVE_WARNINGS=$((SENSITIVE_WARNINGS + 1))
+                break
+            fi
+        done
+
+        # Check exact-match files
+        for file_desc in "${sensitive_files[@]}"; do
+            local sensitive_name="${file_desc%%|*}"
+            local desc="${file_desc##*|}"
+            if [[ "$file" == "$sensitive_name" ]]; then
+                warn "SENSITIVE FILE MODIFIED: ${file} — ${desc}"
+                SENSITIVE_WARNINGS=$((SENSITIVE_WARNINGS + 1))
+            fi
+        done
+    done <<< "$all_changed_files"
+
+    if [[ $SENSITIVE_WARNINGS -gt 0 ]]; then
+        echo ""
+        warn "================================================"
+        warn "  ${SENSITIVE_WARNINGS} sensitive file(s) modified in this commit."
+        warn "  If this is an agent-authored commit, a human"
+        warn "  reviewer MUST verify these changes before merge."
+        warn "================================================"
+        echo ""
+    else
+        success "ADVISORY: No sensitive file modifications detected"
+    fi
+}
+
+# ==============================================================================
 # MAIN EXECUTION
 # ==============================================================================
 
@@ -787,7 +1203,22 @@ main() {
     echo "=============================================="
     echo ""
 
-    # Run all checks
+    # SECURITY: Check for symlinks in staged files before running other checks.
+    # Symlinks in wiki/ or memory/ can point outside the vault, enabling path
+    # traversal attacks where scripts read /etc/passwd or .git/config.
+    info "SEC: Checking for symlinks in staged files..."
+    local staged_files_sec
+    staged_files_sec=$(get_staged_files)
+    while IFS= read -r file; do
+        [[ -z "$file" ]] && continue
+        local full_path="${VAULT_ROOT}/${file}"
+        if is_symlink "$full_path"; then
+            violation "SEC" "$file" "Symlinks are not allowed in vault content directories. Remove the symlink and use a regular file."
+        fi
+    done <<< "$staged_files_sec"
+    success "SEC: Symlink check complete"
+
+    # Run all hard rule checks
     check_hr001
     check_hr002
     check_hr003
@@ -798,6 +1229,12 @@ main() {
     check_hr008
     check_hr009
     check_hr010
+
+    # Run optional hardening checks (no-op if not configured)
+    check_skill_hardening
+
+    # Run advisory checks (non-blocking)
+    check_sensitive_files
 
     echo ""
     echo "=============================================="
@@ -817,6 +1254,9 @@ main() {
         exit 1
     else
         echo -e "${GREEN}  ALL CHECKS PASSED${RESET}"
+        if [[ $SENSITIVE_WARNINGS -gt 0 ]]; then
+            echo -e "${YELLOW}  (${SENSITIVE_WARNINGS} advisory warning(s) — review recommended)${RESET}"
+        fi
         echo "=============================================="
         echo ""
         exit 0

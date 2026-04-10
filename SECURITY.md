@@ -60,10 +60,36 @@
 - **Mitigation**: Human review of `raw/` contents before agent ingestion
 - The vault's hard rules (HR-001: `raw/` immutability) prevent agents from modifying sources
 
-### Recommended Security Posture
+### Agent Threat Model
 
-- Use git branch protection on `main`
-- Require PR reviews before merging agent-generated content
-- Run `vault-tools.sh lint` in CI on every PR
-- Periodically audit `wiki/` content for accuracy and appropriateness
-- Back up your vault regularly (it's a git repo — push to a remote)
+AI agents with vault access operate in a trust-based compliance model.
+The vault mitigates agent-related risks through layered defenses:
+
+- **Content trust hierarchy**: `raw/` is untrusted input; `wiki/` is
+  agent-generated (may contain errors); config files are trusted
+- **Pre-commit hooks**: Enforce hard rules, reject symlinks, warn on
+  sensitive file modifications
+- **CI checks**: Lint, shellcheck, and skill audit run on every PR
+- **Skill hardening** (optional): Policy-based validation of Claude Code
+  skills, blocking dangerous patterns and tool escalation
+
+See `CLAUDE.md` Security section for the full agent constraint set.
+
+### Supply Chain Considerations
+
+- GitHub Actions are SHA-pinned (not tag-based) to prevent tag-retargeting
+- Obsidian plugins run with full filesystem access — see `docs/plugin-security.md`
+- MCP servers use stdio transport with no authentication layer
+- Skill hardening can block malicious Claude Code skills at commit time
+
+### Configuration Hardening Checklist
+
+- [ ] Enable branch protection on `main` (require PR reviews)
+- [ ] Add CODEOWNERS requiring human approval for `.vault/`, `.github/`, config files
+- [ ] Run `bash .vault/scripts/init.sh` and choose skill hardening level
+- [ ] Review `.gitignore` includes `.claude/settings*.json`
+- [ ] Disable Obsidian plugin auto-updates for security-critical vaults
+- [ ] Consider signed commits for authorship provenance
+- [ ] Run `vault-tools.sh skill-audit` before installing third-party skills
+- [ ] Periodically audit `wiki/` content for accuracy
+- [ ] Back up your vault regularly (push to a remote)

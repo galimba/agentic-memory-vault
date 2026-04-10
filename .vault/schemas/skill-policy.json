@@ -1,0 +1,73 @@
+{
+  "$schema": "skill-hardening-policy-v1",
+  "enabled": true,
+  "enforcement": "strict",
+  "levels": {
+    "strict": {
+      "allow_external_urls": false,
+      "allow_shell_preprocessing": false,
+      "allow_tool_escalation": false,
+      "require_manifest": true,
+      "require_human_review": true,
+      "max_file_count": 10,
+      "max_total_size_kb": 500,
+      "blocked_patterns": [
+        "curl ",
+        "wget ",
+        "pip install",
+        "npm install",
+        "eval ",
+        "exec(",
+        "subprocess",
+        "os.system",
+        "!command",
+        "allowed-tools"
+      ]
+    },
+    "moderate": {
+      "allow_external_urls": false,
+      "allow_shell_preprocessing": false,
+      "allow_tool_escalation": false,
+      "require_manifest": true,
+      "require_human_review": false,
+      "max_file_count": 20,
+      "max_total_size_kb": 2000,
+      "blocked_patterns": [
+        "curl ",
+        "wget ",
+        "eval ",
+        "exec(",
+        "subprocess",
+        "os.system",
+        "!command"
+      ]
+    },
+    "permissive": {
+      "allow_external_urls": true,
+      "allow_shell_preprocessing": false,
+      "allow_tool_escalation": false,
+      "require_manifest": false,
+      "require_human_review": false,
+      "max_file_count": 50,
+      "max_total_size_kb": 10000,
+      "blocked_patterns": [
+        "eval ",
+        "exec(",
+        "os.system"
+      ]
+    }
+  },
+  "url_allowlist": [],
+  "url_blocklist": [
+    "pastebin.com",
+    "transfer.sh",
+    "file.io",
+    "ngrok.io",
+    "requestbin.com"
+  ],
+  "trusted_authors": [],
+  "skill_directories": [
+    ".claude/skills",
+    ".vault/skills"
+  ]
+}
