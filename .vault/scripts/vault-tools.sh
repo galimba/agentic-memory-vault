@@ -522,7 +522,8 @@ cmd_lint() {
 
     # 2. Tag validation
     subheader "Tag validation"
-    cmd_tag_audit 2>/dev/null | grep -c "Unapproved tag" | read -r unapproved || unapproved=0
+    local unapproved
+    unapproved=$(cmd_tag_audit 2>/dev/null | grep -c "Unapproved tag:" || true)
     if [[ $unapproved -gt 0 ]]; then
         total_violations=$((total_violations + unapproved))
     fi

@@ -9,3 +9,13 @@ shell=bash
 disable=SC2034
 # SC1091: Not following sourced files (can't resolve at lint time)
 disable=SC1091
+# SC2295: Expansions inside ${..} need separate quoting (intentional pattern trimming)
+disable=SC2295
+# SC2015: A && B || C is not if-then-else (used deliberately for concise checks)
+disable=SC2015
+# SC2016: Expressions don't expand in single quotes (intentional regex patterns)
+disable=SC2016
+# SC2323: Extra parentheses in arithmetic (style preference)
+disable=SC2323
+# SC2126: Consider grep -c instead of grep|wc -l (style preference)
+disable=SC2126

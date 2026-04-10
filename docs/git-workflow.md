@@ -160,7 +160,9 @@ git add wiki/log.md
 
 Two agents rarely edit the same concept or entity page. When they do:
 
-**Resolution**: The second agent should re-read the page (now including the first agent's changes) and reconcile its additions. This is a manual process -- the human reviewer should verify both contributions are preserved.
+**Resolution**: The second agent should re-read the page (now including the first agent's
+changes) and reconcile its additions. This is a manual process --
+the human reviewer should verify both contributions are preserved.
 
 ### Prevention
 

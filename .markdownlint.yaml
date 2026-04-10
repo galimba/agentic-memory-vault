@@ -20,6 +20,9 @@ MD024:
 # Don't require first line to be a heading (frontmatter comes first)
 MD041: false
 
+# Allow multiple H1 headings (files with YAML frontmatter have title + H1)
+MD025: false
+
 # Allow trailing punctuation in headings (for "?" in FAQ-style headings)
 MD026:
   punctuation: ".,;:!"
@@ -30,3 +33,9 @@ MD012:
 
 # Allow bare URLs (common in source references)
 MD034: false
+
+# Don't require language on fenced code blocks (pseudo-code and step lists)
+MD040: false
+
+# Allow any ordered list prefix style (1/2/3 or all 1s)
+MD029: false

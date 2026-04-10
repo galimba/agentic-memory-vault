@@ -12,25 +12,43 @@ The vault follows the **Karpathy LLM Wiki** pattern: separate provenance from sy
 | 2. Knowledge | `wiki/` | Agent | Agent-writable, human-reviewable |
 | 3. Operations | `memory/` | Agent | Decisions, logs, notes, status |
 
-**Rationale**: When sources are immutable, every claim in the wiki can be traced back to an unmodified original. If agents could edit sources, you lose ground truth. If knowledge and operations are mixed, you cannot distinguish "what we know" from "what we decided to do about it."
+**Rationale**: When sources are immutable, every claim in the wiki can be traced back to an
+unmodified original. If agents could edit sources, you lose ground truth.
+If knowledge and operations are mixed, you cannot distinguish
+"what we know" from "what we decided to do about it."
 
-**Alternative considered**: A single flat directory with metadata-based filtering. Rejected because agents perform better with explicit directory-level affordances -- reading `wiki/sources/` is unambiguous in a way that filtering by `type: source` across a flat namespace is not.
+**Alternative considered**: A single flat directory with metadata-based filtering.
+Rejected because agents perform better with explicit directory-level affordances --
+reading `wiki/sources/` is unambiguous in a way that filtering by `type: source`
+across a flat namespace is not.
 
 ## Why Flat Tags Over Nested Hierarchies
 
 Tags use **flat prefix notation**: `domain/engineering`, `type/concept`, `lifecycle/active`.
 
-**Rationale**: Agent parseability. A single regex (`^prefix/value$`) extracts any tag. Nested hierarchies (`domain/engineering/backend/api`) require recursive parsing and introduce ambiguity -- is `backend` a sub-domain or a team? Flat prefixes keep every tag exactly one level deep, making programmatic filtering trivial.
+**Rationale**: Agent parseability. A single regex (`^prefix/value$`) extracts any tag.
+Nested hierarchies (`domain/engineering/backend/api`) require recursive parsing
+and introduce ambiguity -- is `backend` a sub-domain or a team?
+Flat prefixes keep every tag exactly one level deep, making programmatic filtering trivial.
 
-**Alternative considered**: Obsidian's nested tag syntax (`#domain/engineering/backend`). Rejected because nesting creates implicit parent tags and agents must decide at which level to filter. With flat tags, you use `dept/backend` separately from `domain/engineering` -- explicit over implicit.
+**Alternative considered**: Obsidian's nested tag syntax (`#domain/engineering/backend`).
+Rejected because nesting creates implicit parent tags and agents must decide
+at which level to filter. With flat tags, you use `dept/backend` separately
+from `domain/engineering` -- explicit over implicit.
 
 ## Why 200-Line Markdown Limit (HR-004)
 
 No markdown file in `wiki/` or `memory/` may exceed 200 lines.
 
-**Rationale**: Context window optimization. Agents process pages individually. A 500-line page forces an agent to load irrelevant content alongside relevant content, wasting tokens and reducing precision. Short, focused pages with clear `[[wikilinks]]` between them enable targeted retrieval -- the agent reads only the pages it needs.
+**Rationale**: Context window optimization. Agents process pages individually.
+A 500-line page forces an agent to load irrelevant content alongside relevant content,
+wasting tokens and reducing precision.
+Short, focused pages with clear `[[wikilinks]]` between them enable targeted retrieval --
+the agent reads only the pages it needs.
 
-The 200-line limit forces modular knowledge: instead of one sprawling "API Design" page, you get `concept-api-design-principles.md`, `concept-api-versioning.md`, and `concept-api-error-handling.md`, each focused and independently retrievable.
+The 200-line limit forces modular knowledge: instead of one sprawling "API Design" page,
+you get `concept-api-design-principles.md`, `concept-api-versioning.md`,
+and `concept-api-error-handling.md`, each focused and independently retrievable.
 
 **Exception**: `wiki/index.md` and `wiki/log.md` are exempt. They grow indefinitely by design. When `index.md` exceeds 500 lines, split into category-specific index files.
 
@@ -38,7 +56,12 @@ The 200-line limit forces modular knowledge: instead of one sprawling "API Desig
 
 Standalone code files in `.vault/scripts/` and `.vault/hooks/` must be at least 500 lines.
 
-**Rationale**: Consolidation over proliferation. A vault with fifty 20-line shell scripts becomes unmaintainable. The minimum forces related functionality into well-documented, comprehensive tool files. The vault ships with two main code files: `vault-tools.sh` (870+ lines, all CLI operations) and `pre-commit.sh` (830+ lines, all enforcement). Each is self-contained with documentation, error handling, and helpers.
+**Rationale**: Consolidation over proliferation. A vault with fifty 20-line shell scripts
+becomes unmaintainable. The minimum forces related functionality into well-documented,
+comprehensive tool files. The vault ships with two main code files:
+`vault-tools.sh` (870+ lines, all CLI operations) and
+`pre-commit.sh` (830+ lines, all enforcement).
+Each is self-contained with documentation, error handling, and helpers.
 
 **Exception**: `init.sh` and configuration files (`.json`, `.yaml`, `.toml`) are exempt.
 
@@ -53,7 +76,9 @@ The vault uses `wiki/index.md` as its primary retrieval mechanism, not embedding
 - **Zero infrastructure**: No embedding service, no vector database, no indexing pipeline. Just a markdown file.
 - **Git-native**: The index is versioned, diffable, and mergeable. Vector databases require separate backup.
 
-**When to reconsider**: If the vault exceeds 1,000 wiki pages, consider augmenting (not replacing) the index with semantic search. The index remains the source of truth; embeddings become an optional discovery layer.
+**When to reconsider**: If the vault exceeds 1,000 wiki pages, consider augmenting
+(not replacing) the index with semantic search.
+The index remains the source of truth; embeddings become an optional discovery layer.
 
 ## How INGEST, QUERY, and LINT Interact
 

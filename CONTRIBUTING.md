@@ -2,7 +2,10 @@
 
 ## Welcome
 
-Thank you for your interest in contributing. This project provides a knowledge vault template used by teams working with AI agents. Your contributions help improve the foundation that many organizations build on. Please read our [Code of Conduct](CODE_OF_CONDUCT.md) before participating.
+Thank you for your interest in contributing. This project provides a knowledge vault template
+used by teams working with AI agents. Your contributions help improve the foundation that
+many organizations build on. Please read our [Code of Conduct](CODE_OF_CONDUCT.md)
+before participating.
 
 ## Two Types of Contributions
 
@@ -27,14 +30,18 @@ Thank you for your interest in contributing. This project provides a knowledge v
 2. Create a branch: `feature/description`, `fix/description`, or `docs/description`
 3. Make your changes
 4. Run linters locally:
+
    ```bash
    markdownlint '**/*.md'
    shellcheck .vault/**/*.sh
    ```
+
 5. Run vault diagnostics:
+
    ```bash
    bash .vault/scripts/vault-tools.sh doctor
    ```
+
 6. Commit using Conventional Commits (see below)
 7. Push and open a PR against `main`
 8. Fill in the [PR template](.github/pull_request_template.md) completely

@@ -13,7 +13,9 @@ After running `init.sh`, these placeholders are replaced in all `.md` files:
 | `{{PLATFORM}}` | Identity section | Primary agent platform (`claude-code`, `codex`, `copilot`, `cursor`, `custom`) |
 | `{{INIT_DATE}}` | Identity section | Date the vault was initialized |
 
-To change these after initialization, search-and-replace across all `.md` files. The `init.sh` script uses `sed` and can be re-run, but it only replaces the `{{placeholder}}` syntax, not already-substituted values.
+To change these after initialization, search-and-replace across all `.md` files.
+The `init.sh` script uses `sed` and can be re-run, but it only replaces
+the `{{placeholder}}` syntax, not already-substituted values.
 
 ## Soft Rules
 

@@ -73,4 +73,4 @@ confidence: high
 - Frontmatter delimiters are `---` on their own line
 - YAML parsing extracts content between the first and second `---` markers
 - Fields are case-sensitive
-- List fields use YAML list syntax (indented with `- ` prefix)
+- List fields use YAML list syntax (indented with `-` prefix)

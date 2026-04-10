@@ -1,6 +1,9 @@
 # Tag Taxonomy — Approved Vault Tags
 
-> All tags in this vault MUST use flat prefix notation: `prefix/value`. This file is the single source of truth for approved tags. Agents MUST NOT create tags outside this list unless instructed by a human. New tags are added to this file first, then used in content.
+> All tags in this vault MUST use flat prefix notation: `prefix/value`.
+> This file is the single source of truth for approved tags.
+> Agents MUST NOT create tags outside this list unless instructed by a human.
+> New tags are added to this file first, then used in content.
 >
 > **Format**: `prefix/value` — Description
 
@@ -349,6 +352,7 @@ tags:
 ```
 
 To add a new approved tag:
+
 1. Add it to this file under the appropriate prefix (or create a new prefix section)
 2. Commit this file change with message `[tags] Added custom/your-tag-name`
 3. The tag is now available for use in wiki pages
