@@ -41,8 +41,9 @@ validate_input() {
         echo "Please re-run init.sh with a safe value."
         exit 2
     fi
-    # Reject control characters other than tab
-    if [[ "$value" =~ [[:cntrl:]] ]] && [[ "$value" != *$'\t'* ]]; then
+    # Reject control characters other than tab — strip tabs before testing
+    local stripped="${value//$'\t'/}"
+    if [[ "$stripped" =~ [[:cntrl:]] ]]; then
         echo "ERROR: ${name} contains control characters."
         exit 2
     fi
@@ -144,6 +145,15 @@ echo "Levels: strict (recommended), moderate, permissive, none"
 echo ""
 read -rp "Enable skill hardening? [strict/moderate/permissive/none] (default: strict): " SKILL_HARDENING
 SKILL_HARDENING="${SKILL_HARDENING:-strict}"
+
+# SECURITY: Validate enum before interpolating into sed
+case "$SKILL_HARDENING" in
+    strict|moderate|permissive|none) ;;
+    *)
+        echo "ERROR: Invalid hardening level '${SKILL_HARDENING}'. Must be strict, moderate, permissive, or none."
+        exit 2
+        ;;
+esac
 
 if [[ "$SKILL_HARDENING" != "none" ]]; then
     cp "${VAULT_ROOT}/.vault/schemas/skill-policy.json" "${VAULT_ROOT}/.vault/schemas/skill-policy.json.bak" 2>/dev/null || true

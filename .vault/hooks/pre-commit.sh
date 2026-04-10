@@ -38,6 +38,7 @@
 #   - sed
 #   - date
 #   - file (for binary detection)
+#   - python3 (optional — required for skill hardening enforcement)
 #
 # ==============================================================================
 
@@ -382,7 +383,9 @@ is_within_vault() {
     fi
     local vault_resolved
     vault_resolved=$(readlink -f "$VAULT_ROOT" 2>/dev/null || realpath "$VAULT_ROOT" 2>/dev/null)
-    [[ "$resolved" == "${vault_resolved}"* ]]
+    # Use trailing slash to prevent sibling directory prefix match
+    # e.g., /home/user/vault must not match /home/user/vault-backup
+    [[ "$resolved" == "${vault_resolved}/"* ]] || [[ "$resolved" == "${vault_resolved}" ]]
 }
 
 # Validate a date string matches YYYY-MM-DD format strictly.
@@ -902,6 +905,13 @@ check_skill_hardening() {
 
     # Skip silently if no policy file exists
     [[ ! -f "$policy_file" ]] && return
+
+    # python3 is required for JSON parsing in skill hardening
+    if ! command -v python3 &>/dev/null; then
+        warn "SKILL-HARDENING: python3 not found — skill policy enforcement skipped."
+        warn "Install python3 to enable skill hardening checks."
+        return
+    fi
 
     # Skip silently if hardening is disabled
     local enabled
