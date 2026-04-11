@@ -123,10 +123,14 @@ read -rp "Install git pre-commit hook? [Y/n]: " INSTALL_HOOKS
 INSTALL_HOOKS="${INSTALL_HOOKS:-Y}"
 
 if [[ "${INSTALL_HOOKS}" =~ ^[Yy] ]]; then
-    bash "${VAULT_ROOT}/.vault/scripts/vault-tools.sh" init-hooks 2>/dev/null || {
-        cp "${VAULT_ROOT}/.vault/hooks/pre-commit.sh" "${VAULT_ROOT}/.git/hooks/pre-commit"
-        chmod +x "${VAULT_ROOT}/.git/hooks/pre-commit"
-    }
+    # cmd_init_hooks is the single source of truth for hook installation.
+    # Do NOT add a silent `cp` fallback here — the original implementation
+    # did that and masked a bug where the flat-copied hook could not find
+    # its own library files, silently disabling HR enforcement.
+    if ! bash "${VAULT_ROOT}/.vault/scripts/vault-tools.sh" init-hooks; then
+        echo "  ERROR: hook install failed. Run manually: bash .vault/scripts/vault-tools.sh init-hooks" >&2
+        exit 2
+    fi
     echo "  Hooks installed"
 else
     echo "  Skipped. Install later: bash .vault/scripts/vault-tools.sh init-hooks"
