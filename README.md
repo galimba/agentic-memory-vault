@@ -14,7 +14,7 @@ Memory Vault is a git-based knowledge management system designed for AI agents
 You clone this template, initialize it for your organization, and start building
 institutional memory that both humans and agents can read, write, and reason over.
 
-The architecture is based on the
+The architecture is inspired by the
 [Karpathy LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)
 pattern, extended for multi-agent enterprise use.
 Source documents go in, structured knowledge comes out.
