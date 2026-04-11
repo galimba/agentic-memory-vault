@@ -13,7 +13,7 @@
 
 ## Architecture
 
-Three-layer knowledge vault based on the Karpathy LLM Wiki pattern:
+Three-layer knowledge vault inspired by the Karpathy LLM Wiki pattern:
 
 | Layer | Directory | Owner | Purpose |
 |-------|-----------|-------|---------|
