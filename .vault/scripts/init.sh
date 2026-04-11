@@ -169,16 +169,18 @@ rm -f "${VAULT_ROOT}/.vault/schemas/skill-policy.json.bak"
 
 echo ""
 echo "Content hardening detects injection attacks and bulk manipulation."
-echo "This is optional and disabled by default."
+echo "Since v0.2.0 it is enabled by default in 'warn' mode — violations"
+echo "are reported but do not block commits. Set enforcement=block in"
+echo ".vault/schemas/content-policy.json to make it blocking."
 echo ""
-read -rp "Enable content integrity checking? [y/N] (default: N): " CONTENT_HARDENING
-CONTENT_HARDENING="${CONTENT_HARDENING:-N}"
+read -rp "Keep content integrity checking enabled? [Y/n] (default: Y): " CONTENT_HARDENING
+CONTENT_HARDENING="${CONTENT_HARDENING:-Y}"
 
-if [[ "$CONTENT_HARDENING" =~ ^[Yy]$ ]]; then
-    sed -i 's/"enabled": false/"enabled": true/' "${VAULT_ROOT}/.vault/schemas/content-policy.json"
-    echo "  Content hardening enabled"
+if [[ "$CONTENT_HARDENING" =~ ^[Nn]$ ]]; then
+    sed -i 's/"enabled": true/"enabled": false/' "${VAULT_ROOT}/.vault/schemas/content-policy.json"
+    echo "  Content hardening disabled"
 else
-    echo "  Content hardening disabled (default)"
+    echo "  Content hardening enabled (warn mode)"
 fi
 
 # Offer to run diagnostics

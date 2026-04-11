@@ -5,6 +5,66 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-04-11
+
+### Fixed
+
+- `cmd_stale()` and `cmd_lint()` now actually read
+  `.vault/schemas/staleness-config.json` (A1). Per-domain and per-type
+  thresholds plus `exempt_statuses` were shipped in v0.1.0 but inert —
+  every file was checked against the hardcoded 30-day default. v0.2.0
+  resolves the most restrictive matching threshold per file via
+  `resolve_stale_threshold()` in `lib-utils.sh`.
+- `.vault/schemas/content-policy.json` now ships with `"enabled": true`
+  and a new `"enforcement": "warn"` field (A2). The instruction-pattern
+  detection was dormant in v0.1.0; v0.2.0 runs it in pre-commit via
+  `check_content_policy` in `check-sensitive-files.sh`. `block`
+  enforcement is opt-in for strict environments.
+- `CLAUDE.md` / `AGENTS.md` LINT step 7 previously referenced a
+  `memory/notes/lint-report-{{DATE}}.md` artefact that nothing wrote.
+  Fixed by implementing `_write_lint_report()` (see Added).
+
+### Added
+
+- `vault-tools.sh lint --report` now writes a structured report to
+  `memory/notes/lint-report-YYYY-MM-DD.md` with summary counts, orphan
+  and stale totals, and recommendations. `vault-tools.sh doctor`
+  automatically runs lint with `--report` (B3).
+- `HR-015: Append-only logs` — new hard rule and new pre-commit check
+  (`.vault/hooks/checks/check-hr015.sh`) rejecting any commit that
+  deletes or modifies existing lines in `wiki/log.md` or
+  `memory/logs/*.md`. Set `LOG_EDIT_ALLOWED=1` to bypass for legitimate
+  corrections (B5).
+- `CONTENT_POLICY_DISABLED=1` environment bypass for the new content
+  policy check (A2).
+- Three-tier **Always / Ask first / Never** Boundaries block in
+  `CLAUDE.md`, `AGENTS.md`, and `CODEX.md` replacing the flat
+  "Prohibited Actions" list. The new block adds an explicit "Ask first"
+  tier so agents pause on ambiguous actions instead of silently
+  proceeding (C2).
+
+### Changed
+
+- `check_skill_hardening` was already wired into pre-commit in v0.1.0;
+  v0.2.0 documents this explicitly in the pre-commit header comment so
+  operators can see which policy-driven checks run. No functional
+  change — the audit that previously only ran via `vault-tools.sh
+  skill-audit` and CI has been running at commit time since v0.1.0
+  (A3).
+- `init.sh` content-hardening prompt now defaults to Y (keep enabled)
+  to match the new v0.2.0 default.
+- `docs/configuration.md` documents staleness-config wiring and the
+  optional `jq` dependency.
+- `docs/security-hardening.md` documents the new `enforcement` field
+  and `CONTENT_POLICY_DISABLED` bypass.
+- `CLAUDE.md` / `AGENTS.md` `Vault Version` bumped to `0.2.0`.
+
+### Notes
+
+- HR-014 is intentionally reserved. Content policy ships as a
+  configurable warn-level check, not as a hard rule, so future growth
+  of the hard-rule list can claim HR-014 without renumbering HR-015.
+
 ## [0.1.0] - {{INIT_DATE}}
 
 ### Added

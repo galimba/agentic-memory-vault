@@ -33,6 +33,11 @@
 #   HR-011: Vault configuration protection
 #   HR-012: Agent configuration protection
 #   HR-013: CI and template protection
+#   HR-015: Append-only logs (wiki/log.md, memory/logs/)
+#
+# POLICY CHECKS:
+#   check_skill_hardening — driven by .vault/schemas/skill-policy.json
+#   check_content_policy  — driven by .vault/schemas/content-policy.json
 #
 # EXIT CODES:
 #   0 — All checks passed
@@ -181,9 +186,11 @@ main() {
     check_hr011
     check_hr012
     check_hr013
+    check_hr015
 
-    # Run optional hardening checks (no-op if not configured)
+    # Run optional hardening checks (no-op if policy file is absent or disabled)
     check_skill_hardening
+    check_content_policy
 
     # Run advisory checks (non-blocking)
     check_sensitive_files

@@ -210,9 +210,10 @@ cmd_doctor() {
     template_count=$(count_files "${VAULT_ROOT}/templates" "*.md")
     echo "  Templates found: ${template_count}"
 
-    # Run lint
+    # Run lint with report output so memory/notes/ always has a fresh
+    # lint-report-YYYY-MM-DD.md after doctor runs.
     subheader "Running lint..."
-    cmd_lint || true
+    cmd_lint --report || true
 
     echo ""
     ok "Doctor complete"

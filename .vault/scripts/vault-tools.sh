@@ -7,7 +7,8 @@
 # plus utilities for vault management, status reporting, and maintenance.
 #
 # USAGE:
-#   ./vault-tools.sh lint              Run full vault lint
+#   ./vault-tools.sh lint [--report]   Run full vault lint (--report writes
+#                                      memory/notes/lint-report-YYYY-MM-DD.md)
 #   ./vault-tools.sh status            Show vault status
 #   ./vault-tools.sh validate <file>   Validate a single file
 #   ./vault-tools.sh index-rebuild     Rebuild wiki/index.md from scratch
@@ -97,7 +98,7 @@ cmd_help() {
     echo "Usage: vault-tools.sh <command> [options]"
     echo ""
     echo "Lint & Validation:"
-    echo "  lint              Run full vault lint"
+    echo "  lint [--report]   Run full vault lint (--report writes to memory/notes/)"
     echo "  validate <file>   Validate a single file"
     echo "  orphans           List orphan pages"
     echo "  stale [days]      List stale pages (default: 30)"

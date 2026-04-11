@@ -153,3 +153,121 @@ is_linked() {
     count=$(grep -Frl "$target_basename" "${WIKI_DIR}" 2>/dev/null | grep -Fv "$1" | wc -l | tr -d ' ')
     [[ $count -gt 0 ]]
 }
+
+# ==============================================================================
+# STALENESS CONFIG LOADER
+# ==============================================================================
+# Reads .vault/schemas/staleness-config.json and resolves the staleness
+# threshold for a given file based on its domain tags and type. Falls back
+# to default_threshold_days if no specific override matches. Uses jq when
+# available, with a bash-only fallback for the flat JSON shape.
+#
+# Config file shape (see .vault/schemas/staleness-config.json):
+#   {
+#     "default_threshold_days": 30,
+#     "domain_thresholds": { "domain/engineering": 30, ... },
+#     "type_thresholds":   { "type/runbook": 14, ... },
+#     "exempt_statuses":   ["archived", "deprecated"]
+#   }
+# ==============================================================================
+
+_STALE_CONFIG_LOADED=false
+_STALE_DEFAULT=30
+_STALE_EXEMPT_STATUSES=""
+declare -A _STALE_OVERRIDES=()
+
+# Load staleness config once, cache in globals
+_load_stale_config() {
+    if $_STALE_CONFIG_LOADED; then
+        return
+    fi
+    _STALE_CONFIG_LOADED=true
+
+    local config_file="${VAULT_ROOT}/.vault/schemas/staleness-config.json"
+    if [[ ! -f "$config_file" ]]; then
+        return
+    fi
+
+    if command -v jq &>/dev/null; then
+        _STALE_DEFAULT=$(jq -r '.default_threshold_days // 30' "$config_file" 2>/dev/null || echo "30")
+        _STALE_EXEMPT_STATUSES=$(jq -r '(.exempt_statuses // []) | join(",")' "$config_file" 2>/dev/null || echo "")
+        while IFS='=' read -r key val; do
+            [[ -z "$key" ]] && continue
+            _STALE_OVERRIDES["$key"]="$val"
+        done < <(jq -r '(.domain_thresholds // {}) | to_entries[] | "\(.key)=\(.value)"' "$config_file" 2>/dev/null)
+        while IFS='=' read -r key val; do
+            [[ -z "$key" ]] && continue
+            _STALE_OVERRIDES["$key"]="$val"
+        done < <(jq -r '(.type_thresholds // {}) | to_entries[] | "\(.key)=\(.value)"' "$config_file" 2>/dev/null)
+    else
+        # Bash-only fallback for the flat JSON shape.
+        local default_match
+        default_match=$(grep -oE '"default_threshold_days"[[:space:]]*:[[:space:]]*[0-9]+' "$config_file" | grep -oE '[0-9]+$')
+        [[ -n "$default_match" ]] && _STALE_DEFAULT="$default_match"
+
+        # exempt_statuses: ["archived", "deprecated"]
+        local exempt_line
+        exempt_line=$(grep -oE '"exempt_statuses"[[:space:]]*:[[:space:]]*\[[^]]*\]' "$config_file")
+        if [[ -n "$exempt_line" ]]; then
+            _STALE_EXEMPT_STATUSES=$(echo "$exempt_line" | grep -oE '"[a-z][a-z0-9_-]*"' | tr -d '"' | paste -sd',')
+        fi
+
+        # Scan for "prefix/value": number entries (both domain_thresholds and type_thresholds)
+        while IFS= read -r line; do
+            if [[ "$line" =~ \"([a-z][a-z0-9_-]*/[a-z0-9_-]+)\"[[:space:]]*:[[:space:]]*([0-9]+) ]]; then
+                local key="${BASH_REMATCH[1]}"
+                local val="${BASH_REMATCH[2]}"
+                _STALE_OVERRIDES["$key"]="$val"
+            fi
+        done < "$config_file"
+    fi
+}
+
+# Resolve the staleness threshold for a file given its frontmatter.
+# Args: $1 = frontmatter blob (output of extract_fm)
+# Returns: threshold in days (echoed to stdout)
+# Logic: find the minimum of matching type override, matching domain
+#        overrides, and the default. Most restrictive wins.
+resolve_stale_threshold() {
+    local fm="$1"
+    _load_stale_config
+
+    local threshold=$_STALE_DEFAULT
+
+    # Check type override: "type/<value>"
+    local file_type
+    file_type=$(fm_field "type" "$fm")
+    if [[ -n "$file_type" && -n "${_STALE_OVERRIDES["type/$file_type"]+x}" ]]; then
+        local type_thresh="${_STALE_OVERRIDES["type/$file_type"]}"
+        if [[ $type_thresh -lt $threshold ]]; then
+            threshold=$type_thresh
+        fi
+    fi
+
+    # Check domain overrides via the file's tags
+    local tags
+    tags=$(fm_tags "$fm")
+    while IFS= read -r tag; do
+        [[ -z "$tag" ]] && continue
+        if [[ -n "${_STALE_OVERRIDES["$tag"]+x}" ]]; then
+            local tag_thresh="${_STALE_OVERRIDES["$tag"]}"
+            if [[ $tag_thresh -lt $threshold ]]; then
+                threshold=$tag_thresh
+            fi
+        fi
+    done <<< "$tags"
+
+    echo "$threshold"
+}
+
+# Return 0 if a status is exempt from staleness checks, 1 otherwise.
+is_stale_exempt() {
+    local status="$1"
+    [[ -z "$status" ]] && return 1
+    _load_stale_config
+    [[ -z "$_STALE_EXEMPT_STATUSES" ]] && return 1
+    case ",$_STALE_EXEMPT_STATUSES," in
+        *,"$status",*) return 0 ;;
+        *) return 1 ;;
+    esac
+}
