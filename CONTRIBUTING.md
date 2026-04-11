@@ -84,8 +84,8 @@ docs(templates): add report template with executive summary section
 Minimal — no build step required.
 
 ```bash
-git clone https://github.com/{{GITHUB_ORG}}/memory-vault-boilerplate.git
-cd memory-vault-boilerplate
+git clone https://github.com/galimba/agentic-memory-vault.git
+cd agentic-memory-vault
 ```
 
 **Optional tools** (for running linters locally):

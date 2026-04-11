@@ -34,4 +34,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `docs/rules-customization.md` — creating new rules, industry-specific templates
 - Architecture diagrams embedded in README (`docs/architecture.png`, `docs/vaults.png`)
 
-[0.1.0]: https://github.com/{{GITHUB_ORG}}/memory-vault-boilerplate/releases/tag/v0.1.0
+[0.1.0]: https://github.com/galimba/agentic-memory-vault/releases/tag/v0.1.0

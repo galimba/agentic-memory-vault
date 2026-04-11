@@ -27,7 +27,7 @@ No databases, no external services, no dependencies beyond bash and git. The vau
 
 ```bash
 # 1. Create your vault from the template
-git clone https://github.com/{{GITHUB_ORG}}/memory-vault-boilerplate.git my-vault
+git clone https://github.com/galimba/agentic-memory-vault.git my-vault
 cd my-vault
 
 # 2. Run the initialization script
@@ -157,6 +157,16 @@ After cloning and running `init.sh`, customize these files for your organization
 4. **`CLAUDE.md`** — Adjust agent behavior, context loading order, git workflow
 
 ## FAQ
+
+**Is this the right template for my team?**
+Memory Vault is an opinionated *Governed Knowledge-repository* scaffold, built for
+agent governance and memory hygiene. It's a strong fit if your team already lives
+in git and Markdown and wants reviewable institutional memory that both humans and
+agents can audit, diff, and revert. It's a weaker fit if you're looking for
+automatic ingestion pipelines, semantic retrieval, or embeddings/vector search —
+the vault is deliberately deterministic and index-based. See
+[`docs/architecture.md`](docs/architecture.md) for the rationale, and the
+*Is this a vector database?* entry below for the retrieval model.
 
 **Do I need Obsidian?**
 No. The vault is plain markdown files in a git repo. Obsidian provides a nice UI for browsing wikilinks, but any text editor works. Agents interact with the vault through the filesystem.
