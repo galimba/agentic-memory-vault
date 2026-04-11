@@ -221,7 +221,7 @@ cmd_validate() {
     # Check links
     subheader "Links"
     local link_count
-    link_count=$(grep -o '\[\[' "$full_path" 2>/dev/null | wc -l | tr -d ' ')
+    link_count=$( { grep -o '\[\[' "$full_path" 2>/dev/null || true; } | wc -l | tr -d ' ')
     echo "  Wikilinks: ${link_count}"
     if [[ $link_count -lt 3 ]]; then
         warning "Fewer than 3 links (soft rule SR-003)"

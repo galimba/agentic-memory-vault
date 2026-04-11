@@ -83,7 +83,7 @@ cmd_stats() {
     local pages_with_links=0
     while IFS= read -r file; do
         local links
-        links=$(grep -o '\[\[' "$file" 2>/dev/null | wc -l | tr -d ' ')
+        links=$( { grep -o '\[\[' "$file" 2>/dev/null || true; } | wc -l | tr -d ' ')
         total_links=$((total_links + links))
         if [[ $links -gt 0 ]]; then
             pages_with_links=$((pages_with_links + 1))
