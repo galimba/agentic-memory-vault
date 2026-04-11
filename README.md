@@ -191,6 +191,13 @@ It's a git repo. Push to a remote. That's your backup, version history, and coll
 **Can I use this without AI agents?**
 Yes. The vault structure works for human-only teams too. The rules, tags, and templates help maintain consistency. Skip the agent-specific configuration in `CLAUDE.md`.
 
+## Roadmap
+
+See [docs/roadmap.md](docs/roadmap.md) for planned features and
+contribution opportunities. Issues labeled
+[`good first issue`](../../labels/good%20first%20issue) are a
+great starting point.
+
 ## Contributing
 
 Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on reporting bugs, suggesting features, and submitting changes.

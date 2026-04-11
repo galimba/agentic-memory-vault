@@ -54,7 +54,7 @@ This project uses [Conventional Commits](https://www.conventionalcommits.org/):
 type(scope): description
 ```
 
-**Types**: `feat`, `fix`, `docs`, `chore`, `refactor`, `test`
+**Types**: `feat`, `fix`, `docs`, `chore`, `refactor`, `test`, `infra`
 
 **Scopes**: `vault`, `rules`, `tags`, `hooks`, `scripts`, `docs`, `ci`, `templates`
 
