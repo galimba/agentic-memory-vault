@@ -90,19 +90,45 @@ find .claude/skills/my-skill -type f ! -name skill-manifest.json \
 Then create `skill-manifest.json` with name, version, author, and the
 files array. Run `vault-tools.sh skill-audit` to verify.
 
-## Content Hardening (Optional)
+## Content Hardening
 
 Content hardening protects wiki and memory files from injection and
-bulk manipulation. Disabled by default. Enable via `init.sh` or by
-setting `"enabled": true` in `.vault/schemas/content-policy.json`.
+bulk manipulation. Since v0.2.0 it is **enabled by default in warn
+mode** — the pre-commit hook scans staged markdown files for the
+`instruction_patterns` list in `.vault/schemas/content-policy.json` and
+prints a warning on any match, but does not block the commit.
+
+### Enforcement Levels
+
+The `enforcement` field in `content-policy.json` controls behavior:
+
+- `"warn"` (default) — pre-commit hook prints warnings, commit proceeds.
+  Use while you stabilize the pattern list and review false positives.
+- `"block"` — pre-commit hook records violations and rejects the
+  commit. Use in strict environments once you trust the pattern list.
+
+To temporarily bypass the content policy for a legitimate bulk
+operation:
+
+```bash
+CONTENT_POLICY_DISABLED=1 git commit -m "chore: bulk tag rename"
+```
+
+Document the bypass reason in the commit message.
 
 ### Checks Performed
 
 - **Instruction injection** — scans for phrases like "IGNORE ALL PREVIOUS"
+  (enforced at pre-commit)
 - **Bulk deletion** — flags commits deleting more than 20% of content
+  (via `vault-tools.sh content-audit`)
 - **Confidence downgrades** — detects changes lowering confidence fields
+  (via `vault-tools.sh content-audit`)
 - **Mass status changes** — flags many status field changes at once
-- **File count limits** — warns on commits touching more than 25 files; can be overridden per-operation when justified (e.g., batch ingestion, broad cross-reference updates)
+  (via `vault-tools.sh content-audit`)
+- **File count limits** — warns on commits touching more than 25 files;
+  can be overridden per-operation when justified (e.g., batch ingestion,
+  broad cross-reference updates)
 
 ## Disabling Hardening
 
@@ -114,7 +140,8 @@ the file entirely. The vault operates identically without it.
 ### Disable Content Hardening
 
 Set `"enabled": false` in `.vault/schemas/content-policy.json`, or delete
-the file. Content hardening is off by default.
+the file. Since v0.2.0 content hardening is on by default in warn mode;
+setting `enabled: false` restores the pre-v0.2.0 behavior.
 
 ### Skip During Init
 

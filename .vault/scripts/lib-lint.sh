@@ -50,11 +50,23 @@ cmd_orphans() {
 # ==============================================================================
 # COMMAND: stale
 # ==============================================================================
-# List pages not updated within the threshold (default 30 days).
+# List pages whose age exceeds their staleness threshold.
+#
+# Threshold resolution:
+#   - If a numeric argument is supplied, it is used globally for every file
+#     (preserves the historical CLI contract: `vault-tools.sh stale 14`).
+#   - Otherwise, each file's threshold is resolved from
+#     .vault/schemas/staleness-config.json via resolve_stale_threshold(),
+#     taking the most restrictive matching domain/type override.
+# Pages whose status matches `exempt_statuses` in the config are skipped.
 
 cmd_stale() {
-    local threshold="${1:-$DEFAULT_STALE_DAYS}"
-    header "Stale Pages (not updated in ${threshold}+ days)"
+    local explicit_threshold=""
+    if [[ $# -gt 0 ]]; then
+        explicit_threshold="$1"
+    fi
+    local header_label="${explicit_threshold:-per-file (staleness-config.json)}"
+    header "Stale Pages (threshold: ${header_label})"
 
     local today_ts
     today_ts=$(date +%s)
@@ -64,6 +76,12 @@ cmd_stale() {
         local fm
         fm=$(extract_fm "$file")
         [[ -z "$fm" ]] && continue
+
+        local status
+        status=$(fm_field "status" "$fm")
+        if is_stale_exempt "$status"; then
+            continue
+        fi
 
         local updated
         updated=$(fm_field "updated" "$fm")
@@ -83,12 +101,19 @@ cmd_stale() {
         updated_ts=$(date -d "$updated" +%s 2>/dev/null || date -j -f "%Y-%m-%d" "$updated" +%s 2>/dev/null || echo "0")
         [[ "$updated_ts" == "0" ]] && continue
 
+        local file_threshold
+        if [[ -n "$explicit_threshold" ]]; then
+            file_threshold="$explicit_threshold"
+        else
+            file_threshold=$(resolve_stale_threshold "$fm")
+        fi
+
         local age_days=$(( (today_ts - updated_ts) / 86400 ))
-        if [[ $age_days -ge $threshold ]]; then
+        if [[ $age_days -ge $file_threshold ]]; then
             local relative="${file#${VAULT_ROOT}/}"
             local title
             title=$(fm_field "title" "$fm")
-            warning "${relative} — \"${title}\" (${age_days} days old)"
+            warning "${relative} — \"${title}\" (${age_days} days old, threshold ${file_threshold})"
             stale_count=$((stale_count + 1))
         fi
     done < <(wiki_files)
@@ -218,11 +243,25 @@ cmd_validate() {
 # COMMAND: lint
 # ==============================================================================
 # Full vault lint — runs all checks and generates a report.
+#
+# Flags:
+#   --report   Write a structured markdown report to
+#              memory/notes/lint-report-YYYY-MM-DD.md (B3).
 
 cmd_lint() {
+    local write_report=false
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --report) write_report=true; shift ;;
+            *) shift ;;
+        esac
+    done
+
     header "Full Vault Lint"
     local total_violations=0
     local total_warnings=0
+    local orphans=0
+    local stale=0
 
     # 1. Frontmatter validation
     subheader "Frontmatter validation"
@@ -264,7 +303,6 @@ cmd_lint() {
 
     # 4. Orphan check
     subheader "Orphan detection"
-    local orphans=0
     while IFS= read -r file; do
         local relative="${file#${VAULT_ROOT}/}"
         if [[ "$relative" == "wiki/index.md" ]] || [[ "$relative" == "wiki/log.md" ]]; then
@@ -278,15 +316,19 @@ cmd_lint() {
     done < <(wiki_files)
     ok "Orphan scan complete (${orphans} found)"
 
-    # 5. Stale content check
-    subheader "Staleness check (${DEFAULT_STALE_DAYS} day threshold)"
-    local stale=0
+    # 5. Stale content check — per-domain/type thresholds via resolve_stale_threshold
+    subheader "Staleness check (per-file via staleness-config.json)"
     local today_ts
     today_ts=$(date +%s)
     while IFS= read -r file; do
         local fm
         fm=$(extract_fm "$file")
         [[ -z "$fm" ]] && continue
+        local status
+        status=$(fm_field "status" "$fm")
+        if is_stale_exempt "$status"; then
+            continue
+        fi
         local updated
         updated=$(fm_field "updated" "$fm")
         [[ -z "$updated" ]] && continue
@@ -296,10 +338,12 @@ cmd_lint() {
         local updated_ts
         updated_ts=$(date -d "$updated" +%s 2>/dev/null || echo "0")
         [[ "$updated_ts" == "0" ]] && continue
+        local file_threshold
+        file_threshold=$(resolve_stale_threshold "$fm")
         local age_days=$(( (today_ts - updated_ts) / 86400 ))
-        if [[ $age_days -ge $DEFAULT_STALE_DAYS ]]; then
+        if [[ $age_days -ge $file_threshold ]]; then
             local relative="${file#${VAULT_ROOT}/}"
-            warning "${relative}: stale (${age_days} days)"
+            warning "${relative}: stale (${age_days} days, threshold ${file_threshold})"
             stale=$((stale + 1))
             total_warnings=$((total_warnings + 1))
         fi
@@ -336,6 +380,10 @@ cmd_lint() {
     echo "  Warnings (advisory):   ${total_warnings}"
     echo ""
 
+    if $write_report; then
+        _write_lint_report "$total_violations" "$total_warnings" "$orphans" "$stale"
+    fi
+
     if [[ $total_violations -gt 0 ]]; then
         error "Lint failed with ${total_violations} violation(s)"
         return 1
@@ -343,4 +391,80 @@ cmd_lint() {
         ok "Lint passed"
         return 0
     fi
+}
+
+# ==============================================================================
+# INTERNAL: _write_lint_report
+# ==============================================================================
+# Writes a structured lint report to memory/notes/lint-report-YYYY-MM-DD.md.
+# Frontmatter is valid per the schema; content is kept under the SR-002
+# 200-line soft target so the file remains agent-readable.
+# Called only when cmd_lint is invoked with --report.
+
+_write_lint_report() {
+    local violations="$1" warnings="$2" orphans="$3" stale="$4"
+    local report_date
+    report_date=$(date +%Y-%m-%d)
+    local notes_dir="${MEMORY_DIR}/notes"
+    local report_file="${notes_dir}/lint-report-${report_date}.md"
+
+    mkdir -p "$notes_dir"
+
+    cat > "$report_file" <<EOF
+---
+title: "Lint Report ${report_date}"
+type: report
+created: ${report_date}
+updated: ${report_date}
+status: active
+tags:
+  - type/report
+  - lifecycle/active
+  - format/log
+  - agent/generated
+owner: agent
+confidence: high
+---
+
+# Lint Report — ${report_date}
+
+Automated vault lint output. Regenerated each time
+\`vault-tools.sh lint --report\` runs.
+
+## Summary
+
+| Metric                | Count |
+|-----------------------|-------|
+| Violations (blocking) | ${violations} |
+| Warnings (advisory)   | ${warnings} |
+| Orphan pages          | ${orphans} |
+| Stale pages           | ${stale} |
+
+## Recommendations
+
+EOF
+
+    {
+        if [[ $violations -gt 0 ]]; then
+            echo "- ${violations} blocking violation(s). See lint console output for details."
+        fi
+        if [[ $orphans -gt 0 ]]; then
+            echo "- ${orphans} orphan page(s) have no inbound links. Add links or archive."
+        fi
+        if [[ $stale -gt 0 ]]; then
+            echo "- ${stale} stale page(s) exceed their per-domain or per-type threshold. Review and update."
+        fi
+        if [[ $violations -eq 0 && $warnings -eq 0 && $orphans -eq 0 && $stale -eq 0 ]]; then
+            echo "_Vault is healthy. No action needed._"
+        fi
+    } >> "$report_file"
+
+    # Soft 200-line cap (SR-002 target)
+    local report_lines
+    report_lines=$(wc -l < "$report_file" | tr -d ' ')
+    if [[ $report_lines -gt 200 ]]; then
+        warning "Lint report is ${report_lines} lines (SR-002 target: 200)"
+    fi
+
+    ok "Lint report written to memory/notes/lint-report-${report_date}.md"
 }

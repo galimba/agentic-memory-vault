@@ -1,6 +1,7 @@
 {
   "$schema": "content-hardening-policy-v1",
-  "enabled": false,
+  "enabled": true,
+  "enforcement": "warn",
   "checks": {
     "detect_instruction_injection": true,
     "max_deletion_percentage": 20,

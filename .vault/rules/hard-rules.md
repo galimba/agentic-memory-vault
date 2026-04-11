@@ -201,3 +201,30 @@ from it.
 
 **Enforcement**: Pre-commit hook rejects any commit that modifies files
 in `.github/` or `templates/`.
+
+---
+
+## HR-015: Append-Only Logs
+
+**Rule**: `wiki/log.md` and files under `memory/logs/` are append-only.
+Commits that delete or modify existing lines in these files are rejected.
+Only pure additions are allowed.
+
+**Rationale**: The operations log is the vault's audit trail. If agents
+can rewrite log history, there is no reliable record of what happened.
+Append-only enforcement ensures accountability and aligns with the
+"git-as-memory" pattern where logs serve as immutable records.
+
+**Enforcement**: Pre-commit hook (`check_hr015` in
+`.vault/hooks/checks/check-hr015.sh`) inspects
+`git diff --cached --numstat` for each staged log file and rejects the
+commit if the deletion count is non-zero.
+
+**Exception**: Set the `LOG_EDIT_ALLOWED=1` environment variable to bypass
+the check for legitimate corrections (e.g., fixing a typo in a log
+entry). Document the reason in the commit message when you do.
+
+**Note**: HR-014 is intentionally reserved for future content-policy
+hard-rule promotion. The content-policy check currently ships as a
+configurable warn-level policy (see
+`.vault/schemas/content-policy.json`), not as a hard rule.

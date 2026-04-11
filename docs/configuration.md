@@ -85,6 +85,17 @@ Configure per-domain staleness in `.vault/schemas/staleness-config.json`:
 - `type_thresholds`: Override by content type
 - `exempt_statuses`: Pages with these statuses are never flagged as stale
 
+Since v0.2.0 this config is actually read at lint time. `cmd_stale` and
+`cmd_lint` resolve a per-file threshold by taking the most restrictive
+matching override (minimum of default, matching domain tag, matching
+type), and skip any file whose status is in `exempt_statuses`. Passing
+an explicit threshold (`vault-tools.sh stale 14`) still overrides the
+config globally for that run.
+
+If `jq` is installed it is used for reliable JSON parsing; otherwise a
+bash-only fallback handles the flat JSON shape. Installing `jq` is
+recommended but not required.
+
 ## Git Workflow Configuration
 
 ### Branch protection (recommended)
