@@ -7,7 +7,7 @@ it for your organization, and how to create new rules.
 
 The vault enforces two categories of rules:
 
-**Hard rules** (HR-001 through HR-013) are non-negotiable constraints
+**Hard rules** (HR-001 through HR-015) are non-negotiable constraints
 enforced by the pre-commit git hook. A commit that violates any hard
 rule is rejected. Hard rules protect vault integrity — they prevent
 data loss, corruption, and security breaches.

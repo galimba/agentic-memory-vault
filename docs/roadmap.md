@@ -43,6 +43,7 @@ community input on design questions before implementation begins.
 
 | Version | Highlights |
 |---------|-----------|
+| v0.3.0 | HR-014: No file deletion — agents must archive instead of delete |
 | v0.2.0 | Per-domain staleness thresholds, content policy (warn mode), lint reports, append-only logs (HR-015), three-tier agent boundaries |
 | v0.1.0 | Three-layer architecture, 13 hard rules, 15 soft rules, 200+ tags, modular hook checks, skill hardening framework |
 

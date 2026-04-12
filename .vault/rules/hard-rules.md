@@ -204,6 +204,37 @@ in `.github/` or `templates/`.
 
 ---
 
+## HR-014: No File Deletion
+
+**Rule**: Agents must not delete files from `wiki/` or `memory/`.
+To remove content from the active vault, set `status: archived` in
+the file's frontmatter. The file remains in the working tree and
+git history but is excluded from active queries, lint reports, and
+staleness checks by its archived status.
+
+**Rationale**: Every documented AI agent data-loss incident involved
+file deletion — whether through `git rm`, file truncation, or
+accidental removal during refactoring. Preventing deletion
+structurally eliminates the entire failure class. This pattern is
+independently used by Zep/Graphiti (invalid_at timestamps), Mem0
+(invalid relationship marking), and SoulClaw (immutable core memory).
+The vault's implementation uses `status: archived` as the
+invalidation marker, which the existing staleness and lint systems
+already respect.
+
+**Enforcement**: Pre-commit hook (`check_hr014` in
+`.vault/hooks/checks/check-hr014.sh`) checks for deleted files
+(`--diff-filter=D`) and renames out of protected directories
+(`--diff-filter=R`) in `wiki/` and `memory/`. Rejects the commit
+if any are found.
+
+**Exception**: Set `VAULT_ALLOW_DELETE=1` environment variable to
+bypass for legitimate cleanup (removing accidentally committed
+secrets, PII, or test artifacts). Document the reason in the commit
+message.
+
+---
+
 ## HR-015: Append-Only Logs
 
 **Rule**: `wiki/log.md` and files under `memory/logs/` are append-only.
@@ -224,7 +255,3 @@ commit if the deletion count is non-zero.
 the check for legitimate corrections (e.g., fixing a typo in a log
 entry). Document the reason in the commit message when you do.
 
-**Note**: HR-014 is intentionally reserved for future content-policy
-hard-rule promotion. The content-policy check currently ships as a
-configurable warn-level policy (see
-`.vault/schemas/content-policy.json`), not as a hard rule.

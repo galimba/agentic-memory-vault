@@ -7,14 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+<!-- Nothing yet -->
+
+## [0.3.0] - 2026-04-12
+
 ### Added
 
+- HR-014: Agents cannot delete files from `wiki/` or `memory/`. Set
+  `status: archived` in frontmatter instead. Use `VAULT_ALLOW_DELETE=1`
+  for legitimate cleanup. This rule closes the last unprotected
+  deletion surface in the vault.
+- "Never delete files" added to the Boundaries block in CLAUDE.md,
+  AGENTS.md, and CODEX.md.
 - `docs/roadmap.md` linking to 11 open GitHub Issues covering deferred
   features from the v0.2.0 improvement work.
 - Priority, type, and scope label taxonomy on the issue tracker to give
   contributors a consistent triage vocabulary.
 - `infra` added to the `CONTRIBUTING.md` conventional-commit type list for
   CI and tooling work (used by the new smoke test harness issue).
+
+### Changed
+
+- Hard rule count updated from 14 to 15 across all documentation.
+- `docs/rules-customization.md` template updated: next available
+  rule ID is now HR-016.
+- Vault version bumped to 0.3.0 in CLAUDE.md, AGENTS.md, README.md.
 
 ## [0.2.0] - 2026-04-11
 
@@ -105,4 +122,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `docs/rules-customization.md` — creating new rules, industry-specific templates
 - Architecture diagrams embedded in README (`docs/architecture.png`, `docs/vaults.png`)
 
+[Unreleased]: https://github.com/galimba/agentic-memory-vault/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/galimba/agentic-memory-vault/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/galimba/agentic-memory-vault/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/galimba/agentic-memory-vault/releases/tag/v0.1.0

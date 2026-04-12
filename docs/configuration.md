@@ -129,7 +129,7 @@ Format: `[operation] description`
 
 Located at `.vault/hooks/pre-commit.sh`, installed to `.git/hooks/pre-commit` by `init.sh`.
 
-Enforces all 13 hard rules (HR-001 through HR-013). Violations block the commit with a clear error message identifying the rule, file, and issue.
+Enforces all 15 hard rules (HR-001 through HR-015). Violations block the commit with a clear error message identifying the rule, file, and issue.
 
 ### Customizing the pre-commit hook
 
