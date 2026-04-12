@@ -21,7 +21,7 @@ bash --version      # 4.0+
 1. Clone the boilerplate:
 
 ```bash
-git clone https://github.com/your-org/agentic-memory-vault.git my-vault
+git clone https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}.git my-vault
 cd my-vault
 ```
 
@@ -31,16 +31,22 @@ cd my-vault
 bash .vault/scripts/init.sh
 ```
 
-The script prompts for four values:
+The script prompts for six values:
 
 | Prompt | Example | What it does |
 |--------|---------|--------------|
 | Vault name | `acme-memory` | Replaces `{{VAULT_NAME}}` in all `.md` files |
 | Organization | `Acme Corp` | Replaces `{{ORG_NAME}}` everywhere |
+| GitHub org | `acme-corp` | Replaces `{{GITHUB_ORG}}` in URLs and config |
 | Platform | `claude-code` | Sets `{{PLATFORM}}` (claude-code, codex, copilot, cursor, custom) |
+| Repository name | `my-vault` | Replaces `{{REPO_NAME}}` in URLs and config |
+| Maintainer | `my-team` | Sets `{{MAINTAINER}}` in CODEOWNERS and CODE_OF_CONDUCT |
 | Date | (auto-detected) | Sets `{{INIT_DATE}}` to today |
 
-The script also initializes git (if needed), installs the pre-commit hook, and makes all scripts executable.
+The script also offers to reorganize template documentation for your instance
+(README, onboarding guide, changelog), initializes git (if needed), offers to
+update the remote origin, installs the pre-commit hook, and makes all scripts
+executable. State is saved to `.vault/.initialized`.
 
 3. Verify initialization:
 

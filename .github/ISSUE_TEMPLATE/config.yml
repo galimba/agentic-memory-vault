@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
   - name: Questions & Discussion
-    url: https://github.com/galimba/agentic-memory-vault/discussions
+    url: https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}/discussions
     about: Ask questions, share ideas, and discuss vault patterns
   - name: Security Vulnerability
-    url: https://github.com/galimba/agentic-memory-vault/security/advisories/new
+    url: https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}/security/advisories/new
     about: Report security vulnerabilities privately

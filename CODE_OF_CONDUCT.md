@@ -14,6 +14,6 @@ respectful, and aligned with the project's values.
 
 ## Enforcement
 
-Instances of unacceptable behavior may be reported to: **[INSERT CONTACT METHOD]**
+Instances of unacceptable behavior may be reported to: **@{{MAINTAINER}}**
 
 All reports will be reviewed and investigated promptly and fairly.

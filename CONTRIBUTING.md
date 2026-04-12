@@ -1,4 +1,4 @@
-# Contributing to Memory Vault Boilerplate
+# Contributing to {{VAULT_NAME}}
 
 ## Welcome
 
@@ -84,7 +84,7 @@ docs(templates): add report template with executive summary section
 Minimal — no build step required.
 
 ```bash
-git clone https://github.com/galimba/agentic-memory-vault.git
+git clone https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}.git
 cd agentic-memory-vault
 ```
 
