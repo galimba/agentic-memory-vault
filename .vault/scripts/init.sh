@@ -3,7 +3,7 @@
 # VAULT INITIALIZATION SCRIPT
 # ==============================================================================
 # Run this after cloning the boilerplate to configure for your organization.
-# This file is EXEMPT from the 500-line code minimum (HR-005).
+# This file is EXEMPT from the HR-005 code length limit (warn 400, block 600).
 # Usage: bash .vault/scripts/init.sh
 # ==============================================================================
 
@@ -20,7 +20,7 @@ if [[ -f "${VAULT_ROOT}/.vault/.initialized" ]]; then
     echo ""
     cat "${VAULT_ROOT}/.vault/.initialized"
     echo ""
-    read -rp "Re-initialize? This will overwrite current configuration. [y/N]: " REINIT
+    read -rp "Re-run init? Placeholders already substituted in files will not change. Scaffolding steps will re-run. [y/N]: " REINIT
     if [[ ! "${REINIT}" =~ ^[Yy] ]]; then
         echo "Aborted."
         exit 0
@@ -128,11 +128,23 @@ echo "  Done"
 
 # Replace placeholders in YAML config files (.github/)
 echo "Replacing placeholders in config files..."
-find "${VAULT_ROOT}/.github" -maxdepth 5 -name "*.yml" ! -type l -type f -exec sed -i \
-    -e "s/{{GITHUB_ORG}}/${GITHUB_ORG_SED}/g" \
-    -e "s/{{REPO_NAME}}/${REPO_NAME_SED}/g" \
-    -e "s/{{MAINTAINER}}/${MAINTAINER_SED}/g" \
-    {} + 2>/dev/null || true
+if [[ -d "${VAULT_ROOT}/.github" ]]; then
+    find "${VAULT_ROOT}/.github" -maxdepth 5 -name "*.yml" ! -type l -type f -exec sed -i \
+        -e "s/{{GITHUB_ORG}}/${GITHUB_ORG_SED}/g" \
+        -e "s/{{REPO_NAME}}/${REPO_NAME_SED}/g" \
+        -e "s/{{MAINTAINER}}/${MAINTAINER_SED}/g" \
+        {} +
+else
+    echo "  WARNING: .github/ directory not found, skipping YAML substitution"
+fi
+# CODEOWNERS has no extension -- sed it directly
+if [[ -f "${VAULT_ROOT}/.github/CODEOWNERS" ]]; then
+    sed -i \
+        -e "s/{{GITHUB_ORG}}/${GITHUB_ORG_SED}/g" \
+        -e "s/{{REPO_NAME}}/${REPO_NAME_SED}/g" \
+        -e "s/{{MAINTAINER}}/${MAINTAINER_SED}/g" \
+        "${VAULT_ROOT}/.github/CODEOWNERS"
+fi
 echo "  Done"
 
 # ==============================================================================
@@ -164,19 +176,27 @@ SCAFFOLD="${SCAFFOLD:-Y}"
 if [[ "${SCAFFOLD}" =~ ^[Yy] ]]; then
     echo ""
 
-    # 1. Move template README, install instance README
-    {
-        echo "> This file contains the original template documentation."
-        echo "> Upstream template: https://github.com/galimba/agentic-memory-vault"
-        echo ""
-        cat "${VAULT_ROOT}/README.md"
-    } > "${VAULT_ROOT}/docs/vault-template-readme.md"
-    cp "${VAULT_ROOT}/templates/readme-instance.md" "${VAULT_ROOT}/README.md"
-    echo "  README.md replaced with instance gateway"
+    # 1. Archive template README, install instance README
+    if [[ -f "${VAULT_ROOT}/templates/readme-instance.md" ]]; then
+        {
+            echo "> This file contains the original template documentation."
+            echo "> Upstream template: https://github.com/galimba/agentic-memory-vault"
+            echo ""
+            cat "${VAULT_ROOT}/README.md"
+        } > "${VAULT_ROOT}/docs/vault-template-readme.md"
+        cp "${VAULT_ROOT}/templates/readme-instance.md" "${VAULT_ROOT}/README.md"
+        echo "  README.md replaced with instance gateway"
+    else
+        echo "  WARNING: templates/readme-instance.md not found, skipping README replacement"
+    fi
 
     # 2. Generate onboarding guide
-    cp "${VAULT_ROOT}/templates/onboarding-instance.md" "${VAULT_ROOT}/docs/onboarding.md"
-    echo "  docs/onboarding.md generated"
+    if [[ -f "${VAULT_ROOT}/templates/onboarding-instance.md" ]]; then
+        cp "${VAULT_ROOT}/templates/onboarding-instance.md" "${VAULT_ROOT}/docs/onboarding.md"
+        echo "  docs/onboarding.md generated"
+    else
+        echo "  WARNING: templates/onboarding-instance.md not found, skipping onboarding guide"
+    fi
 
     # 3. Replace CHANGELOG with a fresh one
     cat > "${VAULT_ROOT}/CHANGELOG.md" <<CHANGELOG_EOF
@@ -200,28 +220,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 CHANGELOG_EOF
     echo "  CHANGELOG.md replaced with fresh instance changelog"
 
-    # 4. Clean up CONTRIBUTING.md — remove template-specific "Two Types" section
+    # 4. Clean up CONTRIBUTING.md -- remove template-specific "Two Types" section
     #    Match by content (not line numbers) since earlier sed may have shifted lines
-    sed -i '/^## Two Types of Contributions$/,/^## How to Report Bugs$/{/^## How to Report Bugs$/!d;}' \
-        "${VAULT_ROOT}/CONTRIBUTING.md"
-    echo "  CONTRIBUTING.md updated for instance"
+    if [[ -f "${VAULT_ROOT}/CONTRIBUTING.md" ]]; then
+        sed -i '/^## Two Types of Contributions$/,/^## How to Report Bugs$/{/^## How to Report Bugs$/!d;}' \
+            "${VAULT_ROOT}/CONTRIBUTING.md"
+        echo "  CONTRIBUTING.md updated for instance"
+    else
+        echo "  WARNING: CONTRIBUTING.md not found, skipping cleanup"
+    fi
 
     # 5. Reset vault version from template version to instance 0.1.0
     for verfile in CLAUDE.md AGENTS.md; do
-        sed -i 's/\*\*Vault Version\*\*: `0\.[0-9]\+\.[0-9]\+`/**Vault Version**: `0.1.0`/' \
-            "${VAULT_ROOT}/${verfile}" 2>/dev/null || true
+        if [[ -f "${VAULT_ROOT}/${verfile}" ]]; then
+            sed -i 's/\*\*Vault Version\*\*: `0\.[0-9]\+\.[0-9]\+`/**Vault Version**: `0.1.0`/' \
+                "${VAULT_ROOT}/${verfile}"
+        else
+            echo "  WARNING: ${verfile} not found, cannot reset version"
+        fi
     done
     echo "  Vault version reset to 0.1.0 in CLAUDE.md and AGENTS.md"
 
     # 6. Move template roadmap
-    {
-        echo "> This file contains the original template roadmap."
-        echo "> Upstream template: https://github.com/galimba/agentic-memory-vault"
-        echo ""
-        cat "${VAULT_ROOT}/docs/roadmap.md"
-    } > "${VAULT_ROOT}/docs/vault-template-roadmap.md"
-    rm "${VAULT_ROOT}/docs/roadmap.md"
-    echo "  docs/roadmap.md moved to docs/vault-template-roadmap.md"
+    if [[ -f "${VAULT_ROOT}/docs/roadmap.md" ]]; then
+        {
+            echo "> This file contains the original template roadmap."
+            echo "> Upstream template: https://github.com/galimba/agentic-memory-vault"
+            echo ""
+            cat "${VAULT_ROOT}/docs/roadmap.md"
+        } > "${VAULT_ROOT}/docs/vault-template-roadmap.md"
+        rm "${VAULT_ROOT}/docs/roadmap.md"
+        echo "  docs/roadmap.md moved to docs/vault-template-roadmap.md"
+    else
+        echo "  docs/roadmap.md already moved (skipped)"
+    fi
 
     echo ""
     echo "  Instance scaffolding complete"
@@ -342,14 +374,14 @@ fi
 # SAVE INITIALIZATION STATE
 # ==============================================================================
 cat > "${VAULT_ROOT}/.vault/.initialized" <<INIT_EOF
-vault_name=${VAULT_NAME}
-org_name=${ORG_NAME}
-repo_name=${REPO_NAME}
-github_org=${GITHUB_ORG}
-maintainer=${MAINTAINER}
-platform=${PLATFORM}
-init_date=${INIT_DATE}
-template_version=0.4.0
+vault_name="${VAULT_NAME}"
+org_name="${ORG_NAME}"
+repo_name="${REPO_NAME}"
+github_org="${GITHUB_ORG}"
+maintainer="${MAINTAINER}"
+platform="${PLATFORM}"
+init_date="${INIT_DATE}"
+template_version="0.4.0"
 INIT_EOF
 echo "  State saved to .vault/.initialized"
 

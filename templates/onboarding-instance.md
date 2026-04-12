@@ -1,4 +1,4 @@
-# Onboarding Guide — {{VAULT_NAME}}
+# Onboarding Guide -- {{VAULT_NAME}}
 
 Welcome to {{VAULT_NAME}}, {{ORG_NAME}}'s knowledge vault. This guide covers
 everything you need to start contributing, whether you write code or not.
@@ -12,9 +12,9 @@ itself through automated linting and health checks.
 
 Three operations drive everything:
 
-- **INGEST** — An agent reads a source document and creates structured wiki pages
-- **QUERY** — An agent answers questions using the vault's knowledge
-- **LINT** — Automated checks find stale content, orphan pages, and rule violations
+- **INGEST** -- An agent reads a source document and creates structured wiki pages
+- **QUERY** -- An agent answers questions using the vault's knowledge
+- **LINT** -- Automated checks find stale content, orphan pages, and rule violations
 
 ## For Engineers
 
@@ -76,14 +76,14 @@ It checks frontmatter, tags, line counts, orphans, staleness, and index complete
 
 | Rule | Impact |
 |------|--------|
-| HR-001 | `raw/` is immutable — add files via PRs only |
+| HR-001 | `raw/` is immutable -- add files via PRs only |
 | HR-002 | Every wiki page needs valid YAML frontmatter |
 | HR-003 | Every wiki page needs at least one approved tag |
 | HR-004 | Markdown pages: warn at 200 lines, block at 400 |
 | HR-006 | Wiki page titles must be unique |
 | HR-007 | The `updated` frontmatter field must be accurate |
 | HR-008 | Every wiki page must appear in `wiki/index.md` |
-| HR-014 | Never delete wiki/memory files — archive instead |
+| HR-014 | Never delete wiki/memory files -- archive instead |
 | HR-015 | Log files are append-only |
 
 **Soft rules** are guidelines that won't block commits but should be followed:
@@ -99,7 +99,7 @@ Full rules: `.vault/rules/hard-rules.md` and `.vault/rules/soft-rules.md`
 
 ### The 200-Line Page Budget
 
-Wiki pages should target 80-150 lines. This is not arbitrary — it is sized for
+Wiki pages should target 80-150 lines. This is not arbitrary -- it is sized for
 agent context windows. A 200-line page fits comfortably in an agent's working
 memory alongside the index and other context. Pages over 400 lines are blocked
 by HR-004. If a page grows too large, split it into linked sub-pages.
@@ -109,7 +109,7 @@ by HR-004. If a page grows too large, split it into linked sub-pages.
 Knowledge decays. The vault fights this with:
 
 - **Staleness detection**: Pages not updated in 30+ days are flagged during lint
-  (threshold varies by domain — see `.vault/schemas/staleness-config.json`)
+  (threshold varies by domain -- see `.vault/schemas/staleness-config.json`)
 - **Orphan detection**: Pages with no inbound links are flagged
 - **Confidence tracking**: Each page has a `confidence` field (high/medium/low/unverified)
 - **Regular lint runs**: Schedule weekly lints to catch drift early
@@ -161,7 +161,7 @@ in `memory/decisions/`.
 
 ## Getting Help
 
-- [Getting Started Guide](getting-started.md) �� Detailed setup and first operations
-- [Configuration Guide](configuration.md) — Customizing rules, tags, and thresholds
-- [SUPPORT.md](../SUPPORT.md) — How to get help and report issues
-- [Full Template Reference](vault-template-readme.md) — Complete architecture, rules, FAQ
+- [Getting Started Guide](getting-started.md) -- Detailed setup and first operations
+- [Configuration Guide](configuration.md) -- Customizing rules, tags, and thresholds
+- [SUPPORT.md](../SUPPORT.md) -- How to get help and report issues
+- [Full Template Reference](vault-template-readme.md) -- Complete architecture, rules, FAQ

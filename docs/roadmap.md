@@ -12,17 +12,17 @@ organized by priority. Contributions are welcome on any item — see
 
 | Feature | Issue | Priority | Labels |
 |---------|-------|----------|--------|
-| Source verification command | [#7](https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}/issues/7) | Deferred | `help wanted` |
-| Decay scoring for freshness | [#8](https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}/issues/8) | Low | `discussion` |
-| Auto-split index for large vaults | [#9](https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}/issues/9) | Medium | `help wanted` |
-| Incremental index update | [#10](https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}/issues/10) | Medium | `good first issue` |
-| MEMORY.md root pointer index | [#11](https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}/issues/11) | Deferred | `discussion` |
-| Lifecycle tier tags | [#12](https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}/issues/12) | Low | `discussion` |
-| Multi-agent namespacing | [#13](https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}/issues/13) | Deferred | `discussion` |
-| Git blame helper | [#14](https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}/issues/14) | Low | `good first issue` |
-| RFC 2119 language pass | [#15](https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}/issues/15) | Low | `good first issue` |
-| Consolidation command | [#16](https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}/issues/16) | Low | `discussion` |
-| Smoke test harness | [#17](https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}/issues/17) | Medium | `help wanted` |
+| Source verification command | [#7](https://github.com/galimba/agentic-memory-vault/issues/7) | Deferred | `help wanted` |
+| Decay scoring for freshness | [#8](https://github.com/galimba/agentic-memory-vault/issues/8) | Low | `discussion` |
+| Auto-split index for large vaults | [#9](https://github.com/galimba/agentic-memory-vault/issues/9) | Medium | `help wanted` |
+| Incremental index update | [#10](https://github.com/galimba/agentic-memory-vault/issues/10) | Medium | `good first issue` |
+| MEMORY.md root pointer index | [#11](https://github.com/galimba/agentic-memory-vault/issues/11) | Deferred | `discussion` |
+| Lifecycle tier tags | [#12](https://github.com/galimba/agentic-memory-vault/issues/12) | Low | `discussion` |
+| Multi-agent namespacing | [#13](https://github.com/galimba/agentic-memory-vault/issues/13) | Deferred | `discussion` |
+| Git blame helper | [#14](https://github.com/galimba/agentic-memory-vault/issues/14) | Low | `good first issue` |
+| RFC 2119 language pass | [#15](https://github.com/galimba/agentic-memory-vault/issues/15) | Low | `good first issue` |
+| Consolidation command | [#16](https://github.com/galimba/agentic-memory-vault/issues/16) | Low | `discussion` |
+| Smoke test harness | [#17](https://github.com/galimba/agentic-memory-vault/issues/17) | Medium | `help wanted` |
 
 ## Where to Start
 

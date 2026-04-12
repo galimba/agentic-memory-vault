@@ -158,8 +158,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `docs/rules-customization.md` — creating new rules, industry-specific templates
 - Architecture diagrams embedded in README (`docs/architecture.png`, `docs/vaults.png`)
 
-[Unreleased]: https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}/compare/v0.4.0...HEAD
-[0.4.0]: https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}/compare/v0.3.0...v0.4.0
-[0.3.0]: https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}/compare/v0.2.0...v0.3.0
-[0.2.0]: https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}/releases/tag/v0.1.0
+[Unreleased]: https://github.com/galimba/agentic-memory-vault/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/galimba/agentic-memory-vault/compare/v0.3.0...v0.4.0
+[0.3.0]: https://github.com/galimba/agentic-memory-vault/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/galimba/agentic-memory-vault/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/galimba/agentic-memory-vault/releases/tag/v0.1.0

@@ -1,6 +1,6 @@
 # {{VAULT_NAME}}
 
-Knowledge vault for {{ORG_NAME}} — a git-based knowledge base managed by AI agents and humans.
+Knowledge vault for {{ORG_NAME}} -- a git-based knowledge base managed by AI agents and humans.
 
 Built from the [agentic-memory-vault](https://github.com/galimba/agentic-memory-vault) template.
 
@@ -23,19 +23,19 @@ bash .vault/scripts/vault-tools.sh doctor
 
 Agents perform three operations:
 
-- **INGEST** — Process source documents from `raw/` into structured wiki pages
-- **QUERY** — Answer questions using vault contents, with `[[wikilink]]` citations
-- **LINT** — Health-check the vault for stale content, orphans, and rule violations
+- **INGEST** -- Process source documents from `raw/` into structured wiki pages
+- **QUERY** -- Answer questions using vault contents, with `[[wikilink]]` citations
+- **LINT** -- Health-check the vault for stale content, orphans, and rule violations
 
 ## Directory Map
 
 ```
-raw/          Source documents (immutable — add via PRs)
+raw/          Source documents (immutable -- add via PRs)
 wiki/         Agent-generated knowledge pages
   sources/    Summaries of ingested documents
   concepts/   Ideas, patterns, principles
   entities/   People, companies, tools
-  index.md    Master catalog — agents read this first
+  index.md    Master catalog -- agents read this first
   log.md      Append-only operations log
 memory/       Operational state (decisions, logs, notes)
 .vault/       Configuration (rules, schemas, hooks, scripts)
@@ -49,11 +49,11 @@ These rules are enforced by git hooks and will block your commit:
 
 | Rule | What it means |
 |------|--------------|
-| HR-001 | Never modify files in `raw/` — it is immutable |
+| HR-001 | Never modify files in `raw/` -- it is immutable |
 | HR-002 | Every wiki page needs valid YAML frontmatter |
 | HR-004 | Markdown pages must stay under 400 lines (warning at 200) |
 | HR-008 | Every wiki page must be registered in `wiki/index.md` |
-| HR-014 | Never delete files in `wiki/` or `memory/` — set `status: archived` instead |
+| HR-014 | Never delete files in `wiki/` or `memory/` -- set `status: archived` instead |
 
 Full rules: `.vault/rules/hard-rules.md` and `.vault/rules/soft-rules.md`
 
@@ -77,11 +77,11 @@ bash .vault/scripts/vault-tools.sh help      # See all commands
 
 ## Links
 
-- [Onboarding Guide](docs/onboarding.md) — Detailed guide for new team members
-- [Getting Started](docs/getting-started.md) — Setup, first ingestion, first query
-- [Template Reference](docs/vault-template-readme.md) — Full architecture, rules, and FAQ
-- [Contributing](CONTRIBUTING.md) — How to contribute to this vault
-- [Agent Configuration](CLAUDE.md) — Full agent specification
+- [Onboarding Guide](docs/onboarding.md) -- Detailed guide for new team members
+- [Getting Started](docs/getting-started.md) -- Setup, first ingestion, first query
+- [Template Reference](docs/vault-template-readme.md) -- Full architecture, rules, and FAQ
+- [Contributing](CONTRIBUTING.md) -- How to contribute to this vault
+- [Agent Configuration](CLAUDE.md) -- Full agent specification
 
 ## Platform Support
 

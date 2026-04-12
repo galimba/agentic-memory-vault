@@ -221,9 +221,10 @@ cmd_doctor() {
     else
         ok ".vault/.initialized exists"
     fi
-    if grep -q '{{VAULT_NAME}}\|{{ORG_NAME}}\|{{INIT_DATE}}\|{{PLATFORM}}\|{{GITHUB_ORG}}\|{{REPO_NAME}}\|{{MAINTAINER}}' \
-        "${VAULT_ROOT}/CLAUDE.md" 2>/dev/null; then
-        warning "Placeholders still present in CLAUDE.md — init.sh may not have completed"
+    if [[ ! -f "${VAULT_ROOT}/CLAUDE.md" ]]; then
+        error "CLAUDE.md missing -- cannot check for unresolved placeholders"
+    elif grep -qE '\{\{[A-Z_]+\}\}' "${VAULT_ROOT}/CLAUDE.md"; then
+        warning "Placeholders still present in CLAUDE.md -- init.sh may not have completed"
     else
         ok "No unresolved placeholders in CLAUDE.md"
     fi

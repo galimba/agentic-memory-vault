@@ -85,7 +85,7 @@ Minimal — no build step required.
 
 ```bash
 git clone https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}.git
-cd agentic-memory-vault
+cd {{REPO_NAME}}
 ```
 
 **Optional tools** (for running linters locally):
