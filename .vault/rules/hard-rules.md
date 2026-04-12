@@ -223,9 +223,10 @@ invalidation marker, which the existing staleness and lint systems
 already respect.
 
 **Enforcement**: Pre-commit hook (`check_hr014` in
-`.vault/hooks/checks/check-hr014.sh`) checks
-`git diff --cached --diff-filter=D` for deleted files in `wiki/`
-and `memory/`. Rejects the commit if any are found.
+`.vault/hooks/checks/check-hr014.sh`) checks for deleted files
+(`--diff-filter=D`) and renames out of protected directories
+(`--diff-filter=R`) in `wiki/` and `memory/`. Rejects the commit
+if any are found.
 
 **Exception**: Set `VAULT_ALLOW_DELETE=1` environment variable to
 bypass for legitimate cleanup (removing accidentally committed
