@@ -215,6 +215,20 @@ cmd_doctor() {
         fi
     done
 
+    subheader "Initialization State"
+    if [[ ! -f "${VAULT_ROOT}/.vault/.initialized" ]]; then
+        warning "Vault not initialized. Run: bash .vault/scripts/init.sh"
+    else
+        ok ".vault/.initialized exists"
+    fi
+    if [[ ! -f "${VAULT_ROOT}/CLAUDE.md" ]]; then
+        error "CLAUDE.md missing -- cannot check for unresolved placeholders"
+    elif grep -qE '\{\{[A-Z_]+\}\}' "${VAULT_ROOT}/CLAUDE.md"; then
+        warning "Placeholders still present in CLAUDE.md -- init.sh may not have completed"
+    else
+        ok "No unresolved placeholders in CLAUDE.md"
+    fi
+
     subheader "Git Hooks"
     local hook_path="${VAULT_ROOT}/.git/hooks/pre-commit"
     if [[ ! -x "$hook_path" ]]; then

@@ -1,6 +1,6 @@
-/.vault/     @galimba
-/.github/    @galimba
-/CLAUDE.md   @galimba
-/AGENTS.md   @galimba
-/CODEX.md    @galimba
-/templates/  @galimba
+/.vault/     @{{MAINTAINER}}
+/.github/    @{{MAINTAINER}}
+/CLAUDE.md   @{{MAINTAINER}}
+/AGENTS.md   @{{MAINTAINER}}
+/CODEX.md    @{{MAINTAINER}}
+/templates/  @{{MAINTAINER}}

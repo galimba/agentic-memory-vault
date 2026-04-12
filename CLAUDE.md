@@ -6,7 +6,7 @@
 
 - **Vault Name**: `{{VAULT_NAME}}` <!-- Replace during initialization -->
 - **Organization**: `{{ORG_NAME}}` <!-- Replace during initialization -->
-- **Vault Version**: `0.3.0`
+- **Vault Version**: `0.4.0`
 - **Initialized**: `{{INIT_DATE}}` <!-- Replace during initialization -->
 - **Primary Agent Platform**: `{{PLATFORM}}` <!-- claude-code | codex | copilot | cursor | custom -->
 

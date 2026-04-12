@@ -4,19 +4,35 @@ This guide covers every configurable aspect of the vault: identity fields, rules
 
 ## Identity Fields (CLAUDE.md / AGENTS.md)
 
-After running `init.sh`, these placeholders are replaced in all `.md` files:
+After running `init.sh`, these placeholders are replaced in all `.md` and `.yml` files:
 
 | Field | Location | Purpose |
 |-------|----------|---------|
-| `{{VAULT_NAME}}` | Identity section | Human-readable vault identifier |
+| `{{VAULT_NAME}}` | Identity section, README, CONTRIBUTING | Human-readable vault identifier |
 | `{{ORG_NAME}}` | Identity section | Your organization name |
 | `{{PLATFORM}}` | Identity section | Primary agent platform (`claude-code`, `codex`, `copilot`, `cursor`, `custom`) |
-| `{{INIT_DATE}}` | Identity section | Date the vault was initialized |
-| `{{GITHUB_ORG}}` | README, CONTRIBUTING, CHANGELOG | GitHub organization for repo URLs |
+| `{{INIT_DATE}}` | Identity section, frontmatter, CHANGELOG | Date the vault was initialized |
+| `{{GITHUB_ORG}}` | README, CONTRIBUTING, CHANGELOG, config.yml, roadmap | GitHub organization for repo URLs |
+| `{{REPO_NAME}}` | README, CONTRIBUTING, CHANGELOG, config.yml, roadmap | Repository name for repo URLs |
+| `{{MAINTAINER}}` | CODEOWNERS, CODE_OF_CONDUCT | GitHub maintainer user or team |
 
 To change these after initialization, search-and-replace across all `.md` files.
 The `init.sh` script uses `sed` and can be re-run, but it only replaces
 the `{{placeholder}}` syntax, not already-substituted values.
+
+## Instance Scaffolding
+
+During `init.sh`, you are offered the option to reorganize template documentation:
+
+- `README.md` is replaced with a compact instance gateway README
+- The original template README is preserved at `docs/vault-template-readme.md`
+- A starter onboarding guide is generated at `docs/onboarding.md`
+- `CHANGELOG.md` is replaced with a fresh instance changelog
+- `CONTRIBUTING.md` is updated for your repository
+- `docs/roadmap.md` is moved to `docs/vault-template-roadmap.md`
+
+This step is optional — declining it leaves all files in their template state
+(with placeholder URLs already substituted).
 
 ## Soft Rules
 
@@ -44,7 +60,7 @@ Agents read `soft-rules.md` during context loading. Changes take effect on the n
 
 ## Tag Taxonomy
 
-The full tag list lives in `.vault/rules/tags.md`. The vault ships with 200+ approved tags across 17 prefix categories.
+The full tag list lives in `.vault/rules/tags.md`. The vault ships with 200+ approved tags across 19 prefix categories.
 
 ### Adding custom tags
 
