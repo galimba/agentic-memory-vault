@@ -9,6 +9,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- Nothing yet -->
 
+## [0.4.0] - 2026-04-12
+
+### Added
+
+- Instance scaffolding phase in `init.sh`: reorganizes README, generates
+  onboarding guide, creates fresh CHANGELOG, updates CONTRIBUTING for
+  instance audience.
+- Instance README template (`templates/readme-instance.md`) and onboarding
+  template (`templates/onboarding-instance.md`).
+- `{{REPO_NAME}}` and `{{MAINTAINER}}` prompts during initialization
+  (7 placeholders total, up from 5).
+- Idempotency guard: `.vault/.initialized` marker prevents accidental
+  re-initialization.
+- Git remote origin detection and update prompt for repos cloned from
+  the template.
+- Doctor checks for initialization state and remaining placeholders in
+  `vault-tools.sh`.
+
+### Fixed
+
+- Hardcoded `galimba/agentic-memory-vault` references in 9 files replaced
+  with init-time placeholders (`{{GITHUB_ORG}}/{{REPO_NAME}}`).
+- `.github/CODEOWNERS` no longer hardcoded to `@galimba`; uses
+  `@{{MAINTAINER}}` populated during init.
+- `CODE_OF_CONDUCT.md` enforcement contact populated during init instead
+  of `[INSERT CONTACT METHOD]`.
+- `AGENTS.md` and `CLAUDE.md` vault version now reflects template version
+  and resets to `0.1.0` for instances during scaffolding.
+- `README.md` version badge updated to match template release.
+
+### Changed
+
+- Vault version bumped to 0.4.0 in CLAUDE.md, AGENTS.md, README.md.
+- `docs/configuration.md` documents new placeholders and scaffolding phase.
+- `docs/getting-started.md` prompt table expanded from 4 to 7 values.
+
 ## [0.3.0] - 2026-04-12
 
 ### Added
@@ -122,7 +158,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `docs/rules-customization.md` — creating new rules, industry-specific templates
 - Architecture diagrams embedded in README (`docs/architecture.png`, `docs/vaults.png`)
 
-[Unreleased]: https://github.com/galimba/agentic-memory-vault/compare/v0.3.0...HEAD
-[0.3.0]: https://github.com/galimba/agentic-memory-vault/compare/v0.2.0...v0.3.0
-[0.2.0]: https://github.com/galimba/agentic-memory-vault/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/galimba/agentic-memory-vault/releases/tag/v0.1.0
+[Unreleased]: https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}/compare/v0.3.0...v0.4.0
+[0.3.0]: https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}/releases/tag/v0.1.0

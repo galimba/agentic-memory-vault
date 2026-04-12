@@ -3,7 +3,7 @@
 A structured, agent-first knowledge base template for organizations using AI agents alongside human teams.
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
-![Version](https://img.shields.io/badge/version-0.3.0-green)
+![Version](https://img.shields.io/badge/version-0.4.0-green)
 
 ## What Is This
 
@@ -27,7 +27,7 @@ No databases, no external services, no dependencies beyond bash and git. The vau
 
 ```bash
 # 1. Create your vault from the template
-git clone https://github.com/galimba/agentic-memory-vault.git my-vault
+git clone https://github.com/{{GITHUB_ORG}}/{{REPO_NAME}}.git my-vault
 cd my-vault
 
 # 2. Run the initialization script
