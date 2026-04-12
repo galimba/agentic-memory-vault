@@ -6,7 +6,7 @@ system works.
 
 ## Creating a Hard Rule
 
-1. Choose the next ID (HR-014, HR-015, etc.)
+1. Choose the next ID (HR-016, HR-017, etc.)
 2. Add to `.vault/rules/hard-rules.md`:
 
 ```markdown
@@ -22,7 +22,7 @@ system works.
 ```
 
 3. Create `.vault/hooks/checks/check-hr0XX.sh` with your `check_hr0XX()` function
-4. The pre-commit hook auto-discovers all files in `checks/` — no need to modify `pre-commit.sh`
+4. Add a `check_hr0XX` call to the `main()` function in `pre-commit.sh` (files are auto-sourced but functions must be called explicitly)
 5. Add a summary line to `CLAUDE.md` Hard Rules section
 6. Test: create a violating file, verify the hook catches it
 

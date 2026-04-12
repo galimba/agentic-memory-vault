@@ -9,7 +9,7 @@
 #
 # This is the entry point that sources modular libraries:
 #   lib-hook-utils.sh       — utility functions, logging, file inspection
-#   checks/check-hr*.sh    — individual hard rule check functions (HR-001 through HR-013)
+#   checks/check-hr*.sh    — individual hard rule check functions (HR-001 through HR-015)
 #   checks/check-*.sh      — additional checks (skill hardening, sensitive files)
 #
 # INSTALLATION:
@@ -33,6 +33,7 @@
 #   HR-011: Vault configuration protection
 #   HR-012: Agent configuration protection
 #   HR-013: CI and template protection
+#   HR-014: No file deletion in wiki/ or memory/
 #   HR-015: Append-only logs (wiki/log.md, memory/logs/)
 #
 # POLICY CHECKS:
@@ -186,6 +187,7 @@ main() {
     check_hr011
     check_hr012
     check_hr013
+    check_hr014
     check_hr015
 
     # Run optional hardening checks (no-op if policy file is absent or disabled)

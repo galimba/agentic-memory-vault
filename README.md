@@ -3,7 +3,7 @@
 A structured, agent-first knowledge base template for organizations using AI agents alongside human teams.
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
-![Version](https://img.shields.io/badge/version-0.1.0-green)
+![Version](https://img.shields.io/badge/version-0.3.0-green)
 
 ## What Is This
 
@@ -105,6 +105,8 @@ and optionally files the answer back as a new wiki page. Every query is logged.
 | HR-011 | Vault configuration protected | `.vault/rules/`, `.vault/hooks/`, `.vault/scripts/` |
 | HR-012 | Agent configuration protected | `CLAUDE.md`, `AGENTS.md`, `CODEX.md` |
 | HR-013 | CI and templates protected | `.github/`, `templates/` |
+| HR-014 | No file deletion in `wiki/` or `memory/` | Set `status: archived` instead |
+| HR-015 | Log files are append-only | `wiki/log.md`, `memory/logs/` |
 
 ### Soft Rules (Configurable Defaults)
 
