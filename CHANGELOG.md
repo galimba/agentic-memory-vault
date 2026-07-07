@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `vault-tools.sh index-update` — incremental index maintenance: parses the
+  current `wiki/index.md`, diffs it against the actual `wiki/` file listing,
+  and appends only the missing entries under the section matching each page's
+  frontmatter `type`, preserving all existing entries and human-authored
+  prose. Split-layout aware: appends to the right `wiki/index-*.md` sub-index
+  when one exists. The HR-008 violation message now suggests it as the
+  non-destructive fix (#10).
+- `vault-tools.sh index-split [threshold]` — partitions an oversized
+  `wiki/index.md` (default threshold: 250 lines) into per-section
+  `wiki/index-{sources,concepts,entities,comparisons,decisions,reports}.md`
+  sub-indexes (plus `index-other.md` when needed), each with valid index
+  frontmatter. The root index keeps its section headings — stable anchors
+  for external links — with each split section reduced to a wikilink pointer
+  to its sub-index. `index-rebuild` is now split-layout aware and regenerates
+  the sub-indexes plus the pointer root (#9).
+- New module `.vault/scripts/lib-index.sh` housing all index maintenance
+  commands (`index-rebuild` moved out of `lib-manage.sh`) and the shared
+  type-to-section and entry-formatting helpers.
+
 ### Changed
 
 - Recorded the freshness model decision (2026-07-07): the template keeps
@@ -14,6 +35,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   freshness model. Decay scoring (#8) and lifecycle tier tags (#12) are
   closed as adopter customizations, with build-it-yourself recipes in
   `docs/freshness-customization.md`.
+
+- HR-008 now recognizes registration in any `wiki/index-*.md` sub-index, not
+  only the root `wiki/index.md` (#9). The `vault-tools.sh lint` (and `doctor`)
+  index-completeness check is likewise split-layout aware: a page registered
+  only in a sub-index no longer counts as unregistered.
+- `index-rebuild` now adopts the split layout on its own when a freshly
+  rebuilt single-file index would exceed the split threshold (250 lines,
+  overridable via the `INDEX_SPLIT_THRESHOLD` environment variable), not only
+  when `wiki/index-*.md` files already exist (#9).
+- **Potentially breaking**: HR-004's index exception changed. `wiki/index.md`
+  (and `wiki/index-*.md` sub-indexes) are no longer unbounded: the pre-commit
+  hook warns above 250 lines and blocks above 400 (the rule text previously
+  suggested splitting at 500 lines with no enforcement). Vaults whose index
+  is already over 400 lines must run `vault-tools.sh index-split` before the
+  next commit that touches the index (#9).
+
+### Fixed
+
+- `check-hr008.sh` matched pages against the index with
+  `echo "$content" | grep -qF`: `grep -q` exits at the first match, which can
+  SIGPIPE `echo` mid-write on large index content, and under
+  `set -o pipefail` the resulting 141 turned a successful match into a false
+  HR-008 violation. Registration is now checked with a bash literal substring
+  match — deterministic and fork-free.
 
 ## [0.5.0] - 2026-07-07
 

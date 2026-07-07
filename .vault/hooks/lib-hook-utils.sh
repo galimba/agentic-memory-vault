@@ -74,6 +74,12 @@ is_exempt() {
             return 0
         fi
     done
+    # Split-index sub-files get the same treatment as wiki/index.md
+    # (exempt from the generic HR-004 limits; check-hr004.sh applies the
+    # index-specific warn-250/block-400 thresholds to them instead)
+    if [[ "$file_path" == "${WIKI_DIR}/index-"*.md ]]; then
+        return 0
+    fi
     # Library files (lib-*.sh) and individual check/audit modules are sourced by entry points
     local basename
     basename=$(basename "$file_path")
