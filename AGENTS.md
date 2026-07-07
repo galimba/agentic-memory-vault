@@ -89,7 +89,7 @@ Full details: `.vault/rules/hard-rules.md`
 ```yaml
 ---
 title: "Page Title"
-type: concept | entity | source | comparison | decision | report | index
+type: concept | entity | source | comparison | decision | report | index | evaluation
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 status: draft | active | review | archived | deprecated

@@ -132,7 +132,7 @@ Every wiki page MUST include this YAML frontmatter:
 ```yaml
 ---
 title: "Page Title"
-type: concept | entity | source | comparison | decision | report | index
+type: concept | entity | source | comparison | decision | report | index | evaluation
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 status: draft | active | review | archived | deprecated
@@ -168,7 +168,7 @@ The complete tag taxonomy is defined in `.vault/rules/tags.md`. Tags use **flat 
 | `method/` | Methodology | `method/agile` |
 | `role/` | Organizational role | `role/architect` |
 
-See `.vault/rules/tags.md` for the full taxonomy with 100+ categories.
+See `.vault/rules/tags.md` for the full taxonomy: 19 prefix categories, 230 approved tags.
 
 ## Agent Behavior
 

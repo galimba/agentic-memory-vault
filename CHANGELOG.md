@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-<!-- Nothing yet -->
+### Fixed
+
+- `evaluation` frontmatter type accepted by the pre-commit hook (HR-002)
+  and emitted by `index rebuild` is now documented in the type enum in
+  `.vault/schemas/frontmatter.md`, `CLAUDE.md`, and `AGENTS.md` (#27).
+- `CLAUDE.md` tag taxonomy claim corrected from "100+ categories" to the
+  actual counts: 19 prefix categories, 230 approved tags (#27).
 
 ## [0.4.0] - 2026-04-12
 
