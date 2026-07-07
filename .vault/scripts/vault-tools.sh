@@ -18,6 +18,7 @@
 #   ./vault-tools.sh skill-audit       Audit skills against hardening policy
 #   ./vault-tools.sh skill-manifest <dir>  Generate/refresh skill-manifest.json
 #   ./vault-tools.sh content-audit     Audit content integrity
+#   ./vault-tools.sh consolidate       Report stale overlapping pages to merge
 #   ./vault-tools.sh stats             Show vault statistics
 #   ./vault-tools.sh init-hooks        Install git hooks
 #   ./vault-tools.sh doctor            Full diagnostic check
@@ -110,6 +111,7 @@ cmd_help() {
     echo "  skill-audit       Audit skill security"
     echo "  skill-manifest <dir>  Generate or refresh a skill's manifest"
     echo "  content-audit     Audit content integrity"
+    echo "  consolidate       Report groups of stale overlapping pages to merge"
     echo ""
     echo "Management:"
     echo "  status            Show vault status"
@@ -140,6 +142,7 @@ main() {
         skill-audit)    cmd_skill_audit "$@" ;;
         skill-manifest) cmd_skill_manifest "$@" ;;
         content-audit)  cmd_content_audit "$@" ;;
+        consolidate)    cmd_consolidate "$@" ;;
         index-rebuild)  cmd_index_rebuild "$@" ;;
         init-hooks)     cmd_init_hooks "$@" ;;
         doctor)         cmd_doctor "$@" ;;
