@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Root `MEMORY.md` — thin, agent-editable pointer index (Core files, rules,
+  latest lint report, recently active pages) loaded right after `CLAUDE.md`.
+  Regenerated deterministically by the new `vault-tools.sh memory-refresh`
+  command (`.vault/scripts/lib-memory.sh`); `doctor` warns when the file is
+  missing or exceeds 200 lines. Context loading order in `CLAUDE.md`,
+  `AGENTS.md`, and `CODEX.md` updated to include it. Covered by
+  `.vault/scripts/tests/test-memory-refresh.sh` (#11).
+
 ## [0.5.0] - 2026-07-07
 
 ### Added

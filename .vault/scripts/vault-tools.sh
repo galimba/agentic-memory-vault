@@ -20,6 +20,7 @@
 #   ./vault-tools.sh content-audit     Audit content integrity
 #   ./vault-tools.sh stats             Show vault statistics
 #   ./vault-tools.sh init-hooks        Install git hooks
+#   ./vault-tools.sh memory-refresh    Regenerate MEMORY.md pointer index
 #   ./vault-tools.sh doctor            Full diagnostic check
 #
 # EXIT CODES:
@@ -88,6 +89,7 @@ done
 source "${SCRIPT_DIR}/lib-lint.sh"
 source "${SCRIPT_DIR}/lib-manage.sh"
 source "${SCRIPT_DIR}/lib-skills.sh"
+source "${SCRIPT_DIR}/lib-memory.sh"
 
 # ==============================================================================
 # HELP
@@ -115,6 +117,7 @@ cmd_help() {
     echo "  status            Show vault status"
     echo "  stats             Show detailed vault statistics"
     echo "  index-rebuild     Rebuild wiki/index.md"
+    echo "  memory-refresh    Regenerate MEMORY.md pointer index"
     echo "  init-hooks        Install git hooks"
     echo "  doctor            Full diagnostic check"
     echo "  help              Show this help"
@@ -141,6 +144,7 @@ main() {
         skill-manifest) cmd_skill_manifest "$@" ;;
         content-audit)  cmd_content_audit "$@" ;;
         index-rebuild)  cmd_index_rebuild "$@" ;;
+        memory-refresh) cmd_memory_refresh "$@" ;;
         init-hooks)     cmd_init_hooks "$@" ;;
         doctor)         cmd_doctor "$@" ;;
         help|--help|-h) cmd_help "$@" ;;
