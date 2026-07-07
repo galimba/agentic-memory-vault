@@ -255,6 +255,15 @@ CHANGELOG_EOF
         echo "  docs/roadmap.md already moved (skipped)"
     fi
 
+    # 7. Copy bundled skills into .claude/skills/ so the agent platform loads them
+    if compgen -G "${VAULT_ROOT}/.vault/skills/*/" > /dev/null; then
+        mkdir -p "${VAULT_ROOT}/.claude/skills"
+        cp -r "${VAULT_ROOT}/.vault/skills/"*/ "${VAULT_ROOT}/.claude/skills/"
+        echo "  Bundled skills copied from .vault/skills/ to .claude/skills/"
+    else
+        echo "  No bundled skills in .vault/skills/ (skipped)"
+    fi
+
     echo ""
     echo "  Instance scaffolding complete"
 else
@@ -403,6 +412,8 @@ echo "  2. Add domain-specific tags to .vault/rules/tags.md"
 echo "  3. Fill in your company context in docs/company-context.md"
 echo "  4. Drop your first source document into raw/"
 echo "  5. Tell your agent: 'Ingest the new file in raw/'"
+echo "  6. After pulling template updates, re-copy bundled skills:"
+echo "     mkdir -p .claude/skills && cp -r .vault/skills/. .claude/skills/"
 echo ""
 echo "If initialization failed partway, re-run init.sh and confirm re-initialization."
 echo ""

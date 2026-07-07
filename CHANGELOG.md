@@ -14,6 +14,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   every `vault-tools.sh` command exits 0 on a healthy vault, and verifies
   adversarial commits are blocked with the right markers (HR-002, HR-004,
   HR-012, HR-015) plus the warn-mode content-policy warning (#17).
+- `vault-tools.sh skill-manifest <skill-dir>` — generates or refreshes a
+  skill's `skill-manifest.json` (SHA-256 hashes, sizes, metadata) per
+  `.vault/schemas/skill-manifest.schema.md`. Preserves existing metadata
+  and review fields, and prominently warns when content changes invalidate
+  a prior human review under a strict skill policy (#30).
+- `init.sh` instance scaffolding copies bundled skills from
+  `.vault/skills/` to `.claude/skills/` so the agent platform loads them
+  (#30).
+- Round-trip test `.vault/scripts/tests/test-skill-manifest.sh` covering
+  manifest generation, hash verification, and a passing strict
+  `skill-audit` after review sign-off (#30).
 
 ### Fixed
 

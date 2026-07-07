@@ -16,6 +16,7 @@
 #   ./vault-tools.sh stale [days]      List stale pages (default: 30 days)
 #   ./vault-tools.sh tag-audit         Audit tag usage across vault
 #   ./vault-tools.sh skill-audit       Audit skills against hardening policy
+#   ./vault-tools.sh skill-manifest <dir>  Generate/refresh skill-manifest.json
 #   ./vault-tools.sh content-audit     Audit content integrity
 #   ./vault-tools.sh stats             Show vault statistics
 #   ./vault-tools.sh init-hooks        Install git hooks
@@ -86,6 +87,7 @@ done
 
 source "${SCRIPT_DIR}/lib-lint.sh"
 source "${SCRIPT_DIR}/lib-manage.sh"
+source "${SCRIPT_DIR}/lib-skills.sh"
 
 # ==============================================================================
 # HELP
@@ -106,6 +108,7 @@ cmd_help() {
     echo "Audits:"
     echo "  tag-audit         Audit tag usage"
     echo "  skill-audit       Audit skill security"
+    echo "  skill-manifest <dir>  Generate or refresh a skill's manifest"
     echo "  content-audit     Audit content integrity"
     echo ""
     echo "Management:"
@@ -135,6 +138,7 @@ main() {
         stale)          cmd_stale "$@" ;;
         tag-audit)      cmd_tag_audit "$@" ;;
         skill-audit)    cmd_skill_audit "$@" ;;
+        skill-manifest) cmd_skill_manifest "$@" ;;
         content-audit)  cmd_content_audit "$@" ;;
         index-rebuild)  cmd_index_rebuild "$@" ;;
         init-hooks)     cmd_init_hooks "$@" ;;
