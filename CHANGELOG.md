@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Recorded the freshness model decision (2026-07-07): the template keeps
+  binary per-domain/per-type staleness thresholds as its one canonical
+  freshness model. Decay scoring (#8) and lifecycle tier tags (#12) are
+  closed as adopter customizations, with build-it-yourself recipes in
+  `docs/freshness-customization.md`.
 - `.vault/rules/hard-rules.md` and `.vault/rules/soft-rules.md` now use
   RFC 2119 keywords consistently — hard rules state requirements with
   **MUST**/**MUST NOT**, soft rules with **SHOULD**/**SHOULD NOT**/**MAY** —
