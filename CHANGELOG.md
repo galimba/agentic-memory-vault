@@ -7,7 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-<!-- Nothing yet -->
+### Fixed
+
+- `vault-tools.sh doctor` now exits non-zero when it finds blocking
+  issues — missing required directories or files, a broken pre-commit
+  hook, or a failing lint — so the `vault-doctor` CI job can actually
+  gate merges ([#25]). Warnings, including the un-initialized template
+  state, remain non-fatal.
+- New `tests` CI job runs every script under `.vault/scripts/tests/`;
+  the pre-commit installation test was previously not exercised by any
+  CI job ([#25]).
+
+[#25]: https://github.com/galimba/agentic-memory-vault/issues/25
 
 ## [0.4.0] - 2026-04-12
 

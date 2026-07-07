@@ -63,6 +63,24 @@ jobs:
       - name: Run vault doctor
         run: bash .vault/scripts/vault-tools.sh doctor
 
+  tests:
+    name: Script Tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+      - name: Configure git identity
+        run: |
+          git config --global user.email "ci@example.invalid"
+          git config --global user.name "CI"
+      - name: Run script tests
+        run: |
+          for test in .vault/scripts/tests/test-*.sh; do
+            echo "=== ${test}"
+            bash "$test"
+          done
+
   skill-audit:
     name: Skill Audit
     runs-on: ubuntu-latest
