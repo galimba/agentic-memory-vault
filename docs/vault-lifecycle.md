@@ -81,7 +81,7 @@ A Memory Vault goes through five phases: setup, seeding, active use, maintenance
 | Over 200 lines (warn) / 400 lines (block) | Split into linked sub-pages |
 | Orphan page | Add inbound links from related pages or archive |
 | Stale page | Re-read source, update content, or mark `status: archived` |
-| Not in index | Run `vault-tools.sh index-rebuild` |
+| Not in index | Run `vault-tools.sh index-update` |
 
 ## Phase 5: Evolution (Monthly)
 

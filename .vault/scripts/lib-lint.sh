@@ -350,20 +350,17 @@ cmd_lint() {
     done < <(wiki_files)
     ok "Staleness scan complete (${stale} found)"
 
-    # 6. Index completeness
+    # 6. Index completeness — a page counts as registered when it appears in
+    # the root wiki/index.md OR any wiki/index-*.md sub-index (split layout).
+    # Reuses the lib-index helpers so this mirrors check-hr008.sh exactly.
     subheader "Index completeness"
     if [[ -f "${INDEX_FILE}" ]]; then
         local unregistered=0
         while IFS= read -r file; do
             local relative="${file#${VAULT_ROOT}/}"
-            if [[ "$relative" == "wiki/index.md" ]] || [[ "$relative" == "wiki/log.md" ]]; then
-                continue
-            fi
-            local basename
-            basename=$(basename "$relative")
-            # SECURITY: Use -F for literal matching (filenames may contain regex metacharacters)
-            if ! grep -qF "$basename" "${INDEX_FILE}" 2>/dev/null; then
-                error "${relative}: not in index.md"
+            index_is_structural "$relative" && continue
+            if ! index_page_registered "$relative"; then
+                error "${relative}: not registered in wiki/index.md or any sub-index"
                 unregistered=$((unregistered + 1))
                 total_violations=$((total_violations + 1))
             fi

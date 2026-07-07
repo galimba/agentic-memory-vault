@@ -23,7 +23,8 @@
 #   HR-001: Raw directory immutability
 #   HR-002: Mandatory frontmatter
 #   HR-003: Mandatory tags
-#   HR-004: Markdown length limit (warn 200, block 400 lines)
+#   HR-004: Markdown length limit (warn 200, block 400 lines;
+#           index files warn 250, block 400)
 #   HR-005: Code file length limit (warn 400, block 600 lines)
 #   HR-006: Unique page titles
 #   HR-007: Updated field accuracy
@@ -79,6 +80,10 @@ WARN_MARKDOWN_LINES=200
 MAX_MARKDOWN_LINES=400
 WARN_CODE_LINES=400
 MAX_CODE_LINES=600
+# Index files (wiki/index.md, wiki/index-*.md) get their own HR-004 budget.
+# Fix: bash .vault/scripts/vault-tools.sh index-split (issue #9)
+WARN_INDEX_LINES=250
+MAX_INDEX_LINES=400
 
 # Files exempt from line count rules
 EXEMPT_FILES=(
