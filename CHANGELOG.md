@@ -15,6 +15,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   member is past its staleness threshold) and writes candidates to
   `memory/notes/consolidation-YYYY-MM-DD.md` for human-driven merging (#16).
 
+### Changed
+
+- Recorded the freshness model decision (2026-07-07): the template keeps
+  binary per-domain/per-type staleness thresholds as its one canonical
+  freshness model. Decay scoring (#8) and lifecycle tier tags (#12) are
+  closed as adopter customizations, with build-it-yourself recipes in
+  `docs/freshness-customization.md`.
+
 ## [0.5.0] - 2026-07-07
 
 ### Added
