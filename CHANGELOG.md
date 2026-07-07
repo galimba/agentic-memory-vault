@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-<!-- Nothing yet -->
+### Fixed
+
+- `index-rebuild` silently dropped wiki pages whose frontmatter `type` was
+  outside the seven standard sections (including the `uncategorized`
+  fallback it assigns itself), leaving them out of `wiki/index.md` so
+  HR-008 blocked their commits. Such pages are now emitted under a single
+  `## Other` section, omitted entirely when no such pages exist (#26).
 
 ## [0.4.0] - 2026-04-12
 

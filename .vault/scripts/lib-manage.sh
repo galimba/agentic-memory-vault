@@ -244,6 +244,7 @@ cmd_doctor() {
         hook_out="$(cd "${VAULT_ROOT}" && "$hook_path" </dev/null 2>&1 || true)"
         if echo "$hook_out" | grep -q 'No such file or directory\|command not found'; then
             error "pre-commit hook fails to source its libraries:"
+            # shellcheck disable=SC2001  # per-line indent; ${var//} cannot anchor ^
             echo "$hook_out" | sed 's/^/      /'
         else
             ok "pre-commit hook installed and functional"
@@ -328,6 +329,24 @@ cmd_index_rebuild() {
             output+="_No ${section_title,,} yet._\n\n"
         fi
     done
+
+    # Any remaining types (custom or the "uncategorized" fallback) go under
+    # a single "Other" section, sorted by type for determinism. Emitted only
+    # when such pages exist — no empty section otherwise.
+    local other_types=()
+    for type in "${!type_pages[@]}"; do
+        case "$type" in
+            source|concept|entity|comparison|decision|report|evaluation) ;;
+            *) other_types+=("$type") ;;
+        esac
+    done
+    if [[ ${#other_types[@]} -gt 0 ]]; then
+        output+="## Other\n\n"
+        while IFS= read -r type; do
+            output+="${type_pages[$type]}"
+        done < <(printf '%s\n' "${other_types[@]}" | sort)
+        output+="\n"
+    fi
 
     echo -e "$output" > "${INDEX_FILE}"
     ok "Index rebuilt with entries from $(count_files "${WIKI_DIR}" "*.md") wiki pages"
