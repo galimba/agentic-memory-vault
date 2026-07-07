@@ -28,16 +28,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   commands (`index-rebuild` moved out of `lib-manage.sh`) and the shared
   type-to-section and entry-formatting helpers.
 
-### Fixed
-
-- `check-hr008.sh` matched pages against the index with
-  `echo "$content" | grep -qF`: `grep -q` exits at the first match, which can
-  SIGPIPE `echo` mid-write on large index content, and under
-  `set -o pipefail` the resulting 141 turned a successful match into a false
-  HR-008 violation. Registration is now checked with a bash literal substring
-  match — deterministic and fork-free.
-
 ### Changed
+
+- Recorded the freshness model decision (2026-07-07): the template keeps
+  binary per-domain/per-type staleness thresholds as its one canonical
+  freshness model. Decay scoring (#8) and lifecycle tier tags (#12) are
+  closed as adopter customizations, with build-it-yourself recipes in
+  `docs/freshness-customization.md`.
 
 - HR-008 now recognizes registration in any `wiki/index-*.md` sub-index, not
   only the root `wiki/index.md` (#9). The `vault-tools.sh lint` (and `doctor`)
@@ -53,6 +50,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   suggested splitting at 500 lines with no enforcement). Vaults whose index
   is already over 400 lines must run `vault-tools.sh index-split` before the
   next commit that touches the index (#9).
+
+### Fixed
+
+- `check-hr008.sh` matched pages against the index with
+  `echo "$content" | grep -qF`: `grep -q` exits at the first match, which can
+  SIGPIPE `echo` mid-write on large index content, and under
+  `set -o pipefail` the resulting 141 turned a successful match into a false
+  HR-008 violation. Registration is now checked with a bash literal substring
+  match — deterministic and fork-free.
 
 ## [0.5.0] - 2026-07-07
 
