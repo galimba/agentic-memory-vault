@@ -21,7 +21,7 @@ Defines the required and optional YAML frontmatter fields for all wiki pages. En
 | Field | Type | Values | Enforced |
 |-------|------|--------|----------|
 | `title` | string | Any unique title | HR-002, HR-006 |
-| `type` | enum | `concept`, `entity`, `source`, `comparison`, `decision`, `report`, `index` | HR-002 |
+| `type` | enum | `concept`, `entity`, `source`, `comparison`, `decision`, `report`, `index`, `evaluation` | HR-002 |
 | `created` | date | `YYYY-MM-DD` | HR-002 |
 | `updated` | date | `YYYY-MM-DD` | HR-002, HR-007 |
 | `status` | enum | `draft`, `active`, `review`, `archived`, `deprecated` | HR-002 |

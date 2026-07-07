@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Comprehensive smoke test harness (`.vault/scripts/tests/test-smoke.sh`):
+  builds a disposable vault, installs the real pre-commit hook, asserts
+  every `vault-tools.sh` command exits 0 on a healthy vault, and verifies
+  adversarial commits are blocked with the right markers (HR-002, HR-004,
+  HR-012, HR-015) plus the warn-mode content-policy warning (#17).
+- `vault-tools.sh skill-manifest <skill-dir>` — generates or refreshes a
+  skill's `skill-manifest.json` (SHA-256 hashes, sizes, metadata) per
+  `.vault/schemas/skill-manifest.schema.md`. Preserves existing metadata
+  and review fields, and prominently warns when content changes invalidate
+  a prior human review under a strict skill policy (#30).
+- `init.sh` instance scaffolding copies bundled skills from
+  `.vault/skills/` to `.claude/skills/` so the agent platform loads them
+  (#30).
+- Round-trip test `.vault/scripts/tests/test-skill-manifest.sh` covering
+  manifest generation, hash verification, and a passing strict
+  `skill-audit` after review sign-off (#30).
 - First-party `vault-ops` skill (`.vault/skills/vault-ops/`): single-file
   operational reference covering INGEST/QUERY/LINT checklists, the
   `vault-tools.sh` command surface, commit-blocking rules, and the boundaries
@@ -37,6 +53,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `docs/rules-customization.md`, and `docs/rules-guide.md`, plus one
   ShellCheck SC2015 info on the doctor's hook dry-run (flagged by the
   runner's older ShellCheck; intentional `|| true` guard, now annotated).
+- `index-rebuild` silently dropped wiki pages whose frontmatter `type` was
+  outside the seven standard sections (including the `uncategorized`
+  fallback it assigns itself), leaving them out of `wiki/index.md` so
+  HR-008 blocked their commits. Such pages are now emitted under a single
+  `## Other` section, omitted entirely when no such pages exist (#26).
+- `evaluation` frontmatter type accepted by the pre-commit hook (HR-002)
+  and emitted by `index rebuild` is now documented in the type enum in
+  `.vault/schemas/frontmatter.md`, `CLAUDE.md`, and `AGENTS.md` (#27).
+- `CLAUDE.md` tag taxonomy claim corrected from "100+ categories" to the
+  actual counts: 19 prefix categories, 230 approved tags (#27).
+
+- `fm_field` in `.vault/scripts/lib-utils.sh` no longer propagates grep's
+  non-zero exit when a frontmatter field is absent, which crashed
+  `index-rebuild` (and any other command under `set -euo pipefail`) on
+  pages missing an optional field such as `summary` (found by #17's
+  smoke test).
+- `test-pre-commit-install.sh` seeds pages with today's date instead of a
+  hardcoded `2026-04-11`, which HR-007 (updated-field accuracy, ±1 day)
+  started rejecting once the date passed.
+- Documentation drift sweep (#28, #29): `docs/roadmap.md` "What Already
+  Shipped" table now includes v0.4.0; `docs/getting-started.md` init
+  prompt count corrected from six to seven values; tag counts in
+  README.md and `docs/configuration.md` aligned with the actual
+  taxonomy in `.vault/rules/tags.md` (230 approved tags across 19
+  prefix categories); python3 documented as a required dependency for
+  the skill-hardening and content-policy tooling in README.md,
+  `docs/getting-started.md`, and the roadmap design principles.
 
 [#25]: https://github.com/galimba/agentic-memory-vault/issues/25
 

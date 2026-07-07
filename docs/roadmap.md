@@ -43,6 +43,7 @@ community input on design questions before implementation begins.
 
 | Version | Highlights |
 |---------|-----------|
+| v0.4.0 | Instance scaffolding: `init.sh` instance phase, instance README and onboarding templates, 7 init placeholders, `.vault/.initialized` idempotency guard |
 | v0.3.0 | HR-014: No file deletion — agents must archive instead of delete |
 | v0.2.0 | Per-domain staleness thresholds, content policy (warn mode), lint reports, append-only logs (HR-015), three-tier agent boundaries |
 | v0.1.0 | Three-layer architecture, 13 hard rules, 15 soft rules, 200+ tags, modular hook checks, skill hardening framework |
@@ -54,7 +55,9 @@ These guide which features ship and which stay deferred:
 1. **Boilerplate, not framework.** If a user can build it in
    30 minutes, document the pattern instead of shipping code.
 2. **Bash + markdown + git.** No databases, no external services.
-   Optional `jq` is the only tolerated dependency.
+   Optional `jq` is tolerated, and `python3` is used for JSON parsing
+   in the skill-hardening and content-policy tooling. The core wiki
+   workflow requires neither.
 3. **Report, don't mutate.** New analysis commands produce reports.
    They never auto-modify content without human approval.
 4. **One file per responsibility.** New commands get their own
