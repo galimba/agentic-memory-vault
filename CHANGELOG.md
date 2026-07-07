@@ -25,6 +25,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Round-trip test `.vault/scripts/tests/test-skill-manifest.sh` covering
   manifest generation, hash verification, and a passing strict
   `skill-audit` after review sign-off (#30).
+- First-party `vault-ops` skill (`.vault/skills/vault-ops/`): single-file
+  operational reference covering INGEST/QUERY/LINT checklists, the
+  `vault-tools.sh` command surface, commit-blocking rules, and the boundaries
+  digest; doubles as the authoring example for custom skills. Ships with a
+  hash-locked, human-reviewed `skill-manifest.json` — the `skill-audit` CI job
+  now audits a real skill (#30).
+- `docs/skills.md`: skill locations, governance layers, and authoring guide.
 
 ### Fixed
 
