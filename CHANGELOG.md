@@ -27,6 +27,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `docs/rules-customization.md`, and `docs/rules-guide.md`, plus one
   ShellCheck SC2015 info on the doctor's hook dry-run (flagged by the
   runner's older ShellCheck; intentional `|| true` guard, now annotated).
+- `index-rebuild` silently dropped wiki pages whose frontmatter `type` was
+  outside the seven standard sections (including the `uncategorized`
+  fallback it assigns itself), leaving them out of `wiki/index.md` so
+  HR-008 blocked their commits. Such pages are now emitted under a single
+  `## Other` section, omitted entirely when no such pages exist (#26).
 
 [#25]: https://github.com/galimba/agentic-memory-vault/issues/25
 
