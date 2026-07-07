@@ -1,0 +1,17 @@
+{
+  "name": "vault-ops",
+  "version": "1.0.0",
+  "author": "galimba",
+  "description": "Operate the agentic memory vault: INGEST, QUERY, and LINT workflows, vault-tools.sh command reference, commit-blocking rules, and boundaries digest.",
+  "created": "2026-07-07",
+  "updated": "2026-07-07",
+  "reviewed_by": "galimba",
+  "review_date": "2026-07-07",
+  "files": [
+    {
+      "path": "SKILL.md",
+      "sha256": "023dfb6f8609873b752fee4ab5def8ff7ed7a390e3093718976ab52b20fc2769",
+      "size_bytes": 7081
+    }
+  ]
+}

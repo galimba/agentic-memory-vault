@@ -7,7 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-<!-- Nothing yet -->
+### Added
+
+- First-party `vault-ops` skill (`.vault/skills/vault-ops/`): single-file
+  operational reference covering INGEST/QUERY/LINT checklists, the
+  `vault-tools.sh` command surface, commit-blocking rules, and the boundaries
+  digest; doubles as the authoring example for custom skills. Ships with a
+  hash-locked, human-reviewed `skill-manifest.json` — the `skill-audit` CI job
+  now audits a real skill (#30).
+- `docs/skills.md`: skill locations, governance layers, and authoring guide.
 
 ## [0.4.0] - 2026-04-12
 
