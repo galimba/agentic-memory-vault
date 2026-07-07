@@ -91,8 +91,12 @@ extract_fm() {
 
 # Get a field from frontmatter text
 # Usage: fm_field "title" "$frontmatter"
+# Always returns 0: grep exits 1 when the field is absent, which under the
+# caller's `set -euo pipefail` would abort the whole script mid-assignment
+# (e.g. index-rebuild on a page with no summary field). Callers test the
+# echoed value for emptiness instead.
 fm_field() {
-    echo "$2" | grep -E "^$1:" | head -1 | sed "s/^$1:[[:space:]]*//" | sed 's/^["'"'"']//' | sed 's/["'"'"']$//'
+    echo "$2" | grep -E "^$1:" | head -1 | sed "s/^$1:[[:space:]]*//" | sed 's/^["'"'"']//' | sed 's/["'"'"']$//' || true
 }
 
 # Get tags from frontmatter as newline-separated list

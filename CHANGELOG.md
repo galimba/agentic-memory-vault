@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Comprehensive smoke test harness (`.vault/scripts/tests/test-smoke.sh`):
+  builds a disposable vault, installs the real pre-commit hook, asserts
+  every `vault-tools.sh` command exits 0 on a healthy vault, and verifies
+  adversarial commits are blocked with the right markers (HR-002, HR-004,
+  HR-012, HR-015) plus the warn-mode content-policy warning (#17).
+
 ### Fixed
 
 - `vault-tools.sh doctor` now exits non-zero when it finds blocking
@@ -37,6 +45,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `.vault/schemas/frontmatter.md`, `CLAUDE.md`, and `AGENTS.md` (#27).
 - `CLAUDE.md` tag taxonomy claim corrected from "100+ categories" to the
   actual counts: 19 prefix categories, 230 approved tags (#27).
+
+- `fm_field` in `.vault/scripts/lib-utils.sh` no longer propagates grep's
+  non-zero exit when a frontmatter field is absent, which crashed
+  `index-rebuild` (and any other command under `set -euo pipefail`) on
+  pages missing an optional field such as `summary` (found by #17's
+  smoke test).
+- `test-pre-commit-install.sh` seeds pages with today's date instead of a
+  hardcoded `2026-04-11`, which HR-007 (updated-field accuracy, ±1 day)
+  started rejecting once the date passed.
 
 [#25]: https://github.com/galimba/agentic-memory-vault/issues/25
 
