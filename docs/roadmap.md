@@ -43,7 +43,7 @@ community input on design questions before implementation begins.
 
 | Version | Highlights |
 |---------|-----------|
-| v0.5.0 | Working CI (fixed an unparseable workflow that had failed every run since v0.4.0), honest `doctor` exit codes, a script test suite wired into CI, the `index-rebuild` "Other" section fix, `evaluation` type schema alignment, a documentation drift sweep, and the first shipped agent skill (`vault-ops`) with its `skill-manifest` generator |
+| v0.5.0 | Working CI (fixed a workflow that failed GitHub's validation and had failed every run since v0.4.0), honest `doctor` exit codes, a script test suite wired into CI, the `index-rebuild` "Other" section fix, `evaluation` type schema alignment, a documentation drift sweep, and the first shipped agent skill (`vault-ops`) with its `skill-manifest` generator |
 | v0.4.0 | Instance scaffolding: `init.sh` instance phase, instance README and onboarding templates, 7 init placeholders, `.vault/.initialized` idempotency guard |
 | v0.3.0 | HR-014: No file deletion — agents must archive instead of delete |
 | v0.2.0 | Per-domain staleness thresholds, content policy (warn mode), lint reports, append-only logs (HR-015), three-tier agent boundaries |
