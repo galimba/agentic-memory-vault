@@ -113,6 +113,8 @@ If `jq` is installed it is used for reliable JSON parsing; otherwise a
 bash-only fallback handles the flat JSON shape. Installing `jq` is
 recommended but not required.
 
+Binary thresholds are the template's one canonical freshness model; for recipes to build continuous decay scoring or lifecycle tier tags in your instance, see [Freshness Customization](freshness-customization.md).
+
 ## Git Workflow Configuration
 
 ### Branch protection (recommended)
