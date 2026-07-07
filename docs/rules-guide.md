@@ -12,7 +12,7 @@ enforced by the pre-commit git hook. A commit that violates any hard
 rule is rejected. Hard rules protect vault integrity — they prevent
 data loss, corruption, and security breaches.
 
-**Soft rules** (SR-001 through SR-015) are configurable guidelines
+**Soft rules** (SR-001 through SR-016) are configurable guidelines
 checked during lint operations. Violations generate warnings, not
 rejections. Soft rules encode best practices that vary by organization.
 

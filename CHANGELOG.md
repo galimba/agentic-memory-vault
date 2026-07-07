@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- SR-016 "One Writer per Branch": within a single branch, `wiki/` has
+  exactly one writing agent; other agents on the same branch write to
+  their namespaced scratch space under `memory/agents/<agent-id>/` and
+  the single writer promotes scratch notes into `wiki/`. Coordination
+  protocol, not enforced policy. Documented in `docs/git-workflow.md`,
+  `CLAUDE.md`, and `AGENTS.md`; `doctor` now lists the optional
+  `memory/agents/` directory (#13).
+
 ## [0.5.0] - 2026-07-07
 
 ### Added

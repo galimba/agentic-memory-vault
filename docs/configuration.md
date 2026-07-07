@@ -55,6 +55,7 @@ Edit `.vault/rules/soft-rules.md` to customize agent behavior. Each rule has a d
 | SR-013 | Entity page structure | Customize sections |
 | SR-014 | Comparison page structure | Customize sections |
 | SR-015 | Custom tags use `custom/` prefix | Define your prefix convention |
+| SR-016 | One `wiki/` writer per branch | Adapt scratch-space naming under `memory/agents/` |
 
 Agents read `soft-rules.md` during context loading. Changes take effect on the next agent session.
 

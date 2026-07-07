@@ -128,6 +128,12 @@ confidence: high | medium | low | unverified
 - PRs require lint pass before merge
 - Main branch is protected
 
+## Multi-Agent Scratch Space
+
+- One writing agent per branch for `wiki/` (SR-016); other agents on the same branch write to `memory/agents/{{agent-id}}/`
+- The single writer promotes scratch notes into `wiki/`
+- Coordination protocol only — not enforced by hooks or lint
+
 ## Security
 
 ### Content Trust Levels
