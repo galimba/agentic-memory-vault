@@ -60,7 +60,7 @@ Agents read `soft-rules.md` during context loading. Changes take effect on the n
 
 ## Tag Taxonomy
 
-The full tag list lives in `.vault/rules/tags.md`. The vault ships with 200+ approved tags across 19 prefix categories.
+The full tag list lives in `.vault/rules/tags.md`. The vault ships with 230 approved tags across 19 prefix categories, plus the reserved `custom/` prefix for organization-specific tags.
 
 ### Adding custom tags
 

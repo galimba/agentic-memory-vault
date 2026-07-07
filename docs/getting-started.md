@@ -7,6 +7,10 @@ This guide walks you through setting up your Memory Vault, ingesting your first 
 - **Git** 2.20+ (for branch operations and hooks)
 - **Bash** 4.0+ (required by vault scripts; macOS users may need `brew install bash`)
 - **Standard Unix tools**: `grep`, `awk`, `sed`, `find`, `wc`, `sort`, `uniq`, `file`, `date`
+- **Python 3** (required for `skill-audit` and the skill/content policy
+  checks; the core wiki workflow works without it — `check-skill-hardening`
+  skips with a warning, the pre-commit content-policy scan falls back to
+  grep, and `skill-audit` / `content-audit` do not run)
 - **Obsidian** (optional) for visual browsing and graph view of the wiki
 
 Verify your environment:
@@ -14,6 +18,7 @@ Verify your environment:
 ```bash
 git --version       # 2.20+
 bash --version      # 4.0+
+python3 --version   # any recent 3.x
 ```
 
 ## Clone and Initialize
@@ -31,7 +36,7 @@ cd my-vault
 bash .vault/scripts/init.sh
 ```
 
-The script prompts for six values:
+The script prompts for seven values:
 
 | Prompt | Example | What it does |
 |--------|---------|--------------|

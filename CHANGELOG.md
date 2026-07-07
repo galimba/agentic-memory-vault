@@ -7,7 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-<!-- Nothing yet -->
+### Fixed
+
+- Documentation drift sweep (#28, #29): `docs/roadmap.md` "What Already
+  Shipped" table now includes v0.4.0; `docs/getting-started.md` init
+  prompt count corrected from six to seven values; tag counts in
+  README.md and `docs/configuration.md` aligned with the actual
+  taxonomy in `.vault/rules/tags.md` (230 approved tags across 19
+  prefix categories); python3 documented as a required dependency for
+  the skill-hardening and content-policy tooling in README.md,
+  `docs/getting-started.md`, and the roadmap design principles.
 
 ## [0.4.0] - 2026-04-12
 
