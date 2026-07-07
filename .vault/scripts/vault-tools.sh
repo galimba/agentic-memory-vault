@@ -12,6 +12,9 @@
 #   ./vault-tools.sh status            Show vault status
 #   ./vault-tools.sh validate <file>   Validate a single file
 #   ./vault-tools.sh index-rebuild     Rebuild wiki/index.md from scratch
+#   ./vault-tools.sh index-update      Append missing pages to the index
+#   ./vault-tools.sh index-split [n]   Split index into sub-indexes above n
+#                                      lines (default: 250)
 #   ./vault-tools.sh orphans           List orphan pages
 #   ./vault-tools.sh stale [days]      List stale pages (default: 30 days)
 #   ./vault-tools.sh tag-audit         Audit tag usage across vault
@@ -87,6 +90,7 @@ for audit_file in "${SCRIPT_DIR}/audits/"audit-*.sh; do
 done
 
 source "${SCRIPT_DIR}/lib-lint.sh"
+source "${SCRIPT_DIR}/lib-index.sh"
 source "${SCRIPT_DIR}/lib-manage.sh"
 source "${SCRIPT_DIR}/lib-skills.sh"
 source "${SCRIPT_DIR}/lib-blame.sh"
@@ -117,7 +121,9 @@ cmd_help() {
     echo "  blame <file>      Show file history correlated with wiki/log.md"
     echo "  status            Show vault status"
     echo "  stats             Show detailed vault statistics"
-    echo "  index-rebuild     Rebuild wiki/index.md"
+    echo "  index-rebuild     Rebuild wiki/index.md (destructive full rewrite)"
+    echo "  index-update      Append entries for unregistered wiki pages"
+    echo "  index-split [n]   Split index into sub-indexes above n lines (default: 250)"
     echo "  init-hooks        Install git hooks"
     echo "  doctor            Full diagnostic check"
     echo "  help              Show this help"
@@ -145,6 +151,8 @@ main() {
         content-audit)  cmd_content_audit "$@" ;;
         blame)          cmd_blame "$@" ;;
         index-rebuild)  cmd_index_rebuild "$@" ;;
+        index-update)   cmd_index_update "$@" ;;
+        index-split)    cmd_index_split "$@" ;;
         init-hooks)     cmd_init_hooks "$@" ;;
         doctor)         cmd_doctor "$@" ;;
         help|--help|-h) cmd_help "$@" ;;
