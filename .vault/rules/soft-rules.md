@@ -146,9 +146,13 @@ review.
 
 ## SR-011: Cross-Reference on Ingest
 
-**Default**: When ingesting a new source, the agent should update every existing wiki page that the new source materially affects. A "material affect" means the source adds new information, contradicts existing claims, or provides updated data relevant to that page.
+**Default**: When ingesting a new source, the agent should update every
+existing wiki page that the new source materially affects. A "material
+affect" means the source adds new information, contradicts existing
+claims, or provides updated data relevant to that page.
 
 **Guidance**: Most sources affect 5-15 pages. Use these checkpoints:
+
 - If fewer than 3 pages are affected, verify the source isn't too narrow
   to warrant a standalone ingestion. Consider appending to an existing
   source summary instead.

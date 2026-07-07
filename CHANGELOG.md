@@ -17,6 +17,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `vault-tools.sh doctor` now exits non-zero when it finds blocking
+  issues — missing required directories or files, a broken pre-commit
+  hook, or a failing lint — so the `vault-doctor` CI job can actually
+  gate merges ([#25]). Warnings, including the un-initialized template
+  state, remain non-fatal.
+- New `tests` CI job runs every script under `.vault/scripts/tests/`;
+  the pre-commit installation test was previously not exercised by any
+  CI job ([#25]).
+- The entire Lint workflow failed GitHub's workflow validation —
+  `skill-audit` used `hashFiles()` in a job-level `if`, which GitHub
+  only allows at step level, so every Actions run (including on `main`)
+  failed in 0 seconds with no jobs since the guard was introduced. The
+  guard is now a step-level file test ([#25]).
+- Latent lint debt that surfaced the moment CI ran for real: eleven
+  markdownlint spacing/length errors in `.vault/rules/soft-rules.md`,
+  `docs/rules-customization.md`, and `docs/rules-guide.md`, plus one
+  ShellCheck SC2015 info on the doctor's hook dry-run (flagged by the
+  runner's older ShellCheck; intentional `|| true` guard, now annotated).
+
 - `fm_field` in `.vault/scripts/lib-utils.sh` no longer propagates grep's
   non-zero exit when a frontmatter field is absent, which crashed
   `index-rebuild` (and any other command under `set -euo pipefail`) on
@@ -25,6 +44,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `test-pre-commit-install.sh` seeds pages with today's date instead of a
   hardcoded `2026-04-11`, which HR-007 (updated-field accuracy, ±1 day)
   started rejecting once the date passed.
+
+[#25]: https://github.com/galimba/agentic-memory-vault/issues/25
 
 ## [0.4.0] - 2026-04-12
 
