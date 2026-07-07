@@ -195,6 +195,10 @@ HOOK
 cmd_doctor() {
     header "Vault Doctor — Full Diagnostic"
 
+    # Error-level findings increment this counter; warnings stay non-fatal
+    # so an un-initialized template still passes. Non-zero → doctor exits 1.
+    local failures=0
+
     subheader "Directory Structure"
     local required_dirs=("raw" "wiki" "wiki/sources" "wiki/entities" "wiki/concepts" "wiki/comparisons" "memory" "memory/decisions" "memory/logs" "memory/notes" ".vault" ".vault/rules" ".vault/schemas" ".vault/hooks" ".vault/hooks/checks" ".vault/scripts" ".vault/scripts/audits" "templates" "docs")
     for dir in "${required_dirs[@]}"; do
@@ -202,6 +206,7 @@ cmd_doctor() {
             ok "${dir}/"
         else
             error "${dir}/ — MISSING"
+            failures=$((failures + 1))
         fi
     done
 
@@ -212,6 +217,7 @@ cmd_doctor() {
             ok "${file}"
         else
             error "${file} — MISSING"
+            failures=$((failures + 1))
         fi
     done
 
@@ -223,6 +229,7 @@ cmd_doctor() {
     fi
     if [[ ! -f "${VAULT_ROOT}/CLAUDE.md" ]]; then
         error "CLAUDE.md missing -- cannot check for unresolved placeholders"
+        failures=$((failures + 1))
     elif grep -qE '\{\{[A-Z_]+\}\}' "${VAULT_ROOT}/CLAUDE.md"; then
         warning "Placeholders still present in CLAUDE.md -- init.sh may not have completed"
     else
@@ -235,16 +242,20 @@ cmd_doctor() {
         warning "pre-commit hook not installed. Run: vault-tools.sh init-hooks"
     elif ! grep -q 'vault-tools:pre-commit-wrapper' "$hook_path"; then
         error "pre-commit hook is a legacy flat copy (will silently fail). Reinstall: vault-tools.sh init-hooks"
+        failures=$((failures + 1))
     else
         # Dry-run the hook with no staged files to verify it can source its
         # libraries. If BASH_SOURCE-based library resolution is broken, the
         # source line prints "No such file or directory" on stderr even
         # before any check runs.
         local hook_out
+        # shellcheck disable=SC2015  # || true intentionally swallows the dry-run exit code
         hook_out="$(cd "${VAULT_ROOT}" && "$hook_path" </dev/null 2>&1 || true)"
         if echo "$hook_out" | grep -q 'No such file or directory\|command not found'; then
             error "pre-commit hook fails to source its libraries:"
+            # shellcheck disable=SC2001
             echo "$hook_out" | sed 's/^/      /'
+            failures=$((failures + 1))
         else
             ok "pre-commit hook installed and functional"
         fi
@@ -256,11 +267,18 @@ cmd_doctor() {
     echo "  Templates found: ${template_count}"
 
     # Run lint with report output so memory/notes/ always has a fresh
-    # lint-report-YYYY-MM-DD.md after doctor runs.
+    # lint-report-YYYY-MM-DD.md after doctor runs. A lint failure counts
+    # as a blocking issue but must not abort the remaining doctor output.
     subheader "Running lint..."
-    cmd_lint --report || true
+    if ! cmd_lint --report; then
+        failures=$((failures + 1))
+    fi
 
     echo ""
+    if [[ ${failures} -gt 0 ]]; then
+        error "Doctor found ${failures} blocking issue(s)"
+        return 1
+    fi
     ok "Doctor complete"
 }
 
