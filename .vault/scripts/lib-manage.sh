@@ -8,7 +8,9 @@
 #   cmd_status()         — Vault status overview
 #   cmd_doctor()         — Full diagnostic check
 #   cmd_init_hooks()     — Git hook installation
-#   cmd_index_rebuild()  — wiki/index.md regeneration
+#
+# Index maintenance commands (index-rebuild, index-update, index-split)
+# live in lib-index.sh.
 #
 # This file is sourced by vault-tools.sh and depends on functions and
 # variables from lib-utils.sh and the entry point configuration.
@@ -286,92 +288,4 @@ cmd_doctor() {
         return 1
     fi
     ok "Doctor complete"
-}
-
-# ==============================================================================
-# COMMAND: index-rebuild
-# ==============================================================================
-# Rebuild wiki/index.md by scanning all wiki pages.
-
-cmd_index_rebuild() {
-    header "Rebuilding wiki/index.md"
-
-    local output=""
-    output+="---\n"
-    output+="title: \"Vault Index\"\n"
-    output+="type: index\n"
-    output+="created: $(date +%Y-%m-%d)\n"
-    output+="updated: $(date +%Y-%m-%d)\n"
-    output+="status: active\n"
-    output+="tags:\n"
-    output+="  - type/index\n"
-    output+="  - lifecycle/active\n"
-    output+="  - agent/generated\n"
-    output+="---\n\n"
-    output+="# Vault Index\n\n"
-
-    # Collect pages by type
-    declare -A type_pages
-    while IFS= read -r file; do
-        local relative="${file#${VAULT_ROOT}/}"
-        [[ "$relative" == "wiki/index.md" ]] && continue
-        [[ "$relative" == "wiki/log.md" ]] && continue
-
-        local fm
-        fm=$(extract_fm "$file")
-        [[ -z "$fm" ]] && continue
-
-        local title type summary
-        title=$(fm_field "title" "$fm")
-        type=$(fm_field "type" "$fm")
-        summary=$(fm_field "summary" "$fm")
-        [[ -z "$title" ]] && title="$relative"
-        [[ -z "$type" ]] && type="uncategorized"
-        [[ -z "$summary" ]] && summary="(no summary)"
-
-        type_pages["$type"]+="- [[${relative}|${title}]] — ${summary}\n"
-    done < <(wiki_files)
-
-    # Output by type
-    for type in source concept entity comparison decision report evaluation; do
-        local section_title
-        case "$type" in
-            source) section_title="Sources" ;;
-            concept) section_title="Concepts" ;;
-            entity) section_title="Entities" ;;
-            comparison) section_title="Comparisons" ;;
-            decision) section_title="Decisions" ;;
-            report) section_title="Reports" ;;
-            evaluation) section_title="Evaluations" ;;
-            *) section_title="Other" ;;
-        esac
-        output+="## ${section_title}\n\n"
-        if [[ -n "${type_pages[$type]+x}" ]]; then
-            output+="${type_pages[$type]}\n"
-        else
-            output+="_No ${section_title,,} yet._\n\n"
-        fi
-    done
-
-    # Any remaining types (custom or the "uncategorized" fallback) go under
-    # a single "Other" section, sorted by type for determinism. Emitted only
-    # when such pages exist — no empty section otherwise.
-    local other_types=()
-    for type in "${!type_pages[@]}"; do
-        case "$type" in
-            source|concept|entity|comparison|decision|report|evaluation) ;;
-            *) other_types+=("$type") ;;
-        esac
-    done
-    if [[ ${#other_types[@]} -gt 0 ]]; then
-        output+="## Other\n\n"
-        while IFS= read -r type; do
-            output+="${type_pages[$type]}"
-        done < <(printf '%s\n' "${other_types[@]}" | sort)
-        output+="\n"
-    fi
-
-    echo -e "$output" > "${INDEX_FILE}"
-    ok "Index rebuilt with entries from $(count_files "${WIKI_DIR}" "*.md") wiki pages"
-    echo ""
 }
