@@ -47,22 +47,26 @@ system works.
 ## Industry Customizations
 
 ### Engineering-heavy organizations
+
 - Lower SR-008 stale threshold to 7-14 days
 - Add tags: `custom/sprint-N`, `custom/epic-name`
 - Add SR: "Architecture decisions MUST have a decision record"
 
 ### Regulated industries (finance, healthcare)
+
 - Add HR: "Every wiki page MUST include a `sensitivity/` tag"
 - Enable content hardening (`.vault/schemas/content-policy.json`)
 - Set SR-010 to strict: no auto-promotion for any type
 - Add tags: `custom/regulatory-ref`, `custom/audit-trail`
 
 ### Agencies and consultancies
+
 - Add tags per client: `custom/client-acme`
 - Add SR: "Client pages MUST use `sensitivity/confidential`"
 - Consider separate vaults per client for data isolation
 
 ### Research and R&D
+
 - Raise HR-004 warn threshold to 300 (longer research notes)
 - Lower SR-009 confidence requirements (more hypotheses)
 - Add tags: `custom/experiment-N`, `custom/hypothesis`
