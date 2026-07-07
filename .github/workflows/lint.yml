@@ -86,8 +86,14 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    if: hashFiles('.vault/schemas/skill-policy.json') != ''
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+      # hashFiles() is step-level only; a job-level `if` with it makes the
+      # whole workflow unparseable and every run fail at 0s with no jobs.
       - name: Run skill audit
-        run: bash .vault/scripts/vault-tools.sh skill-audit
+        run: |
+          if [ ! -f .vault/schemas/skill-policy.json ]; then
+            echo "No skill policy configured — skipping audit."
+            exit 0
+          fi
+          bash .vault/scripts/vault-tools.sh skill-audit

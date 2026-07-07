@@ -17,6 +17,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New `tests` CI job runs every script under `.vault/scripts/tests/`;
   the pre-commit installation test was previously not exercised by any
   CI job ([#25]).
+- The entire Lint workflow was unparseable — `skill-audit` used
+  `hashFiles()` in a job-level `if`, which GitHub only allows at step
+  level, so every Actions run (including on `main`) failed in 0 seconds
+  with no jobs since the guard was introduced. The guard is now a
+  step-level file test ([#25]).
 
 [#25]: https://github.com/galimba/agentic-memory-vault/issues/25
 
