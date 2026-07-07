@@ -56,9 +56,13 @@ that genuinely need splitting.
 **Enforcement**: Pre-commit hook warns at 200 lines and rejects files
 exceeding 400 lines in `wiki/` and `memory/`.
 
-**Exception**: `wiki/index.md` and `wiki/log.md` are exempt. These files
-grow indefinitely by design. When `index.md` exceeds 500 lines, split
-into `wiki/index-{{category}}.md` files with a root index linking to them.
+**Exception**: `wiki/log.md` is exempt — it grows indefinitely by design.
+Index files (`wiki/index.md` and `wiki/index-*.md` sub-indexes) are exempt
+from the generic limits above but have their own budget: the pre-commit
+hook warns above 250 lines and blocks above 400. When an index approaches
+the warning threshold, run `vault-tools.sh index-split` to partition it
+into `wiki/index-{{category}}.md` sub-indexes behind a root index that
+keeps its section headings and links to them.
 
 ---
 
@@ -113,14 +117,24 @@ Agents MUST update this field whenever they modify page content
 
 ## HR-008: Index Registration
 
-**Rule**: Every file in `wiki/` (except `index.md` and `log.md` themselves) MUST have a corresponding entry in `wiki/index.md`. The entry must include the file path and a one-line summary.
+**Rule**: Every file in `wiki/` MUST be registered in the index — either in
+the root `wiki/index.md` OR in any `wiki/index-*.md` sub-index (the split-index
+layout produced by `vault-tools.sh index-split`). The entry must include the
+file path and a one-line summary. The index files themselves are structural
+and exempt: `wiki/index.md`, every `wiki/index-*.md` sub-index, and
+`wiki/log.md`.
 
-**Rationale**: `wiki/index.md` is the primary retrieval mechanism.
-Agents read the index first to locate relevant pages.
+**Rationale**: The index is the primary retrieval mechanism.
+Agents read it first to locate relevant pages.
 An unregistered page is an invisible page — it exists on disk
 but is functionally absent from the knowledge base.
 
-**Enforcement**: Pre-commit hook (`check_hr008` in `.vault/hooks/checks/check-hr008.sh`) compares `wiki/` file listing against index entries.
+**Enforcement**: Pre-commit hook (`check_hr008` in
+`.vault/hooks/checks/check-hr008.sh`) compares the `wiki/` file listing against
+the combined registration surface of `wiki/index.md` plus all
+`wiki/index-*.md` sub-indexes. Register a missing page with
+`vault-tools.sh index-update`, which appends it under the section matching its
+frontmatter `type`.
 
 ---
 
