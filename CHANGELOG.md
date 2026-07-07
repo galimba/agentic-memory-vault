@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `.vault/rules/hard-rules.md` and `.vault/rules/soft-rules.md` now use
+  RFC 2119 keywords consistently — hard rules state requirements with
+  **MUST**/**MUST NOT**, soft rules with **SHOULD**/**SHOULD NOT**/**MAY** —
+  and both files open with an RFC 2119 reference statement. The hard-rules
+  summaries in `CLAUDE.md` and `AGENTS.md` were aligned. Language pass
+  only; rule numbering, thresholds, and semantics are unchanged (#15).
+
 ## [0.5.0] - 2026-07-07
 
 ### Added
