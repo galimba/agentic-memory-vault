@@ -3,7 +3,7 @@
 A structured, agent-first knowledge base template for organizations using AI agents alongside human teams.
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
-![Version](https://img.shields.io/badge/version-0.4.0-green)
+![Version](https://img.shields.io/badge/version-0.5.0-green)
 
 ## What Is This
 

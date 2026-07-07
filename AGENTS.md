@@ -8,7 +8,7 @@
 
 - **Vault Name**: `{{VAULT_NAME}}`
 - **Organization**: `{{ORG_NAME}}`
-- **Vault Version**: `0.4.0`
+- **Vault Version**: `0.5.0`
 - **Initialized**: `{{INIT_DATE}}`
 
 ## Architecture
