@@ -66,9 +66,10 @@ cmd_blame() {
         return 1
     fi
 
+    # %x1f (unit separator) cannot appear in names/summaries, unlike '|'
     local history
     history="$(git -C "${VAULT_ROOT}" log --follow \
-        --format="%h|%ad|%an|%s" --date=short -- "$rel_path")"
+        --format="%h%x1f%ad%x1f%an%x1f%s" --date=short -- "$rel_path")"
     if [[ -z "$history" ]]; then
         warning "No git history found for ${rel_path} (not committed yet?)"
         return 0
@@ -81,27 +82,31 @@ cmd_blame() {
         "--------------------" "----------------------------------------"
 
     local sha commit_date author summary log_matches log_line
-    while IFS='|' read -r sha commit_date author summary; do
+    while IFS=$'\x1f' read -r sha commit_date author summary; do
         printf "  %-10s | %-9s | %-20s | %s\n" \
             "$commit_date" "$sha" "$author" "$summary"
 
         # Correlate with wiki/log.md entries (SR-005): match headings by
         # date, then check each entry's block for the file path (from the
         # "Files modified" list). Date-only matches are flagged as such.
+        # Path detection is a substring test: a block mentioning a longer
+        # path that contains this one (e.g. page.md.bak) also counts.
+        # The kind is emitted BEFORE the heading so a tab inside a heading
+        # title cannot corrupt the field split below.
         log_matches=""
         if [[ -f "${LOG_FILE}" ]]; then
             log_matches="$(awk -v tag="## [${commit_date}]" -v p="$rel_path" '
                 /^## \[/ {
-                    if (inblk) print head "\t" (hit ? "path" : "date")
+                    if (inblk) print (hit ? "path" : "date") "\t" head
                     inblk = (index($0, tag) == 1); head = $0; hit = 0; next
                 }
                 inblk && index($0, p) { hit = 1 }
-                END { if (inblk) print head "\t" (hit ? "path" : "date") }
+                END { if (inblk) print (hit ? "path" : "date") "\t" head }
             ' "${LOG_FILE}" || true)"
         fi
         if [[ -n "$log_matches" ]]; then
             local match_kind suffix
-            while IFS=$'\t' read -r log_line match_kind; do
+            while IFS=$'\t' read -r match_kind log_line; do
                 suffix=""
                 [[ "$match_kind" == "date" ]] && suffix=" (date match only)"
                 printf "  %-10s |   log: %s%s\n" "" \

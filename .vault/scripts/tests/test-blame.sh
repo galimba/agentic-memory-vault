@@ -13,8 +13,8 @@
 set -euo pipefail
 
 VAULT_ROOT="$(git rev-parse --show-toplevel)"
-TMPDIR="$(mktemp -d)"
-trap 'rm -rf "$TMPDIR"' EXIT
+FIXTURE_DIR="$(mktemp -d)"
+trap 'rm -rf "$FIXTURE_DIR"' EXIT
 
 fail() {
     echo "FAIL: $*" >&2
@@ -28,14 +28,14 @@ TODAY="$(date +%Y-%m-%d)"
 # Hooks are bypassed via core.hooksPath=/dev/null so the fixture
 # commits don't need to satisfy the full pre-commit rule set.
 # ------------------------------------------------------------------
-mkdir -p "$TMPDIR/wiki/concepts" "$TMPDIR/memory"
-cp -r "$VAULT_ROOT/.vault" "$TMPDIR/.vault"
+mkdir -p "$FIXTURE_DIR/wiki/concepts" "$FIXTURE_DIR/memory"
+cp -r "$VAULT_ROOT/.vault" "$FIXTURE_DIR/.vault"
 
-git -C "$TMPDIR" init -q
-git -C "$TMPDIR" config user.name "Blame Tester"
-git -C "$TMPDIR" config user.email "blame-tester@example.com"
+git -C "$FIXTURE_DIR" init -q
+git -C "$FIXTURE_DIR" config user.name "Blame Tester"
+git -C "$FIXTURE_DIR" config user.email "blame-tester@example.com"
 
-cat > "$TMPDIR/wiki/log.md" <<EOF
+cat > "$FIXTURE_DIR/wiki/log.md" <<EOF
 ---
 title: "Operations Log"
 type: index
@@ -51,7 +51,7 @@ confidence: high
 # Operations Log
 EOF
 
-cat > "$TMPDIR/wiki/concepts/concept-blame.md" <<EOF
+cat > "$FIXTURE_DIR/wiki/concepts/concept-blame.md" <<EOF
 ---
 title: "Blame Test Concept"
 type: concept
@@ -70,12 +70,12 @@ confidence: high
 # Blame Test Concept
 EOF
 
-git -C "$TMPDIR" add -A
-git -C "$TMPDIR" -c core.hooksPath=/dev/null commit -q -m "[ingest] Added blame test concept"
+git -C "$FIXTURE_DIR" add -A
+git -C "$FIXTURE_DIR" -c core.hooksPath=/dev/null commit -q -m "[ingest] Added blame test concept"
 
 # Append two same-day log entries: one whose block lists the target page
 # in "Files modified" (definite match) and one that does not (date-only).
-cat >> "$TMPDIR/wiki/log.md" <<EOF
+cat >> "$FIXTURE_DIR/wiki/log.md" <<EOF
 
 ## [${TODAY}] ingest | Blame Test Concept Ingested
 
@@ -90,17 +90,17 @@ cat >> "$TMPDIR/wiki/log.md" <<EOF
 - **Summary**: fixture entry that does not mention the target path
 EOF
 
-git -C "$TMPDIR" add -A
-git -C "$TMPDIR" -c core.hooksPath=/dev/null commit -q -m "[log] Log entry for blame test"
+git -C "$FIXTURE_DIR" add -A
+git -C "$FIXTURE_DIR" -c core.hooksPath=/dev/null commit -q -m "[log] Log entry for blame test"
 
-short_sha="$(git -C "$TMPDIR" log --format="%h" -1 -- wiki/concepts/concept-blame.md)"
+short_sha="$(git -C "$FIXTURE_DIR" log --format="%h" -1 -- wiki/concepts/concept-blame.md)"
 [[ -n "$short_sha" ]] || fail "could not resolve the fixture commit SHA"
 
 # ------------------------------------------------------------------
 # Assert 1: blame on the committed page exits 0 and correlates the
 # commit with the log entry appended above.
 # ------------------------------------------------------------------
-output="$(cd "$TMPDIR" && bash .vault/scripts/vault-tools.sh blame wiki/concepts/concept-blame.md)" \
+output="$(cd "$FIXTURE_DIR" && bash .vault/scripts/vault-tools.sh blame wiki/concepts/concept-blame.md)" \
     || fail "blame exited non-zero on a committed wiki page"
 
 echo "$output" | grep -q "$short_sha" \
@@ -119,10 +119,12 @@ echo "$output" | grep "log: query | Unrelated Same-Day Operation" \
 
 # ------------------------------------------------------------------
 # Assert: a file outside the vault is rejected with exit 2.
+# Explicit /tmp template: must land outside the fixture vault even when
+# the caller's environment exports TMPDIR.
 # ------------------------------------------------------------------
-outside_file="$(mktemp)"
+outside_file="$(mktemp /tmp/blame-outside.XXXXXX)"
 rc=0
-output="$(cd "$TMPDIR" && bash .vault/scripts/vault-tools.sh blame "$outside_file" 2>&1)" || rc=$?
+output="$(cd "$FIXTURE_DIR" && bash .vault/scripts/vault-tools.sh blame "$outside_file" 2>&1)" || rc=$?
 rm -f "$outside_file"
 [[ "$rc" -eq 2 ]] || fail "blame on an outside-vault file exited ${rc}, expected 2"
 echo "$output" | grep -q "outside the vault" \
@@ -132,7 +134,7 @@ echo "$output" | grep -q "outside the vault" \
 # Assert 2: blame on a nonexistent file exits 2 with usage.
 # ------------------------------------------------------------------
 rc=0
-output="$(cd "$TMPDIR" && bash .vault/scripts/vault-tools.sh blame wiki/no-such-page.md 2>&1)" || rc=$?
+output="$(cd "$FIXTURE_DIR" && bash .vault/scripts/vault-tools.sh blame wiki/no-such-page.md 2>&1)" || rc=$?
 [[ "$rc" -eq 2 ]] || fail "blame on a nonexistent file exited ${rc}, expected 2"
 echo "$output" | grep -q "Usage: vault-tools.sh blame" \
     || fail "blame error output missing usage line"
