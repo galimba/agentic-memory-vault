@@ -367,7 +367,13 @@ RUN_DOCTOR="${RUN_DOCTOR:-Y}"
 
 if [[ "${RUN_DOCTOR}" =~ ^[Yy] ]]; then
     echo ""
-    bash "${VAULT_ROOT}/.vault/scripts/vault-tools.sh" doctor
+    # Doctor now exits non-zero on blocking issues; diagnostics are
+    # advisory during init, so a failure must not abort initialization.
+    if ! bash "${VAULT_ROOT}/.vault/scripts/vault-tools.sh" doctor; then
+        echo ""
+        echo "  Doctor reported blocking issues. Initialization will continue;"
+        echo "  fix the issues above, then re-run: bash .vault/scripts/vault-tools.sh doctor"
+    fi
 fi
 
 # ==============================================================================
