@@ -249,6 +249,7 @@ cmd_doctor() {
         # source line prints "No such file or directory" on stderr even
         # before any check runs.
         local hook_out
+        # shellcheck disable=SC2015  # || true intentionally swallows the dry-run exit code
         hook_out="$(cd "${VAULT_ROOT}" && "$hook_path" </dev/null 2>&1 || true)"
         if echo "$hook_out" | grep -q 'No such file or directory\|command not found'; then
             error "pre-commit hook fails to source its libraries:"

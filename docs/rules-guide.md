@@ -75,6 +75,7 @@ Run `vault-tools.sh lint` to check soft rule compliance across the
 vault.
 
 Review rules quarterly:
+
 - Are any rules routinely overridden? (Too strict)
 - Are violations slipping through? (Insufficient enforcement)
 - Has the team found a new failure mode? (New rule needed)
