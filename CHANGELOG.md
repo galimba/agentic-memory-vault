@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `vault-tools.sh blame <file>` — shows a file's git change history
+  (`git log --follow`, so renames are tracked) as a DATE | SHA | AUTHOR |
+  SUMMARY table and correlates each commit with the `wiki/log.md` entries
+  dated the same day, answering "why does this page say X?" (#14).
+
 ## [0.5.0] - 2026-07-07
 
 ### Added
