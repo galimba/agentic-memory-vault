@@ -7,7 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-<!-- Nothing yet -->
+### Added
+
+- `vault-tools.sh skill-manifest <skill-dir>` — generates or refreshes a
+  skill's `skill-manifest.json` (SHA-256 hashes, sizes, metadata) per
+  `.vault/schemas/skill-manifest.schema.md`. Preserves existing metadata
+  and review fields, and prominently warns when content changes invalidate
+  a prior human review under a strict skill policy (#30).
+- `init.sh` instance scaffolding copies bundled skills from
+  `.vault/skills/` to `.claude/skills/` so the agent platform loads them
+  (#30).
+- Round-trip test `.vault/scripts/tests/test-skill-manifest.sh` covering
+  manifest generation, hash verification, and a passing strict
+  `skill-audit` after review sign-off (#30).
 
 ## [0.4.0] - 2026-04-12
 

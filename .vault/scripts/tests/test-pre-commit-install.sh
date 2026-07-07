@@ -124,12 +124,15 @@ fi
 # this assertion is the strongest single reproduction of the real
 # user impact.
 # ------------------------------------------------------------------
-cat > wiki/concepts/valid.md <<'EOF'
+# Dates must be today's: HR-007 rejects `updated` values more than one
+# day from the commit date, so a hardcoded date rots and fails the hook.
+TODAY="$(date +%Y-%m-%d)"
+cat > wiki/concepts/valid.md <<EOF
 ---
 title: "Valid Page"
 type: concept
-created: 2026-04-11
-updated: 2026-04-11
+created: ${TODAY}
+updated: ${TODAY}
 status: draft
 sources: []
 related: []
