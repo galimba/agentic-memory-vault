@@ -21,7 +21,12 @@ Source documents go in, structured knowledge comes out.
 Agents process sources into wiki pages, answer questions from the knowledge base,
 and maintain vault health through automated linting.
 
-No databases, no external services, no dependencies beyond bash and git. The vault is a directory of markdown files with YAML frontmatter, linked together with wikilinks, and governed by enforceable rules.
+No databases, no external services. The core workflow needs only bash, git,
+and standard Unix tools; python3 is required for the skill-hardening and
+content-policy tooling (without it, those checks warn or fall back to grep,
+and `skill-audit` / `content-audit` do not run). The vault is a directory of markdown files
+with YAML frontmatter, linked together with wikilinks, and governed by
+enforceable rules.
 
 ## Quick Start
 
@@ -127,7 +132,7 @@ Full details: `.vault/rules/hard-rules.md` and `.vault/rules/soft-rules.md`
 
 ## Tag System
 
-200+ approved tags using flat prefix notation for maximum agent parseability. Tags are organized by prefix:
+230 approved tags across 19 prefix categories, using flat prefix notation for maximum agent parseability. Tags are organized by prefix:
 
 | Prefix | Example | Purpose |
 |--------|---------|---------|
