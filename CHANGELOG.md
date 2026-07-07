@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `vault-tools.sh verify-sources` — verifies every `sources:` citation in
+  wiki frontmatter resolves to an existing file in `raw/`. Reports each
+  page as verified or dangling with the specific missing paths, exits 1
+  when any citation dangles, and runs inside `doctor` as an advisory
+  check that does not block an otherwise healthy vault (#7).
+
 ## [0.5.0] - 2026-07-07
 
 ### Added

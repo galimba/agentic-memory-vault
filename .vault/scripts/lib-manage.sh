@@ -266,6 +266,12 @@ cmd_doctor() {
     template_count=$(count_files "${VAULT_ROOT}/templates" "*.md")
     echo "  Templates found: ${template_count}"
 
+    # Advisory: dangling source citations degrade provenance but must not
+    # block doctor on an otherwise healthy vault (#7).
+    subheader "Verifying source citations (advisory)..."
+    cmd_verify_sources \
+        || warning "Dangling source citations found (advisory — not counted as a doctor failure)"
+
     # Run lint with report output so memory/notes/ always has a fresh
     # lint-report-YYYY-MM-DD.md after doctor runs. A lint failure counts
     # as a blocking issue but must not abort the remaining doctor output.
