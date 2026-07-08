@@ -212,3 +212,21 @@ prefer appending to an existing relevant page over creating a new page.
 - Use lowercase, hyphenated values: `domain/data-engineering` not `domain/DataEngineering`
 - Add new tags to `.vault/rules/tags.md` before using them
 - Prefix custom tags with `custom/` if they are organization-specific and unlikely to be useful in the boilerplate: `custom/acme-internal`
+
+---
+
+## SR-016: One Writer per Branch
+
+**Default**: Within a single branch, `wiki/` has exactly **one writing agent**. Other agents working on the same branch write to their namespaced
+scratch space in `memory/agents/<agent-id>/` instead. Scratch notes are promoted into `wiki/` by the single writer.
+
+**Guidance**:
+
+- Name scratch directories after the stable agent ID used in branch names: `memory/agents/claude-01/`
+- Scratch notes are free-form working files; they become subject to the full wiki conventions only when promoted
+- The single writer reviews, reconciles, and files scratch content into `wiki/`, updating `wiki/index.md` and `wiki/log.md` as usual
+
+**Rationale**: One writer per branch prevents merge conflicts and semantic corruption in `wiki/` without requiring file-level locks.
+Branch-per-session remains the primary isolation mechanism; this rule covers the case where multiple agents share a branch.
+
+**When to override**: Single-agent sessions — the rule is trivially satisfied. This is a **coordination protocol, not an enforced policy**: no hook or lint check verifies it.

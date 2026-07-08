@@ -125,6 +125,16 @@ Multiple agents can work on the vault simultaneously because each operates on it
 - Keep operations atomic -- small, focused changes merge more cleanly
 - Stagger large ingestions rather than running them in parallel
 
+### One writer per branch (SR-016)
+
+Branch-per-session remains the primary isolation mechanism. When multiple agents do share a single branch, apply the one-writer convention from SR-016 in `.vault/rules/soft-rules.md`:
+
+- Exactly **one agent** writes to `wiki/` on that branch
+- Every other agent writes to its own scratch space: `memory/agents/<agent-id>/` (e.g., `memory/agents/codex-02/`)
+- Scratch notes are promoted into `wiki/` by the single writer, which reconciles them and updates `wiki/index.md` and `wiki/log.md`
+
+This is a coordination protocol, not an enforced policy -- no hook or lint check verifies it.
+
 ## Resolving Conflicts
 
 ### wiki/index.md (most common)

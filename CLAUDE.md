@@ -207,6 +207,13 @@ See `.vault/rules/tags.md` for the full taxonomy: 19 prefix categories, 230 appr
 - PRs require lint pass before merge
 - Main branch is protected
 
+### Multi-Agent Scratch Space
+
+- Within a single branch, `wiki/` has exactly one writing agent (SR-016)
+- Other agents on the same branch write to their namespaced scratch space: `memory/agents/{{agent-id}}/`
+- Scratch notes are promoted into `wiki/` by the single writer
+- Coordination protocol only — not enforced by hooks or lint
+
 ## Security
 
 ### Content Trust Levels

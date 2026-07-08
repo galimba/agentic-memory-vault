@@ -66,7 +66,7 @@ fix(hooks): correct frontmatter date parsing for BSD date
 docs(vault): add batch ingestion example to ingestion guide
 chore(ci): update markdownlint-cli2 action to v19
 refactor(scripts): extract frontmatter parser into shared function
-feat(rules): add SR-016 for minimum entity page completeness
+feat(rules): add SR-0XX for minimum entity page completeness
 docs(templates): add report template with executive summary section
 ```
 

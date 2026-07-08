@@ -212,6 +212,16 @@ cmd_doctor() {
         fi
     done
 
+    # Optional directories — present is healthy, absent is not an error.
+    # memory/agents/ holds per-agent scratch space (SR-016); its
+    # per-agent subdirectories are free-form and never flagged.
+    local optional_dirs=("memory/agents")
+    for dir in "${optional_dirs[@]}"; do
+        if [[ -d "${VAULT_ROOT}/${dir}" ]]; then
+            ok "${dir}/ (optional)"
+        fi
+    done
+
     subheader "Required Files"
     local required_files=("CLAUDE.md" "AGENTS.md" "wiki/index.md" "wiki/log.md" "memory/status.md" ".vault/rules/hard-rules.md" ".vault/rules/soft-rules.md" ".vault/rules/tags.md" ".vault/schemas/frontmatter.md")
     for file in "${required_files[@]}"; do

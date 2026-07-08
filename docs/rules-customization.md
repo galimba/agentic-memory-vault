@@ -28,7 +28,7 @@ system works.
 
 ## Creating a Soft Rule
 
-1. Choose the next ID (SR-016, SR-017, etc.)
+1. Choose the next unused ID (one greater than the highest SR number in `.vault/rules/soft-rules.md`)
 2. Add to `.vault/rules/soft-rules.md`:
 
 ```markdown
