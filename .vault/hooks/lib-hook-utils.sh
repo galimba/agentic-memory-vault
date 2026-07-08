@@ -212,7 +212,7 @@ get_approved_tags() {
         warn "Tags file not found at ${TAGS_FILE}. Skipping tag validation."
         return
     fi
-    grep -E '^\- `[a-z]+/[a-z0-9-]+`' "${VAULT_ROOT}/${TAGS_FILE}" | sed 's/^- `//' | sed 's/`.*//'
+    grep -E '^\- `[a-z][a-z0-9-]*/[a-z0-9-]+`' "${VAULT_ROOT}/${TAGS_FILE}" | sed 's/^- `//' | sed 's/`.*//'
 }
 
 # ==============================================================================
