@@ -27,6 +27,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New module `.vault/scripts/lib-index.sh` housing all index maintenance
   commands (`index-rebuild` moved out of `lib-manage.sh`) and the shared
   type-to-section and entry-formatting helpers.
+- `vault-tools.sh verify-sources` — verifies every `sources:` citation in
+  wiki frontmatter resolves to an existing file in `raw/`. Reports each
+  page as verified or dangling with the specific missing paths, exits 1
+  when any citation dangles, and runs inside `doctor` as an advisory
+  check that does not block an otherwise healthy vault (#7).
+- `vault-tools.sh blame <file>` — shows a file's git change history
+  (`git log --follow`, so renames are tracked) as a DATE | SHA | AUTHOR |
+  SUMMARY table and correlates each commit with the `wiki/log.md` entries
+  dated the same day, answering "why does this page say X?" (#14).
 - `vault-tools.sh consolidate` — report-only command that finds groups of
   3+ stale, overlapping wiki pages (pairs share >= 2 approved tags and a
   direct `related:` reference; groups are connected components where every
