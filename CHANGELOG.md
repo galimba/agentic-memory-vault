@@ -41,6 +41,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   direct `related:` reference; groups are connected components where every
   member is past its staleness threshold) and writes candidates to
   `memory/notes/consolidation-YYYY-MM-DD.md` for human-driven merging (#16).
+- Root `MEMORY.md` — thin, agent-editable pointer index (Core files, rules,
+  latest lint report, recently active pages) loaded right after `CLAUDE.md`.
+  Regenerated deterministically by the new `vault-tools.sh memory-refresh`
+  command (`.vault/scripts/lib-memory.sh`); `doctor` warns when the file is
+  missing or exceeds 200 lines. Context loading order in `CLAUDE.md`,
+  `AGENTS.md`, and `CODEX.md` updated to include it. Covered by
+  `.vault/scripts/tests/test-memory-refresh.sh` (#11).
 
 ### Changed
 

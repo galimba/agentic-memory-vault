@@ -223,6 +223,21 @@ cmd_doctor() {
         fi
     done
 
+    # MEMORY.md is warning-level only: instances upgrading from template
+    # versions that predate it should not hard-fail doctor.
+    local memory_md="${VAULT_ROOT}/MEMORY.md"
+    if [[ ! -f "$memory_md" ]]; then
+        warning "MEMORY.md — missing. Generate it: vault-tools.sh memory-refresh"
+    else
+        local memory_md_lines
+        memory_md_lines=$(wc -l < "$memory_md" | tr -d ' ')
+        if [[ $memory_md_lines -ge 200 ]]; then
+            warning "MEMORY.md has ${memory_md_lines} lines (must stay under 200). Regenerate: vault-tools.sh memory-refresh"
+        else
+            ok "MEMORY.md (${memory_md_lines} lines)"
+        fi
+    fi
+
     subheader "Initialization State"
     if [[ ! -f "${VAULT_ROOT}/.vault/.initialized" ]]; then
         warning "Vault not initialized. Run: bash .vault/scripts/init.sh"

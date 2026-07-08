@@ -26,6 +26,7 @@
 #   ./vault-tools.sh consolidate       Report stale overlapping pages to merge
 #   ./vault-tools.sh stats             Show vault statistics
 #   ./vault-tools.sh init-hooks        Install git hooks
+#   ./vault-tools.sh memory-refresh    Regenerate MEMORY.md pointer index
 #   ./vault-tools.sh doctor            Full diagnostic check
 #
 # EXIT CODES:
@@ -96,6 +97,7 @@ source "${SCRIPT_DIR}/lib-index.sh"
 source "${SCRIPT_DIR}/lib-manage.sh"
 source "${SCRIPT_DIR}/lib-skills.sh"
 source "${SCRIPT_DIR}/lib-blame.sh"
+source "${SCRIPT_DIR}/lib-memory.sh"
 
 # ==============================================================================
 # HELP
@@ -128,6 +130,7 @@ cmd_help() {
     echo "  index-rebuild     Rebuild wiki/index.md (destructive full rewrite)"
     echo "  index-update      Append entries for unregistered wiki pages"
     echo "  index-split [n]   Split index into sub-indexes above n lines (default: 250)"
+    echo "  memory-refresh    Regenerate MEMORY.md pointer index"
     echo "  init-hooks        Install git hooks"
     echo "  doctor            Full diagnostic check"
     echo "  help              Show this help"
@@ -159,6 +162,7 @@ main() {
         index-rebuild)  cmd_index_rebuild "$@" ;;
         index-update)   cmd_index_update "$@" ;;
         index-split)    cmd_index_split "$@" ;;
+        memory-refresh) cmd_memory_refresh "$@" ;;
         init-hooks)     cmd_init_hooks "$@" ;;
         doctor)         cmd_doctor "$@" ;;
         help|--help|-h) cmd_help "$@" ;;
