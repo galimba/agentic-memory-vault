@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-07-08
+
 ### Added
 
 - `vault-tools.sh index-update` — incremental index maintenance: parses the
@@ -321,7 +323,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `docs/rules-customization.md` — creating new rules, industry-specific templates
 - Architecture diagrams embedded in README (`docs/architecture.png`, `docs/vaults.png`)
 
-[Unreleased]: https://github.com/galimba/agentic-memory-vault/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/galimba/agentic-memory-vault/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/galimba/agentic-memory-vault/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/galimba/agentic-memory-vault/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/galimba/agentic-memory-vault/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/galimba/agentic-memory-vault/compare/v0.2.0...v0.3.0
