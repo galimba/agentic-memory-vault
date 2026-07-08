@@ -43,6 +43,7 @@ community input on design questions before implementation begins.
 
 | Version | Highlights |
 |---------|-----------|
+| v0.6.0 | Index maintenance (`index-update`, `index-split`), `verify-sources`, `blame`, `consolidate`, the `MEMORY.md` root pointer with `memory-refresh`, SR-016 multi-agent namespacing, RFC 2119 rule-language pass, and a freshness-model decision record closing decay scoring and lifecycle tiers as adopter customizations |
 | v0.5.0 | Working CI (fixed a workflow that failed GitHub's validation and had failed every run since v0.4.0), honest `doctor` exit codes, a script test suite wired into CI, the `index-rebuild` "Other" section fix, `evaluation` type schema alignment, a documentation drift sweep, and the first shipped agent skill (`vault-ops`) with its `skill-manifest` generator |
 | v0.4.0 | Instance scaffolding: `init.sh` instance phase, instance README and onboarding templates, 7 init placeholders, `.vault/.initialized` idempotency guard |
 | v0.3.0 | HR-014: No file deletion — agents must archive instead of delete |

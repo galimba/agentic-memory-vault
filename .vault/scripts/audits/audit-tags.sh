@@ -19,7 +19,11 @@ cmd_tag_audit() {
     local approved_tags_file
     approved_tags_file=$(mktemp)
     if [[ -f "${TAGS_FILE}" ]]; then
-        grep -oE '`[a-z][a-z0-9-]*/[a-z][a-z0-9-]*`' "${TAGS_FILE}" | sed 's/`//g' | sort -u > "$approved_tags_file"
+        # Anchored to bullet-list lines only, matching the hook's loader —
+        # an unanchored grep also picks up `prefix/value` in this file's
+        # own descriptive prose as if it were a real approved tag.
+        grep -E '^\- `[a-z][a-z0-9-]*/[a-z0-9-]+`' "${TAGS_FILE}" \
+            | sed 's/^- `//' | sed 's/`.*//' | sort -u > "$approved_tags_file"
         local approved_count
         approved_count=$(wc -l < "$approved_tags_file" | tr -d ' ')
         ok "Loaded ${approved_count} approved tags"

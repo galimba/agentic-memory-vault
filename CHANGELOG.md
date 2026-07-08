@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-07-08
+
 ### Added
 
 - `vault-tools.sh index-update` — incremental index maintenance: parses the
@@ -93,6 +95,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `set -o pipefail` the resulting 141 turned a successful match into a false
   HR-008 violation. Registration is now checked with a bash literal substring
   match — deterministic and fork-free.
+- `get_approved_tags()` in `.vault/hooks/lib-hook-utils.sh` required the tag
+  prefix to be pure letters, so HR-003 rejected the entire documented
+  `source-type/` category — the only hyphenated prefix in the taxonomy — even
+  though the tags pass HR-009's own notation check. A page tagged only
+  `source-type/article` was blocked with "No approved tags found." The
+  prefix pattern now matches hyphens, consistent with HR-009. Also fixed
+  `audit-tags.sh`'s unanchored tag-extraction grep, which inflated its
+  approved-tag count by matching the `` `prefix/value` `` example in the
+  taxonomy file's own descriptive prose (#39).
 
 ## [0.5.0] - 2026-07-07
 
@@ -321,7 +332,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `docs/rules-customization.md` — creating new rules, industry-specific templates
 - Architecture diagrams embedded in README (`docs/architecture.png`, `docs/vaults.png`)
 
-[Unreleased]: https://github.com/galimba/agentic-memory-vault/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/galimba/agentic-memory-vault/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/galimba/agentic-memory-vault/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/galimba/agentic-memory-vault/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/galimba/agentic-memory-vault/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/galimba/agentic-memory-vault/compare/v0.2.0...v0.3.0
