@@ -37,6 +37,7 @@ docs/         # Vault documentation for humans. How-to guides, onboarding.
 | `CLAUDE.md` | Root | Agent configuration (this file) |
 | `AGENTS.md` | Root | Platform-agnostic agent instructions (mirrors this file) |
 | `CODEX.md` | Root | OpenAI Codex-specific overrides |
+| `MEMORY.md` | Root | Generated pointer index of vault entry points |
 | `index.md` | `wiki/` | Master catalog of all wiki pages |
 | `log.md` | `wiki/` | Append-only chronological record of all operations |
 | `status.md` | `memory/` | Current vault health and operational state |
@@ -175,10 +176,11 @@ See `.vault/rules/tags.md` for the full taxonomy: 19 prefix categories, 230 appr
 ### Context Loading Order
 
 1. Read this file (`CLAUDE.md`) — always loaded first
-2. Read `wiki/index.md` — understand vault contents
-3. Read `memory/status.md` — understand current state
-4. Read `.vault/rules/hard-rules.md` — understand constraints
-5. Load task-specific wiki pages as needed
+2. Read `MEMORY.md` — entry-point pointers
+3. Read `wiki/index.md` — understand vault contents
+4. Read `memory/status.md` — understand current state
+5. Read `.vault/rules/hard-rules.md` — understand constraints
+6. Load task-specific wiki pages as needed
 
 ### File Naming Conventions
 

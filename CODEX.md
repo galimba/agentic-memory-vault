@@ -22,8 +22,9 @@ Codex should load context in this order:
 
 1. This file (`CODEX.md`) — Codex-specific overrides
 2. `AGENTS.md` — Full operational specification
-3. `wiki/index.md` — Vault contents catalog
-4. `memory/status.md` — Current vault state
+3. `MEMORY.md` — Entry-point pointers
+4. `wiki/index.md` — Vault contents catalog
+5. `memory/status.md` — Current vault state
 
 ### Commit Messages
 

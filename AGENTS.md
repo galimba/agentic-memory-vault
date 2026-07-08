@@ -26,10 +26,11 @@ Support directories: `.vault/` (config), `templates/` (page templates), `docs/` 
 ## Context Loading Order
 
 1. Read this file (`AGENTS.md`) or `CLAUDE.md`
-2. Read `wiki/index.md` — discover vault contents
-3. Read `memory/status.md` — understand current state
-4. Read `.vault/rules/hard-rules.md` — understand constraints
-5. Load task-specific wiki pages as needed
+2. Read `MEMORY.md` — entry-point pointers
+3. Read `wiki/index.md` — discover vault contents
+4. Read `memory/status.md` — understand current state
+5. Read `.vault/rules/hard-rules.md` — understand constraints
+6. Load task-specific wiki pages as needed
 
 ## Three Operations
 

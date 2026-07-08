@@ -21,8 +21,12 @@
 #   ./vault-tools.sh skill-audit       Audit skills against hardening policy
 #   ./vault-tools.sh skill-manifest <dir>  Generate/refresh skill-manifest.json
 #   ./vault-tools.sh content-audit     Audit content integrity
+#   ./vault-tools.sh verify-sources    Verify sources: citations resolve to raw/ files
+#   ./vault-tools.sh blame <file>      Show file history correlated with log.md
+#   ./vault-tools.sh consolidate       Report stale overlapping pages to merge
 #   ./vault-tools.sh stats             Show vault statistics
 #   ./vault-tools.sh init-hooks        Install git hooks
+#   ./vault-tools.sh memory-refresh    Regenerate MEMORY.md pointer index
 #   ./vault-tools.sh doctor            Full diagnostic check
 #
 # EXIT CODES:
@@ -92,6 +96,8 @@ source "${SCRIPT_DIR}/lib-lint.sh"
 source "${SCRIPT_DIR}/lib-index.sh"
 source "${SCRIPT_DIR}/lib-manage.sh"
 source "${SCRIPT_DIR}/lib-skills.sh"
+source "${SCRIPT_DIR}/lib-blame.sh"
+source "${SCRIPT_DIR}/lib-memory.sh"
 
 # ==============================================================================
 # HELP
@@ -114,13 +120,17 @@ cmd_help() {
     echo "  skill-audit       Audit skill security"
     echo "  skill-manifest <dir>  Generate or refresh a skill's manifest"
     echo "  content-audit     Audit content integrity"
+    echo "  verify-sources    Verify sources: citations resolve to raw/ files"
+    echo "  consolidate       Report groups of stale overlapping pages to merge"
     echo ""
     echo "Management:"
+    echo "  blame <file>      Show file history correlated with wiki/log.md"
     echo "  status            Show vault status"
     echo "  stats             Show detailed vault statistics"
     echo "  index-rebuild     Rebuild wiki/index.md (destructive full rewrite)"
     echo "  index-update      Append entries for unregistered wiki pages"
     echo "  index-split [n]   Split index into sub-indexes above n lines (default: 250)"
+    echo "  memory-refresh    Regenerate MEMORY.md pointer index"
     echo "  init-hooks        Install git hooks"
     echo "  doctor            Full diagnostic check"
     echo "  help              Show this help"
@@ -146,9 +156,13 @@ main() {
         skill-audit)    cmd_skill_audit "$@" ;;
         skill-manifest) cmd_skill_manifest "$@" ;;
         content-audit)  cmd_content_audit "$@" ;;
+        verify-sources) cmd_verify_sources "$@" ;;
+        blame)          cmd_blame "$@" ;;
+        consolidate)    cmd_consolidate "$@" ;;
         index-rebuild)  cmd_index_rebuild "$@" ;;
         index-update)   cmd_index_update "$@" ;;
         index-split)    cmd_index_split "$@" ;;
+        memory-refresh) cmd_memory_refresh "$@" ;;
         init-hooks)     cmd_init_hooks "$@" ;;
         doctor)         cmd_doctor "$@" ;;
         help|--help|-h) cmd_help "$@" ;;
