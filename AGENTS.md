@@ -77,10 +77,10 @@ Support directories: `.vault/` (config), `templates/` (page templates), `docs/` 
 8. **Every `wiki/` file MUST be registered in `wiki/index.md`**
 9. **Tags MUST use flat prefix notation**: `prefix/value`
 10. **Binary files MUST be stored in `raw/`** only
-11. **No agent may modify `.vault/rules/`, `.vault/hooks/`, or `.vault/scripts/`**
-12. **No agent may modify `CLAUDE.md`, `AGENTS.md`, or `CODEX.md`**
-13. **No agent may modify `.github/` or `templates/`**
-14. **Do not delete files from `wiki/` or `memory/`.** Set `status: archived` in frontmatter instead. Use `VAULT_ALLOW_DELETE=1` for cleanup.
+11. **Agents MUST NOT modify `.vault/rules/`, `.vault/hooks/`, or `.vault/scripts/`**
+12. **Agents MUST NOT modify `CLAUDE.md`, `AGENTS.md`, or `CODEX.md`**
+13. **Agents MUST NOT modify `.github/` or `templates/`**
+14. **Agents MUST NOT delete files from `wiki/` or `memory/`.** Set `status: archived` in frontmatter instead. Use `VAULT_ALLOW_DELETE=1` for cleanup.
 15. **Log files (`wiki/log.md`, `memory/logs/`) are append-only** (HR-015). Deletions are rejected. Set `LOG_EDIT_ALLOWED=1` to bypass for legitimate corrections.
 
 Full details: `.vault/rules/hard-rules.md`

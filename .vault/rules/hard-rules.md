@@ -2,9 +2,12 @@
 
 > These rules are enforced by hooks and pre-commit scripts. Violations block commits. These rules exist to maintain vault integrity, agent reliability, and data safety. They are not configurable.
 
+The key words **MUST**, **MUST NOT**, **SHOULD**, **SHOULD NOT**, and **MAY** in this document are to
+be interpreted as described in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119).
+
 ## HR-001: Raw Directory Immutability
 
-**Rule**: No agent or automated process may create, modify, rename, or delete files in `raw/`. Only humans add files to `raw/` (manually or via Obsidian Web Clipper).
+**Rule**: Agents and automated processes **MUST NOT** create, modify, rename, or delete files in `raw/`. Only humans add files to `raw/` (manually or via Obsidian Web Clipper).
 
 **Rationale**: `raw/` is the provenance layer. If sources can be modified after ingestion, the wiki loses its grounding truth. Every wiki claim must trace back to an unmodified source.
 
@@ -17,7 +20,7 @@ approval for PRs touching `raw/`.
 
 ## HR-002: Mandatory Frontmatter
 
-**Rule**: Every `.md` file in `wiki/` MUST begin with valid YAML frontmatter containing at minimum: `title`, `type`, `created`, `updated`, `status`, `tags`.
+**Rule**: Every `.md` file in `wiki/` **MUST** begin with valid YAML frontmatter containing at minimum: `title`, `type`, `created`, `updated`, `status`, `tags`.
 
 **Rationale**: Frontmatter is how agents discover, filter, and reason about vault contents.
 Without it, pages become invisible to programmatic access.
@@ -29,7 +32,7 @@ Dataview queries, index generation, and lint operations all depend on structured
 
 ## HR-003: Mandatory Tags
 
-**Rule**: Every file in `wiki/` MUST include at least one tag from the approved taxonomy (`.vault/rules/tags.md`). Tags MUST use the flat prefix notation: `prefix/value`.
+**Rule**: Every file in `wiki/` **MUST** include at least one tag from the approved taxonomy (`.vault/rules/tags.md`). Tags **MUST** use the flat prefix notation: `prefix/value`.
 
 **Rationale**: Tags are the primary discovery mechanism for agents.
 A page without tags is a page that cannot be found by category, domain, or type.
@@ -42,7 +45,7 @@ Flat prefixes ensure consistent machine parsing without ambiguity.
 ## HR-004: Markdown Length Limit
 
 **Rule**: Markdown files in `wiki/` or `memory/` should stay under **200
-lines** (soft warning). Files exceeding **400 lines** are blocked (hard
+lines** (soft warning) and **MUST NOT** exceed **400 lines** (hard
 limit). If content requires more space, split into linked sub-pages with
 a parent page that serves as an index.
 
@@ -69,8 +72,8 @@ keeps its section headings and links to them.
 ## HR-005: Code File Length Limit
 
 **Rule**: Standalone code files (`.sh`, `.py`, `.js`, `.ts`, etc.) in
-`.vault/` should stay under **400 lines** (soft warning). Files exceeding
-**600 lines** are blocked (hard limit). If a file exceeds the limit, split
+`.vault/` should stay under **400 lines** (soft warning) and **MUST NOT**
+exceed **600 lines** (hard limit). If a file exceeds the limit, split
 it into modular files with clear responsibilities and a single entry point
 that sources them.
 
@@ -92,7 +95,7 @@ ability to stay under the limit. Configuration files (`.json`, `.yaml`,
 
 ## HR-006: Unique Page Titles
 
-**Rule**: No two files in `wiki/` may share the same `title` frontmatter value. Titles are the primary human-readable identifier and the basis for `[[wikilink]]` resolution.
+**Rule**: Two files in `wiki/` **MUST NOT** share the same `title` frontmatter value. Titles are the primary human-readable identifier and the basis for `[[wikilink]]` resolution.
 
 **Rationale**: Duplicate titles cause ambiguous wikilinks.
 When an agent writes `[[API Design Principles]]` and two pages share that title,
@@ -104,9 +107,9 @@ the link target is undefined. Uniqueness eliminates this class of error.
 
 ## HR-007: Updated Field Accuracy
 
-**Rule**: The `updated` field in frontmatter MUST reflect the actual date
+**Rule**: The `updated` field in frontmatter **MUST** reflect the actual date
 of the last meaningful content change.
-Agents MUST update this field whenever they modify page content
+Agents **MUST** update this field whenever they modify page content
 (not for metadata-only changes).
 
 **Rationale**: The `updated` field drives staleness detection in lint operations. An inaccurate date means stale content goes undetected, degrading vault quality over time.
@@ -117,12 +120,12 @@ Agents MUST update this field whenever they modify page content
 
 ## HR-008: Index Registration
 
-**Rule**: Every file in `wiki/` MUST be registered in the index — either in
-the root `wiki/index.md` OR in any `wiki/index-*.md` sub-index (the split-index
-layout produced by `vault-tools.sh index-split`). The entry must include the
-file path and a one-line summary. The index files themselves are structural
-and exempt: `wiki/index.md`, every `wiki/index-*.md` sub-index, and
-`wiki/log.md`.
+**Rule**: Every file in `wiki/` **MUST** be registered in the index — either
+in the root `wiki/index.md` OR in any `wiki/index-*.md` sub-index (the
+split-index layout produced by `vault-tools.sh index-split`). The entry
+**MUST** include the file path and a one-line summary. The index files
+themselves are structural and exempt: `wiki/index.md`, every
+`wiki/index-*.md` sub-index, and `wiki/log.md`.
 
 **Rationale**: The index is the primary retrieval mechanism.
 Agents read it first to locate relevant pages.
@@ -140,7 +143,7 @@ frontmatter `type`.
 
 ## HR-009: Flat Tag Notation
 
-**Rule**: Tags MUST use exactly one level of prefixing: `prefix/value`. No deeper nesting (`prefix/sub/value`), no bare tags without prefix (`#concept`), no spaces in tags.
+**Rule**: Tags **MUST** use exactly one level of prefixing: `prefix/value`. Tags **MUST NOT** use deeper nesting (`prefix/sub/value`), appear bare without a prefix (`#concept`), or contain spaces.
 
 **Rationale**: Flat prefixes balance expressiveness with parseability.
 A single `grep` or `awk` command can extract all tags of a given prefix.
@@ -155,8 +158,8 @@ Bare tags without prefixes are ambiguous
 ## HR-010: Binary File Quarantine
 
 **Rule**: Binary files (images, PDFs, spreadsheets, archives, executables)
-MUST be stored in `raw/` only.
-The `wiki/` and `memory/` directories may contain only `.md` files
+**MUST** be stored in `raw/` only.
+The `wiki/` and `memory/` directories **MUST** contain only `.md` files
 and `.json` configuration files.
 
 **Rationale**: Binary files cannot be diffed by git, cannot be read by agents,
@@ -172,7 +175,7 @@ rather than embedding them.
 
 ## HR-011: Vault Configuration Protection
 
-**Rule**: No agent may modify files in `.vault/rules/`, `.vault/hooks/`,
+**Rule**: Agents **MUST NOT** modify files in `.vault/rules/`, `.vault/hooks/`,
 or `.vault/scripts/`. These directories contain the vault's governance
 and enforcement mechanisms. Changes require human-authored PRs.
 
@@ -188,7 +191,7 @@ in `.vault/rules/`, `.vault/hooks/`, or `.vault/scripts/`.
 
 ## HR-012: Agent Configuration Protection
 
-**Rule**: No agent may modify `CLAUDE.md`, `AGENTS.md`, or `CODEX.md`.
+**Rule**: Agents **MUST NOT** modify `CLAUDE.md`, `AGENTS.md`, or `CODEX.md`.
 These files define agent behavior constraints. Changes require
 human-authored PRs.
 
@@ -204,7 +207,7 @@ critical protection after raw/ immutability.
 
 ## HR-013: CI and Template Protection
 
-**Rule**: No agent may modify files in `.github/` or `templates/`.
+**Rule**: Agents **MUST NOT** modify files in `.github/` or `templates/`.
 Workflow files control CI enforcement. Template files shape all future
 wiki pages.
 
@@ -220,7 +223,7 @@ in `.github/` or `templates/`.
 
 ## HR-014: No File Deletion
 
-**Rule**: Agents must not delete files from `wiki/` or `memory/`.
+**Rule**: Agents **MUST NOT** delete files from `wiki/` or `memory/`.
 To remove content from the active vault, set `status: archived` in
 the file's frontmatter. The file remains in the working tree and
 git history but is excluded from active queries, lint reports, and
@@ -252,8 +255,8 @@ message.
 ## HR-015: Append-Only Logs
 
 **Rule**: `wiki/log.md` and files under `memory/logs/` are append-only.
-Commits that delete or modify existing lines in these files are rejected.
-Only pure additions are allowed.
+Existing lines in these files **MUST NOT** be deleted or modified;
+commits that do so are rejected. Only pure additions are allowed.
 
 **Rationale**: The operations log is the vault's audit trail. If agents
 can rewrite log history, there is no reliable record of what happened.

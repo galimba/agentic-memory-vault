@@ -105,10 +105,10 @@ All hard rules are defined in `.vault/rules/hard-rules.md`. Summary:
 8. **No file may exist in `wiki/` without a corresponding entry in `wiki/index.md`**.
 9. **Tags MUST use flat prefix notation**: `domain/engineering`, not nested hierarchies.
 10. **Binary files (images, PDFs) MUST be stored in `raw/`**, never in `wiki/` or `memory/`.
-11. **No agent may modify `.vault/rules/`, `.vault/hooks/`, or `.vault/scripts/`**. Governance changes require human PRs.
-12. **No agent may modify `CLAUDE.md`, `AGENTS.md`, or `CODEX.md`**. Agent instruction changes require human PRs.
-13. **No agent may modify `.github/` or `templates/`**. CI and template changes require human PRs.
-14. **Do not delete files from `wiki/` or `memory/`.** Set `status: archived` in frontmatter instead. Use `VAULT_ALLOW_DELETE=1` for cleanup.
+11. **Agents MUST NOT modify `.vault/rules/`, `.vault/hooks/`, or `.vault/scripts/`**. Governance changes require human PRs.
+12. **Agents MUST NOT modify `CLAUDE.md`, `AGENTS.md`, or `CODEX.md`**. Agent instruction changes require human PRs.
+13. **Agents MUST NOT modify `.github/` or `templates/`**. CI and template changes require human PRs.
+14. **Agents MUST NOT delete files from `wiki/` or `memory/`.** Set `status: archived` in frontmatter instead. Use `VAULT_ALLOW_DELETE=1` for cleanup.
 15. **Log files (`wiki/log.md`, `memory/logs/`) are append-only**. Deletions are rejected by HR-015. Set `LOG_EDIT_ALLOWED=1` to bypass for legitimate corrections.
 
 ### Soft Rules (Configurable — adapt to your workflow)
