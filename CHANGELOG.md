@@ -36,6 +36,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (`git log --follow`, so renames are tracked) as a DATE | SHA | AUTHOR |
   SUMMARY table and correlates each commit with the `wiki/log.md` entries
   dated the same day, answering "why does this page say X?" (#14).
+- `vault-tools.sh consolidate` — report-only command that finds groups of
+  3+ stale, overlapping wiki pages (pairs share >= 2 approved tags and a
+  direct `related:` reference; groups are connected components where every
+  member is past its staleness threshold) and writes candidates to
+  `memory/notes/consolidation-YYYY-MM-DD.md` for human-driven merging (#16).
 
 ### Changed
 

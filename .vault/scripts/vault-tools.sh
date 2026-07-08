@@ -23,6 +23,7 @@
 #   ./vault-tools.sh content-audit     Audit content integrity
 #   ./vault-tools.sh verify-sources    Verify sources: citations resolve to raw/ files
 #   ./vault-tools.sh blame <file>      Show file history correlated with log.md
+#   ./vault-tools.sh consolidate       Report stale overlapping pages to merge
 #   ./vault-tools.sh stats             Show vault statistics
 #   ./vault-tools.sh init-hooks        Install git hooks
 #   ./vault-tools.sh doctor            Full diagnostic check
@@ -118,6 +119,7 @@ cmd_help() {
     echo "  skill-manifest <dir>  Generate or refresh a skill's manifest"
     echo "  content-audit     Audit content integrity"
     echo "  verify-sources    Verify sources: citations resolve to raw/ files"
+    echo "  consolidate       Report groups of stale overlapping pages to merge"
     echo ""
     echo "Management:"
     echo "  blame <file>      Show file history correlated with wiki/log.md"
@@ -153,6 +155,7 @@ main() {
         content-audit)  cmd_content_audit "$@" ;;
         verify-sources) cmd_verify_sources "$@" ;;
         blame)          cmd_blame "$@" ;;
+        consolidate)    cmd_consolidate "$@" ;;
         index-rebuild)  cmd_index_rebuild "$@" ;;
         index-update)   cmd_index_update "$@" ;;
         index-split)    cmd_index_split "$@" ;;
