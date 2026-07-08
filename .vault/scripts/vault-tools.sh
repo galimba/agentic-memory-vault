@@ -22,6 +22,7 @@
 #   ./vault-tools.sh skill-manifest <dir>  Generate/refresh skill-manifest.json
 #   ./vault-tools.sh content-audit     Audit content integrity
 #   ./vault-tools.sh verify-sources    Verify sources: citations resolve to raw/ files
+#   ./vault-tools.sh blame <file>      Show file history correlated with log.md
 #   ./vault-tools.sh stats             Show vault statistics
 #   ./vault-tools.sh init-hooks        Install git hooks
 #   ./vault-tools.sh doctor            Full diagnostic check
@@ -93,6 +94,7 @@ source "${SCRIPT_DIR}/lib-lint.sh"
 source "${SCRIPT_DIR}/lib-index.sh"
 source "${SCRIPT_DIR}/lib-manage.sh"
 source "${SCRIPT_DIR}/lib-skills.sh"
+source "${SCRIPT_DIR}/lib-blame.sh"
 
 # ==============================================================================
 # HELP
@@ -118,6 +120,7 @@ cmd_help() {
     echo "  verify-sources    Verify sources: citations resolve to raw/ files"
     echo ""
     echo "Management:"
+    echo "  blame <file>      Show file history correlated with wiki/log.md"
     echo "  status            Show vault status"
     echo "  stats             Show detailed vault statistics"
     echo "  index-rebuild     Rebuild wiki/index.md (destructive full rewrite)"
@@ -149,6 +152,7 @@ main() {
         skill-manifest) cmd_skill_manifest "$@" ;;
         content-audit)  cmd_content_audit "$@" ;;
         verify-sources) cmd_verify_sources "$@" ;;
+        blame)          cmd_blame "$@" ;;
         index-rebuild)  cmd_index_rebuild "$@" ;;
         index-update)   cmd_index_update "$@" ;;
         index-split)    cmd_index_split "$@" ;;
