@@ -62,9 +62,14 @@ See `docs/security-hardening.md` for the threat model behind these controls and
    fetch and package-installation command strings, dynamic code execution
    patterns, the tool-permission frontmatter key, any line beginning with an
    exclamation mark, and any external URL. The blocked-pattern list is
-   `blocked_patterns` in `.vault/schemas/skill-policy.json`. Note the patterns
-   are literal substring matches — an innocent word that happens to contain a
-   blocked string will also be rejected.
+   `blocked_patterns` in `.vault/schemas/skill-policy.json`. The patterns are
+   literal substring matches over every line, including prose — an innocent
+   word containing a blocked string is also rejected (the dynamic-execution
+   pattern ends in a space, so words like "retrieval " followed by a space can
+   trip it; the tool-permission key is rejected even when merely mentioned in
+   a sentence). Under `strict` the URL allowlist ships empty, so ALL external
+   URLs fail. Before committing, grep your skill files against the
+   `blocked_patterns` list to find accidental hits.
 4. **Generate the manifest**:
 
    ```bash
