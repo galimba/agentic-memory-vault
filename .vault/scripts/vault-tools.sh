@@ -18,6 +18,7 @@
 #   ./vault-tools.sh orphans           List orphan pages
 #   ./vault-tools.sh stale [days]      List stale pages (default: 30 days)
 #   ./vault-tools.sh tag-audit         Audit tag usage across vault
+#   ./vault-tools.sh orphan-tags       List approved tags used by zero pages
 #   ./vault-tools.sh skill-audit       Audit skills against hardening policy
 #   ./vault-tools.sh skill-manifest <dir>  Generate/refresh skill-manifest.json
 #   ./vault-tools.sh content-audit     Audit content integrity
@@ -117,6 +118,7 @@ cmd_help() {
     echo ""
     echo "Audits:"
     echo "  tag-audit         Audit tag usage"
+    echo "  orphan-tags       List approved tags used by zero wiki pages"
     echo "  skill-audit       Audit skill security"
     echo "  skill-manifest <dir>  Generate or refresh a skill's manifest"
     echo "  content-audit     Audit content integrity"
@@ -153,6 +155,7 @@ main() {
         orphans)        cmd_orphans "$@" ;;
         stale)          cmd_stale "$@" ;;
         tag-audit)      cmd_tag_audit "$@" ;;
+        orphan-tags)    cmd_orphan_tags "$@" ;;
         skill-audit)    cmd_skill_audit "$@" ;;
         skill-manifest) cmd_skill_manifest "$@" ;;
         content-audit)  cmd_content_audit "$@" ;;
