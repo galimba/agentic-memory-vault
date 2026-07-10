@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `vault-tools.sh orphan-tags` — lists approved tags from `.vault/rules/tags.md`
+  that are used by zero wiki pages, one per line. Complements `tag-audit`,
+  which only reports an unused-tag count.
+
 ### Changed
 
 - `AGENTS.md` is now the single canonical agent specification; `CLAUDE.md`

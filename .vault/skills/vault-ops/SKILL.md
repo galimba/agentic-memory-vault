@@ -87,6 +87,7 @@ Ask a human first when ingesting more than 10 sources in one session.
 | `orphans` | Pages with no inbound links |
 | `stale [days]` | Pages past their staleness threshold |
 | `tag-audit` | Used tags vs the approved taxonomy |
+| `orphan-tags` | Approved tags used by zero wiki pages |
 | `content-audit` | Content-integrity scan against content policy |
 | `skill-audit` | Verify skills against the skill policy |
 | `skill-manifest <dir>` | Generate or refresh a skill's manifest |
