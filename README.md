@@ -48,6 +48,8 @@ cp ~/documents/q1-retro.md raw/
 bash .vault/scripts/vault-tools.sh doctor
 ```
 
+Full setup walkthrough: [docs/getting-started.md](docs/getting-started.md)
+
 ## What's Included
 
 ```
@@ -148,11 +150,10 @@ Custom tags use the `custom/` prefix. See `.vault/rules/tags.md` for the full ta
 
 | Platform | Config File | Notes |
 |----------|-------------|-------|
-| Claude Code | `CLAUDE.md` | Primary configuration, loaded automatically |
-| Codex | `CODEX.md` | Thin overrides, references `AGENTS.md` |
-| Copilot | `AGENTS.md` | Platform-agnostic instructions |
-| Cursor | `AGENTS.md` | Platform-agnostic instructions |
-| Custom | `AGENTS.md` | Adapt for any agent framework |
+| Any | `AGENTS.md` | **Canonical specification** — all rules and operations live here |
+| Claude Code | `CLAUDE.md` | Thin adapter, imports `AGENTS.md`, loaded automatically |
+| Codex | `CODEX.md` | Thin adapter, references `AGENTS.md` |
+| Copilot / Cursor / Custom | `AGENTS.md` | Read directly |
 
 ## Customization
 

@@ -13,6 +13,59 @@ before participating.
 
 **b) Using the template for your own vault** — Cloning and customizing for your organization. That's normal usage, not a contribution. No PR needed.
 
+## Template Development Workflow
+
+Everything in this section (through the release checklist) applies to
+developing the template itself. It is removed automatically when `init.sh`
+scaffolds an instance.
+
+### Protected paths and the pre-commit hook
+
+The shipped pre-commit hook (HR-011/012/013) blocks any commit touching
+`.vault/rules/`, `.vault/hooks/`, `.vault/scripts/`, `.github/`, `templates/`,
+`CLAUDE.md`, `AGENTS.md`, or `CODEX.md` — including in this repo, if you have
+installed the hook. That is by design: those checks protect vault instances,
+and the template dogfoods them.
+
+- **Humans**: after reviewing your own change, commit protected paths with
+  `git commit --no-verify`. That flag is reserved for humans.
+- **Agents**: never use `--no-verify`. Prepare the change on a branch, stage
+  it, and hand the commit to a human. `.vault/skills/` and `.vault/schemas/`
+  are NOT hook-protected — normal commits work there.
+
+### Testing
+
+Every `vault-tools.sh` command and hook check needs a test in
+`.vault/scripts/tests/` (pattern: copy an existing `test-*.sh`; each test
+builds a scratch vault under `mktemp -d` and must exit non-zero on failure).
+Run the full suite the way CI does:
+
+```bash
+for t in .vault/scripts/tests/test-*.sh; do echo "=== $t"; bash "$t" || exit 1; done
+```
+
+### Definition of done for a template PR
+
+```bash
+for t in .vault/scripts/tests/test-*.sh; do bash "$t" || exit 1; done   # all tests pass
+find .vault -name '*.sh' -exec shellcheck {} +                          # shell clean
+git ls-files '*.md' | xargs npx --yes markdownlint-cli2                 # markdown clean
+bash .vault/scripts/vault-tools.sh doctor                               # exit 0
+```
+
+Plus: a `CHANGELOG.md` entry under `[Unreleased]` (parallel PRs conflict there
+— expected, resolve by keeping both), and a Conventional Commit message (see
+below). New commands also need: help text in `vault-tools.sh`, a row in the
+`vault-ops` skill command table, and docs if user-facing.
+
+### Release checklist (maintainers)
+
+1. Roll `CHANGELOG.md`: `[Unreleased]` → `[X.Y.Z] - YYYY-MM-DD`, add fresh empty `[Unreleased]`, update compare links at the bottom.
+2. Bump the version everywhere it lives: `AGENTS.md` (Vault Identity), `README.md` badge, and `template_version` plus the CHANGELOG heredoc in `.vault/scripts/init.sh`.
+3. Add the release row to `docs/roadmap.md` "What Already Shipped".
+4. Run the full definition-of-done block above.
+5. Commit `chore(release): vX.Y.Z` (needs `--no-verify` — touches protected files), tag, and create the GitHub release.
+
 ## How to Report Bugs
 
 - Use the [Bug Report](.github/ISSUE_TEMPLATE/bug_report.yml) issue template
@@ -32,8 +85,8 @@ before participating.
 4. Run linters locally:
 
    ```bash
-   markdownlint '**/*.md'
-   shellcheck .vault/**/*.sh
+   git ls-files '*.md' | xargs npx --yes markdownlint-cli2
+   find .vault -name '*.sh' -exec shellcheck {} +
    ```
 
 5. Run vault diagnostics:
