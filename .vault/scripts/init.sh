@@ -213,7 +213,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Initialized vault from [agentic-memory-vault](https://github.com/galimba/agentic-memory-vault) template (v0.4.0)
+- Initialized vault from [agentic-memory-vault](https://github.com/galimba/agentic-memory-vault) template (v0.6.0)
 
 [Unreleased]: https://github.com/${GITHUB_ORG}/${REPO_NAME}/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/${GITHUB_ORG}/${REPO_NAME}/releases/tag/v0.1.0
@@ -396,7 +396,7 @@ github_org="${GITHUB_ORG}"
 maintainer="${MAINTAINER}"
 platform="${PLATFORM}"
 init_date="${INIT_DATE}"
-template_version="0.4.0"
+template_version="0.6.0"
 INIT_EOF
 echo "  State saved to .vault/.initialized"
 

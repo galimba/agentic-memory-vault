@@ -254,13 +254,15 @@ cmd_doctor() {
     else
         ok ".vault/.initialized exists"
     fi
-    if [[ ! -f "${VAULT_ROOT}/CLAUDE.md" ]]; then
-        error "CLAUDE.md missing -- cannot check for unresolved placeholders"
+    # AGENTS.md is the canonical spec and carries the Identity placeholders;
+    # CLAUDE.md is a thin adapter with none, so checking it would always pass.
+    if [[ ! -f "${VAULT_ROOT}/AGENTS.md" ]]; then
+        error "AGENTS.md missing -- cannot check for unresolved placeholders"
         failures=$((failures + 1))
-    elif grep -qE '\{\{[A-Z_]+\}\}' "${VAULT_ROOT}/CLAUDE.md"; then
-        warning "Placeholders still present in CLAUDE.md -- init.sh may not have completed"
+    elif grep -qE '\{\{[A-Z_]+\}\}' "${VAULT_ROOT}/AGENTS.md"; then
+        warning "Placeholders still present in AGENTS.md -- init.sh may not have completed"
     else
-        ok "No unresolved placeholders in CLAUDE.md"
+        ok "No unresolved placeholders in AGENTS.md"
     fi
 
     subheader "Git Hooks"

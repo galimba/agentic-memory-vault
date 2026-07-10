@@ -13,6 +13,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   that are used by zero wiki pages, one per line. Complements `tag-audit`,
   which only reports an unused-tag count.
 
+### Changed
+
+- `AGENTS.md` is now the single canonical agent specification; `CLAUDE.md`
+  and `CODEX.md` are thin platform adapters that import or reference it.
+  The vault version string lives only in `AGENTS.md`. The rules digest
+  numbering now matches the canonical HR-/SR- IDs exactly.
+- `CONTRIBUTING.md` gains a "Template Development Workflow" section
+  (protected-path commit flow, test-suite invocation, definition of done,
+  maintainer release checklist). It sits inside the span `init.sh` removes
+  when scaffolding an instance.
+- `doctor` now checks `AGENTS.md` (not the thin `CLAUDE.md`) for unresolved
+  init placeholders.
+- `docs/skills.md` names the exact literal-substring hardening traps that
+  block skill commits.
+
+### Fixed
+
+- `init.sh` stamped `template_version="0.4.0"` and a v0.4.0 CHANGELOG
+  seed line regardless of the actual template version; both now read 0.6.0
+  and the release checklist covers keeping them current.
+
 ## [0.6.0] - 2026-07-08
 
 ### Added
